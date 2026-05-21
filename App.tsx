@@ -286,10 +286,10 @@ function MainScreen() {
         <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
-              <View>
+              <TouchableOpacity onPress={() => navigate('vehicles')}>
                 <Text style={[styles.title, {color: colors.text}]}>ARAÇLARIM</Text>
                 <Text style={[styles.headerSub, {color: colors.textMuted}]}>OBD2 Diagnostik</Text>
-              </View>
+              </TouchableOpacity>
               <TouchableOpacity style={[styles.connectButton, {backgroundColor: colors.card, borderColor: colors.cardBorder}, isConnected && styles.connectButtonActive]} onPress={handleConnectPress}>
                 <View style={[styles.statusDot, isConnected && styles.statusDotActive]} />
                 <Text style={[styles.connectButtonText, {color: colors.text}]}>{isConnected ? 'BAĞLI' : 'BAĞLAN'}</Text>
@@ -350,11 +350,6 @@ function MainScreen() {
                 <Text style={styles.featureIcon}>🚗</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
                 <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Monitör</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('vehicles')}>
-                <Text style={styles.featureIcon}>📋</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇLARIM</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Kayıtlı Araçlar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
                 <Text style={styles.featureIcon}>❄️</Text>
