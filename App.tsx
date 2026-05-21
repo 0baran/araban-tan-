@@ -17,6 +17,7 @@ import HiddenFeatureScreen from './src/screens/HiddenFeatureScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import PerformanceScreen from './src/screens/PerformanceScreen';
 import FreezeFrameScreen from './src/screens/FreezeFrameScreen';
+import IMReadinessScreen from './src/screens/IMReadinessScreen';
 import VehicleInfoScreen from './src/screens/VehicleInfoScreen';
 import DataLogScreen from './src/screens/DataLogScreen';
 import LogScreen from './src/screens/LogScreen';
@@ -25,7 +26,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.6.1';
+const APP_VERSION = '2.7.0';
 
 export default function App() {
   return (
@@ -312,6 +313,7 @@ function MainScreen() {
       {currentScreen === 'settings' && <SettingsScreen {...screenProps} />}
       {currentScreen === 'performance' && <PerformanceScreen {...screenProps} />}
       {currentScreen === 'freezeframe' && <FreezeFrameScreen {...screenProps} />}
+      {currentScreen === 'imreadiness' && <IMReadinessScreen {...screenProps} />}
       {currentScreen === 'vehicleinfo' && <VehicleInfoScreen {...screenProps} />}
       {currentScreen === 'datalog' && <DataLogScreen {...screenProps} />}
       {currentScreen === 'log' && <LogScreen {...screenProps} />}
@@ -380,22 +382,27 @@ function MainScreen() {
                 <Text style={styles.featureIcon}>🏁</Text>
                 <Text style={[styles.featureValue, {fontSize: 22, color: colors.text}]}>{hp} BG</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>PERFORMANS</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>0-100 / HP</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>0-100 Testi & HP</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('vehicleinfo')}>
                 <Text style={styles.featureIcon}>🚗</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
                 <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Monitör</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('imreadiness')}>
+                <Text style={styles.featureIcon}>🌿</Text>
+                <Text style={[styles.featureLabel, {color: colors.textDim}]}>EMİSYON TESTİ</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>I/M Readiness</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
                 <Text style={styles.featureIcon}>❄️</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>DONMA NOKTASI</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Freeze Frame</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Hata Anı Sensörler</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('datalog')}>
                 <Text style={styles.featureIcon}>📊</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>VERİ KAYDI</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>CSV / Yol Bilg.</Text>
+                <Text style={[styles.featureLabel, {color: colors.textDim}]}>YOL BİLGİSAYARI</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Veri Kaydı & Tüketim</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('hiddenfeature')}>
                 <Text style={styles.featureIcon}>🔧</Text>
