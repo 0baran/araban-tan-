@@ -6,21 +6,16 @@ async function makeSquare() {
     const width = image.bitmap.width;
     const height = image.bitmap.height;
     
-    if (width === height) {
-      console.log('Already square');
-      await image.writeAsync('logo-square.png');
-      return;
-    }
-    
+    // Solid Black: 0x000000FF
     const size = Math.max(width, height);
     
-    new Jimp(size, size, 0x00000000, async (err, bg) => {
+    new Jimp(size, size, 0x000000FF, async (err, bg) => {
       if (err) throw err;
       const x = (size - width) / 2;
       const y = (size - height) / 2;
       bg.composite(image, x, y);
       await bg.writeAsync('logo-square.png');
-      console.log('Made square: ' + size + 'x' + size);
+      console.log('Made square with solid black background: ' + size + 'x' + size);
     });
   } catch(e) {
     console.error(e);
