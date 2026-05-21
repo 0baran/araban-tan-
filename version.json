@@ -1,1 +1,5 @@
-{"url":"https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.7.apk","version":"2.9.7","notes":"1. Hata (DTC) okuma algoritması tamamen yenilendi; tüm araçlarda çoklu çerçeve ve başlıklı kodlar sorunsuz okunuyor. 2. Cihaz açılışında son bağlantıya otomatik bağlanma sorunu (İzin eksikliği) düzeltildi. 3. Akıllı Sensör Tarama Filtresi aktif edildi (Veri okuma gecikmeleri ve takılmalar kökünden çözüldü)."}
+{
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.8.apk",
+  "version": "2.9.8",
+  "notes": "v2.9.8: Uygulama ikonu (motor resmi) daha belirgin hale getirildi.\n\nv2.9.7: Hata kodu (DTC) okuma algoritması iyileştirildi, otomatik bağlantı izni eklendi ve kullanılmayan sensör sorguları tamamen iptal edilerek hız & RPM gecikmeleri ortadan kaldırıldı."
+}

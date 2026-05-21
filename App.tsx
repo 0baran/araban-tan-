@@ -26,7 +26,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.9.7';
+const APP_VERSION = '2.9.8';
 
 export default function App() {
   return (
