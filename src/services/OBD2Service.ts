@@ -167,8 +167,6 @@ type Transport = {
 
 class BluetoothTransport implements Transport {
   private device: BluetoothDevice | null = null;
-  private dataSubscription: any = null;
-  private buffer = '';
   address: string;
 
   constructor(address: string) {
@@ -180,35 +178,14 @@ class BluetoothTransport implements Transport {
     if (!this.device) {
       return false;
     }
-    try {
-      this.dataSubscription = this.device.onDataReceived((event: any) => {
-        if (event && event.data) {
-          this.buffer += event.data;
-        }
-      });
-    } catch (e) {
-      console.warn('Bluetooth onDataReceived failed, device may not be fully connected:', e);
-      try { await this.device.disconnect(); } catch (_) {}
-      this.device = null;
-      return false;
-    }
     return true;
   }
 
   async disconnect(): Promise<void> {
-    if (this.dataSubscription) {
-      try {
-        this.dataSubscription.remove();
-      } catch (_) {}
-      this.dataSubscription = null;
-    }
     if (this.device) {
-      try {
-        await this.device.disconnect();
-      } catch (_) {}
+      try { await this.device.disconnect(); } catch (_) {}
       this.device = null;
     }
-    this.buffer = '';
   }
 
   async write(data: string): Promise<void> {
@@ -219,13 +196,23 @@ class BluetoothTransport implements Transport {
   }
 
   async readAll(): Promise<string> {
-    const data = this.buffer;
-    this.buffer = '';
+    if (!this.device) return '';
+    let data = '';
+    try {
+      const count = await this.device.available();
+      for (let i = 0; i < count; i++) {
+        const chunk = await this.device.read();
+        if (chunk) data += chunk;
+      }
+    } catch (_) {}
     return data;
   }
 
   async isAvailable(): Promise<number> {
-    return this.buffer.length;
+    if (!this.device) return 0;
+    try {
+      return await this.device.available();
+    } catch { return 0; }
   }
 }
 
@@ -741,21 +728,21 @@ class OBD2Service {
   }
 
   private async sendCommand(cmd: string): Promise<string> {
-    if (!this.transport || !this._isConnected) {
+    const t = this.transport;
+    if (!t || !this._isConnected) {
       return '';
     }
     try {
-      // Buffer'ı temizle (önceki yanıt kalıntısı olmasın)
-      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
-      await this.transport.write(cmd + '\r');
+      if (await t.isAvailable() > 0) await t.readAll();
+      await t.write(cmd + '\r');
       await this.delay(200);
       let response = '';
       let emptyCount = 0;
       for (let i = 0; i < 30; i++) {
         await this.delay(100);
-        const available = await this.transport.isAvailable();
+        const available = await t.isAvailable();
         if (available > 0) {
-          const chunk = await this.transport.readAll();
+          const chunk = await t.readAll();
           if (chunk) {
             response += chunk;
             emptyCount = 0;
@@ -963,17 +950,18 @@ class OBD2Service {
   private FAST_MAX_POLLS = 12;
 
   private async sendCommandFast(cmd: string): Promise<string> {
-    if (!this.transport || !this._isConnected) return '';
+    const t = this.transport;
+    if (!t || !this._isConnected) return '';
     try {
-      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
-      await this.transport.write(cmd + '\r');
+      if (await t.isAvailable() > 0) await t.readAll();
+      await t.write(cmd + '\r');
       await this.delay(this.FAST_WRITE_DELAY);
       let response = '';
       for (let i = 0; i < this.FAST_MAX_POLLS; i++) {
         await this.delay(this.FAST_POLL_INTERVAL);
-        const avail = await this.transport.isAvailable();
+        const avail = await t.isAvailable();
         if (avail > 0) {
-          const chunk = await this.transport.readAll();
+          const chunk = await t.readAll();
           if (chunk) response += chunk;
         }
         if (response.includes('>')) break;
@@ -994,7 +982,8 @@ class OBD2Service {
     this.pollCycle = 0;
 
     const poll = async () => {
-      if (!this.pollRunning || !this._isConnected || !this.transport) return;
+      try {
+        if (!this.pollRunning || !this._isConnected || !this.transport) return;
 
       this.pollCycle++;
       const isExtended = this.pollCycle % 6 === 0;
@@ -1079,7 +1068,11 @@ class OBD2Service {
       }
 
       this.pollTimer = setTimeout(poll, 300);
-    };
+    } catch (e) {
+      console.error('Polling hatası:', e);
+      if (this.pollRunning) this.pollTimer = setTimeout(poll, 1000);
+    }
+  };
 
     this.pollTimer = setTimeout(poll, 200);
   }
