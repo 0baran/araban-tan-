@@ -9,9 +9,10 @@ import {obd2Service, MonitorStatus} from '../services/OBD2Service';
 
 interface Props {
   onBack: () => void;
+  onNavigate?: (screen: string) => void;
 }
 
-export default function VehicleInfoScreen({onBack}: Props) {
+export default function VehicleInfoScreen({onBack, onNavigate}: Props) {
   const {colors} = useTheme();
   const [vin, setVin] = useState('');
   const [monitorStatus, setMonitorStatus] = useState<MonitorStatus | null>(null);
@@ -86,6 +87,9 @@ export default function VehicleInfoScreen({onBack}: Props) {
               <Text style={[styles.hint, {color: colors.textMuted}]}>
                 Tüm monitörlerin ✔ olması araç emisyon testine hazır demektir.
               </Text>
+              <TouchableOpacity style={[styles.detailedBtn, {backgroundColor: 'rgba(0,191,255,0.1)', borderColor: 'rgba(0,191,255,0.3)'}]} onPress={() => onNavigate?.('imreadiness')}>
+                <Text style={[styles.detailedBtnText, {color: '#00bfff'}]}>🌿 DETAYLI EMİSYON TESTİ (I/M READINESS) →</Text>
+              </TouchableOpacity>
             </View>
           )}
 
@@ -156,4 +160,6 @@ const styles = StyleSheet.create({
   infoIcon: {fontSize: 16, width: 24},
   infoLabel: {color: 'rgba(255,255,255,0.5)', fontSize: 13, flex: 1},
   infoValue: {color: '#fff', fontSize: 14, fontWeight: '600', textAlign: 'right'},
+  detailedBtn: {marginTop: 16, padding: 14, borderRadius: 12, borderWidth: 1, alignItems: 'center'},
+  detailedBtnText: {fontSize: 12, fontWeight: '800', letterSpacing: 1},
 });

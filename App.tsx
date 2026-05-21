@@ -303,7 +303,7 @@ function MainScreen() {
 
   const navigate = (screen: string | null) => setCurrentScreen(screen);
 
-  const screenProps = {onBack: () => navigate(null)};
+  const screenProps = {onBack: () => navigate(null), onNavigate: navigate};
 
   return (
     <>
@@ -387,12 +387,7 @@ function MainScreen() {
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('vehicleinfo')}>
                 <Text style={styles.featureIcon}>🚗</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Monitör</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('imreadiness')}>
-                <Text style={styles.featureIcon}>🌿</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>EMİSYON TESTİ</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>I/M Readiness</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Emisyon</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
                 <Text style={styles.featureIcon}>❄️</Text>
