@@ -6,43 +6,38 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-
-# --- Compute version ---
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
 $version = "2.2.$versionSuffix"
 $apkName = "ArabaniTani-v$version.apk"
+$apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
+
 Write-Host "==> Version: $version" -ForegroundColor Cyan
 
 # --- Read latest changelog notes from Changelog.ts ---
 $changelogPath = Join-Path $root "src\services\Changelog.ts"
-$changelogContent = Get-Content -LiteralPath $changelogPath -Raw
-
-# Extract items from the first version entry (latest)
-$match = [regex]::Match($changelogContent, "'2\.2\.[\d\.]+'[\s\S]*?items:\s*\[([\s\S]*?)\],\s*\}\]")
+$cl = Get-Content -LiteralPath $changelogPath -Raw
 $fullNotes = ""
+# Find the first version entry's items array
+$match = [regex]::Match($cl, "version:\s*'[^']*'[\s\S]*?items:\s*\[([\s\S]*?)\],\s*\}")
 if ($match.Success) {
-  $itemsBlock = $match.Groups[1].Value
-  $itemMatches = [regex]::Matches($itemsBlock, "'([^']*)'")
+  $block = $match.Groups[1].Value
+  $itemMatches = [regex]::Matches($block, "'([^']*)'")
   $items = $itemMatches | ForEach-Object { $_.Groups[1].Value }
   $fullNotes = ($items -join "; ").Trim()
 }
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
-# --- Update App.tsx APP_VERSION ---
+# --- Update App.tsx ---
 $appTsxPath = Join-Path $root "App.tsx"
 $appTsx = Get-Content -LiteralPath $appTsxPath -Raw
 $appTsx = $appTsx -replace "(const APP_VERSION = ')[^']*(')", "`${1}$version`${2}"
 Set-Content -LiteralPath $appTsxPath -Value $appTsx -NoNewline
-Write-Host "==> App.tsx APP_VERSION updated to $version" -ForegroundColor Green
+Write-Host "==> App.tsx updated" -ForegroundColor Green
 
 # --- Update version.json ---
-$versionJsonPath = Join-Path $root "version.json"
-$vj = Get-Content -LiteralPath $versionJsonPath -Raw | ConvertFrom-Json
-$vj.version = $version
-$vj.url = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
-$vj.notes = $fullNotes
-$vj | ConvertTo-Json -Compress | Set-Content -LiteralPath $versionJsonPath -NoNewline
+$vjPath = Join-Path $root "version.json"
+@{ version = $version; url = $apkUrl; notes = $fullNotes } | ConvertTo-Json -Compress | Set-Content -LiteralPath $vjPath -NoNewline
 Write-Host "==> version.json updated" -ForegroundColor Green
 
 # --- Build APK ---
@@ -51,23 +46,31 @@ if (-not $SkipBuild) {
   Push-Location -LiteralPath (Join-Path $root "android")
   try {
     Write-Host "==> Building APK..." -ForegroundColor Yellow
-    & .\gradlew assembleRelease --no-daemon 2>&1
-    if ($LASTEXITCODE -ne 0) { throw "Gradle build failed" }
+    $buildOutput = & .\gradlew assembleRelease --no-daemon 2>&1 | Out-String
+    Write-Host $buildOutput
+    if ($LASTEXITCODE -ne 0) { throw "Gradle build failed (exit $LASTEXITCODE)" }
+
+    # Verify build output contains our version
+    if ($buildOutput -match "BUILD SUCCESSFUL") {
+      Write-Host "==> Build successful" -ForegroundColor Green
+    } else {
+      throw "Build did not complete successfully"
+    }
   } finally {
     Pop-Location
   }
 
-  # --- Copy APK to root ---
+  # Copy APK to project root
   $apkSource = Join-Path $root "android\app\build\outputs\apk\release\ArabaniTani-release-v$version.apk"
   if (Test-Path -LiteralPath $apkSource) {
     Copy-Item -LiteralPath $apkSource -Destination (Join-Path $root $apkName) -Force
     Write-Host "==> APK copied: $apkName" -ForegroundColor Green
   } else {
-    Write-Host "==> APK not found at $apkSource, checking for alternative..." -ForegroundColor Yellow
+    # Fallback: find any APK
     $builtApk = Get-ChildItem -LiteralPath (Join-Path $root "android\app\build\outputs\apk\release") -Filter "*.apk" | Select-Object -First 1
     if ($builtApk) {
       Copy-Item -LiteralPath $builtApk.FullName -Destination (Join-Path $root $apkName) -Force
-      Write-Host "==> APK copied from alternative: $($builtApk.Name)" -ForegroundColor Green
+      Write-Host "==> APK copied (alt): $($builtApk.Name) -> $apkName" -ForegroundColor Yellow
     } else {
       throw "No APK found in build output"
     }
@@ -82,7 +85,7 @@ if (-not $SkipPush) {
   try {
     git add -A
     git add -f $apkName
-    git commit -m "chore: v$version - otomatik build & push"
+    git commit -m "chore: v$version - otomatik build & push" 2>&1 | Out-Null
     Write-Host "==> Pushing to GitHub..." -ForegroundColor Yellow
     git push origin main 2>&1
     Write-Host "==> Push completed" -ForegroundColor Green
@@ -100,9 +103,13 @@ if (-not $SkipInstall) {
     $apkFullPath = Join-Path $root $apkName
     Write-Host "==> Installing APK..." -ForegroundColor Yellow
     & $adbPath install -r $apkFullPath 2>&1
-    Write-Host "==> Installation completed" -ForegroundColor Green
+    if ($LASTEXITCODE -eq 0) {
+      Write-Host "==> Install completed" -ForegroundColor Green
+    } else {
+      Write-Host "==> Install failed" -ForegroundColor Red
+    }
   } else {
-    Write-Host "==> adb not found, skipping install" -ForegroundColor Yellow
+    Write-Host "==> adb not found at $adbPath, skipping install" -ForegroundColor Yellow
   }
 } else {
   Write-Host "==> Install skipped" -ForegroundColor Yellow
