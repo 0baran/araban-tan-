@@ -7,6 +7,7 @@ android/app/build/
 android/.gradle/
 android/build/
 *.apk
+!ProCarScanner-release-*.apk
 *.aab
 *.keystore
 debug.keystore
