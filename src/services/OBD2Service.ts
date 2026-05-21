@@ -1095,7 +1095,48 @@ class OBD2Service {
   pausePolling() { this.stopPolling(); }
 
   resumePolling() {
-    if (this._isConnected && this.transport) this.startPolling();
+    if (this.isSimulating) {
+      this.startSimulation();
+    } else if (this._isConnected && this.transport) {
+      this.startPolling();
+    }
+  }
+
+  async goBackground() {
+    this.stopPolling();
+    if (this.isSimulating) {
+      this.isSimulating = false;
+      this._isConnected = false;
+      this.pollRunning = false;
+      return;
+    }
+    this._isConnected = false;
+    if (this.transport) {
+      try { await this.transport.disconnect(); } catch (_) {}
+      this.transport = null;
+    }
+  }
+
+  async goForeground() {
+    if (this.isSimulating) {
+      this.startSimulation();
+      return;
+    }
+    const config = await this.loadLastDevice();
+    if (!config) return;
+    this._lastConfig = config;
+    this.setConnectionState('connecting', 'Yeniden bağlanıyor...');
+    let ok = false;
+    if (config.type === 'bluetooth' && config.address) {
+      ok = await this.connectBluetooth(config.address, config.name);
+    } else if (config.type === 'wifi' && config.ip) {
+      ok = await this.connectWiFi(config.ip, config.port || 35000);
+    } else if (config.type === 'usb') {
+      ok = await this.connectUSB();
+    }
+    if (!ok) {
+      this.setConnectionState('disconnected', 'Yeniden bağlanılamadı');
+    }
   }
 
   private parseHexValue(

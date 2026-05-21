@@ -121,31 +121,37 @@ function MainScreen() {
     }
 
     // Otomatik DTC kontrolü (her 30sn)
-    const dtcInterval = setInterval(async () => {
+    let dtcInterval: ReturnType<typeof setInterval> | null = setInterval(async () => {
       if (obd2Service.isConnected) {
         const status = await obd2Service.readMonitorStatus();
         setDtcCount(status.dtcCount);
       }
     }, 30000);
 
-    // Arka planda pil tasarrufu
-    let bgTimer: ReturnType<typeof setTimeout> | null = null;
+    // Arka planda pil tasarrufu - Bluetooth bağlantısını tamamen kes
+    let bgLock = false;
     const sub = AppState.addEventListener('change', nextState => {
-      if (nextState === 'background' || nextState === 'inactive') {
-        obd2Service.pausePolling();
-        clearInterval(dtcInterval);
-        if (bgTimer) clearTimeout(bgTimer);
-      } else if (nextState === 'active') {
-        obd2Service.resumePolling();
-        if (bgTimer) clearTimeout(bgTimer);
+      if ((nextState === 'background' || nextState === 'inactive') && !bgLock) {
+        bgLock = true;
+        if (dtcInterval) clearInterval(dtcInterval);
+        dtcInterval = null;
+        obd2Service.goBackground();
+      } else if (nextState === 'active' && bgLock) {
+        bgLock = false;
+        obd2Service.goForeground();
+        dtcInterval = setInterval(async () => {
+          if (obd2Service.isConnected) {
+            const status = await obd2Service.readMonitorStatus();
+            setDtcCount(status.dtcCount);
+          }
+        }, 30000);
       }
     });
 
     return () => {
       obd2Service.disconnect();
-      clearInterval(dtcInterval);
+      if (dtcInterval) clearInterval(dtcInterval);
       sub.remove();
-      if (bgTimer) clearTimeout(bgTimer);
     };
   }, []);
 
