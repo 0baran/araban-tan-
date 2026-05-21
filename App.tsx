@@ -26,7 +26,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.9.1';
+const APP_VERSION = '2.9.2';
 
 export default function App() {
   return (
@@ -62,7 +62,7 @@ function MainScreen() {
   const [dtcCount, setDtcCount] = useState(0);
   const [updateStatus, setUpdateStatus] = useState('');
   const autoConnectDone = useRef(false);
-  const {colors} = useTheme();
+  const {colors, darkMode} = useTheme();
 
   useEffect(() => {
     initLogCapture();
@@ -307,6 +307,7 @@ function MainScreen() {
 
   return (
     <>
+      <StatusBar backgroundColor={colors.bg} barStyle={darkMode ? 'light-content' : 'dark-content'} />
       {currentScreen === 'errorcodes' && <ErrorCodesScreen {...screenProps} />}
       {currentScreen === 'livedata' && <LiveDataScreen {...screenProps} />}
       {currentScreen === 'hiddenfeature' && <HiddenFeatureScreen {...screenProps} />}
