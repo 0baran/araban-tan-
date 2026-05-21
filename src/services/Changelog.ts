@@ -6,7 +6,7 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
-    version: '2.2.20260521.1215',
+    version: '2.2.20260521.1224',
     date: '21 Mayıs 2026',
     items: [
       'Markaya ozel protokoller eklendi (VAG, BMW, Mercedes, Ford, Toyota, Hyundai, Renault, Opel, PSA, Fiat)',

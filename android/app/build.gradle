@@ -97,8 +97,8 @@ def newVCode = vCode + 1
 def newBuildNum = buildNum + 1
 android.defaultConfig.versionCode = newVCode
 
-// Read versionName from version.json (written by build script)
-def versionJsonFile = file('../version.json')
+// Read versionName from version.json (written by build script at project root)
+def versionJsonFile = file('../../version.json')
 try {
     def rawText = versionJsonFile.text
     // Strip BOM (UTF-8 Byte Order Mark) if present

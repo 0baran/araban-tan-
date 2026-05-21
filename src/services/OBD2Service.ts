@@ -503,7 +503,6 @@ class OBD2Service {
         this.setConnectionState('error', 'Bluetooth cihazına bağlanılamadı');
         return false;
       }
-      this._isConnected = true;
       this.isSimulating = false;
       const ok = await this.initializeELM327();
       if (!ok) {
@@ -511,6 +510,7 @@ class OBD2Service {
         this.setConnectionState('error', 'ELM327 başlatılamadı');
         return false;
       }
+      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -538,7 +538,6 @@ class OBD2Service {
       this.setConnectionState('connecting', 'USB OBD2 bağlanıyor...');
       this.transport = new UsbTransport();
       await this.transport.connect();
-      this._isConnected = true;
       this.isSimulating = false;
       const ok = await this.initializeELM327();
       if (!ok) {
@@ -546,6 +545,7 @@ class OBD2Service {
         this.setConnectionState('error', 'USB ELM327 başlatılamadı');
         return false;
       }
+      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -569,7 +569,6 @@ class OBD2Service {
       );
       this.transport = new WiFiTransport(ip, port);
       await this.transport.connect();
-      this._isConnected = true;
       this.isSimulating = false;
       const ok = await this.initializeELM327();
       if (!ok) {
@@ -577,6 +576,7 @@ class OBD2Service {
         this.setConnectionState('error', 'ELM327 WiFi başlatılamadı');
         return false;
       }
+      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -761,21 +761,23 @@ class OBD2Service {
       return true;
     }
 
-    // Otomatik çalışmazsa, yaygın protokolleri dene (önce CAN, sonra eski protokoller)
-    const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A'];
+    // Daha hızlı tarama için timeout'u geçici olarak kısalt
+    await this.sendCommand('ATST30');
     console.log('initializeELM327: Otomatik protokol başarısız, protokoller taranıyor...');
+    const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A'];
     for (const proto of tryProtocols) {
-      await this.sendCommand(`ATSP${proto}`);
-      await this.delay(300);
-      await this.sendCommand('ATE0');
-      await this.delay(100);
-      const resp = await this.sendCommand('0100');
-      if (resp && resp.length > 0 && !resp.includes('UNABLE')) {
+      await this.sendCommandFast(`ATSP${proto}`);
+      await this.delay(200);
+      await this.sendCommandFast('ATE0');
+      const resp = await this.sendCommandFast('0100');
+      if (resp && resp.length > 0 && !resp.includes('UNABLE') && !resp.includes('NO DATA')) {
         this.currentProtocolLabel = PROTOCOL_LABELS[proto] || `SP ${proto}`;
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
+        await this.sendCommand('ATSTFF');
         return true;
       }
     }
+    await this.sendCommand('ATSTFF');
 
     console.error('initializeELM327: Hiçbir protokol ECU ile iletişim kuramadı');
     return false;
@@ -884,14 +886,18 @@ class OBD2Service {
   private pollRunning = false;
   private pollCycle = 0;
 
+  private FAST_WRITE_DELAY = 30;
+  private FAST_POLL_INTERVAL = 50;
+  private FAST_MAX_POLLS = 12;
+
   private async sendCommandFast(cmd: string): Promise<string> {
     if (!this.transport || !this._isConnected) return '';
     try {
       await this.transport.write(cmd + '\r');
-      await this.delay(30);
+      await this.delay(this.FAST_WRITE_DELAY);
       let response = '';
-      for (let i = 0; i < 8; i++) {
-        await this.delay(40);
+      for (let i = 0; i < this.FAST_MAX_POLLS; i++) {
+        await this.delay(this.FAST_POLL_INTERVAL);
         const avail = await this.transport.isAvailable();
         if (avail > 0) {
           const chunk = await this.transport.readAll();
