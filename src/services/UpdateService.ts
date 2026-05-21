@@ -1,7 +1,7 @@
 import {Alert, Linking} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UPDATE_URL = 'https://raw.githubusercontent.com/0baran/araban-tan-/main/version.json';
+const UPDATE_URL = 'https://raw.githubusercontent.com/0baran/araban-tan-/refs/heads/main/version.json';
 const SKIPPED_KEY = '@update_skipped_version';
 
 type UpdateInfo = {
