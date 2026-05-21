@@ -66,6 +66,14 @@ const PARAM_META: {
   {key: 'egtBank1', label: 'Egzoz Sıcaklığı B1', unit: '°C', color: '#ff6d00', category: 'egzoz'},
   {key: 'evapVaporPressure', label: 'Evap Buhar Basıncı', unit: 'Pa', color: '#80ffdb', category: 'yakıt'},
   {key: 'relativePedalPos', label: 'Rel. Gaz Pedalı', unit: '%', color: '#c77dff', category: 'sürüş'},
+  {key: 'commandedEgr', label: 'EGR Komutu', unit: '%', color: '#2b9348', category: 'motor'},
+  {key: 'egrError', label: 'EGR Hatası', unit: '%', color: '#d62828', category: 'motor'},
+  {key: 'actualEgr', label: 'Gerçek EGR Oranı', unit: '%', color: '#55a630', category: 'motor'},
+  {key: 'egrErrorDuty', label: 'EGR Hata Oranı', unit: '%', color: '#e63946', category: 'motor'},
+  {key: 'commandedEvapPurge', label: 'Evap Purge Komutu', unit: '%', color: '#b5838d', category: 'yakıt'},
+  {key: 'commandedEvapPurgeFlow', label: 'Evap Purge Akışı', unit: '%', color: '#6d597a', category: 'yakıt'},
+  {key: 'o2B1S1EquivRatio', label: 'O2 Lambda B1S1', unit: 'λ', color: '#0077b6', category: 'egzoz'},
+  {key: 'o2B1S2EquivRatio', label: 'O2 Lambda B1S2', unit: 'λ', color: '#0096c7', category: 'egzoz'},
 ];
 
 const CATEGORIES = [

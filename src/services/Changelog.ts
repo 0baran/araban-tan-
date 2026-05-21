@@ -6,6 +6,18 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.3.20260521.1300',
+    date: '21 Mayıs 2026',
+    items: [
+      'Gelişmiş protokol desteği: buffer temizleme, yeniden deneme, hızlı tarama',
+      '16 eksik sensör polling döngüsüne eklendi (mutlak yük, etanol, O2 B1S2, trim B2)',
+      '8 yeni sensör: EGR komutu/hatası, Evap purje, Lambda B1S1/B1S2, EGR oranı',
+      'LiveData ekranına 8 yeni sensör eklendi',
+      'Pil tasarrufu: arka planda polling durduruluyor',
+      'Logo yeniden tasarlandı (konturlu, canlı sarı)',
+    ],
+  },
+  {
     version: '2.2.20260521.1237',
     date: '21 Mayıs 2026',
     items: [

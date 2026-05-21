@@ -68,6 +68,14 @@ export type OBD2Data = {
   egtBank1: number;
   evapVaporPressure: number;
   relativePedalPos: number;
+  commandedEgr: number;
+  egrError: number;
+  commandedEvapPurge: number;
+  o2B1S1EquivRatio: number;
+  o2B1S2EquivRatio: number;
+  actualEgr: number;
+  egrErrorDuty: number;
+  commandedEvapPurgeFlow: number;
   milOn: boolean;
   dtcCount: number;
 };
@@ -376,6 +384,8 @@ class OBD2Service {
     timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
     wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
     fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
+    commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
+    o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
   };
   private logBuffer: string[] = [];
   private logMax = 6000;
@@ -691,6 +701,14 @@ class OBD2Service {
         egtBank1: 500 + Math.floor(Math.random() * 300),
         evapVaporPressure: Math.floor(Math.random() * 1000) - 500,
         relativePedalPos: 10 + Math.floor(Math.random() * 80),
+        commandedEgr: Math.floor(Math.random() * 60),
+        egrError: Math.floor(Math.random() * 10) - 5,
+        commandedEvapPurge: Math.floor(Math.random() * 50),
+        o2B1S1EquivRatio: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
+        o2B1S2EquivRatio: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
+        actualEgr: Math.floor(Math.random() * 50),
+        egrErrorDuty: Math.floor(Math.random() * 10) - 5,
+        commandedEvapPurgeFlow: Math.floor(Math.random() * 50),
         milOn: false,
         dtcCount: 0,
       };
@@ -727,9 +745,12 @@ class OBD2Service {
       return '';
     }
     try {
+      // Buffer'ı temizle (önceki yanıt kalıntısı olmasın)
+      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.transport.write(cmd + '\r');
       await this.delay(200);
       let response = '';
+      let emptyCount = 0;
       for (let i = 0; i < 30; i++) {
         await this.delay(100);
         const available = await this.transport.isAvailable();
@@ -737,7 +758,11 @@ class OBD2Service {
           const chunk = await this.transport.readAll();
           if (chunk) {
             response += chunk;
+            emptyCount = 0;
           }
+        } else {
+          emptyCount++;
+          if (emptyCount > 5 && response.length > 0) break;
         }
         if (response.includes('>')) {
           break;
@@ -760,39 +785,59 @@ class OBD2Service {
   }
 
   private async initializeELM327(): Promise<boolean> {
-    // Temel ELM327 kurulum komutları
-    const initCmds = ['ATZ', 'ATE0', 'ATL0', 'ATSTFF', 'ATAT1'];
-    for (const cmd of initCmds) {
-      const resp = await this.sendCommand(cmd);
-      if (cmd === 'ATZ' && !resp) {
-        return false;
-      }
-    }
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
+    await this.sendCommand('ATZ');
+    await this.delay(500);
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
+    await this.sendCommand('ATE0');
+    await this.delay(200);
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
+    await this.sendCommand('ATL0');
+    await this.delay(100);
+    await this.sendCommand('ATSTFF');
+    await this.delay(100);
+    await this.sendCommand('ATAT1');
+    await this.delay(100);
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
 
     // Otomatik protokol seç
     await this.sendCommand('ATSP0');
-    await this.delay(200);
+    await this.delay(400);
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
 
     // ECU ile iletişimi test et (PID 0100 = desteklenen PID'ler)
-    const testResp = await this.sendCommand('0100');
-    if (testResp && testResp.length > 0 && !testResp.includes('UNABLE')) {
+    let testResp = await this.sendCommand('0100');
+    if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
       console.log('initializeELM327: ECU yanıt verdi (otomatik protokol)');
+      return true;
+    }
+
+    // 2. deneme - biraz daha bekle
+    testResp = await this.sendCommand('0100');
+    if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
+      console.log('initializeELM327: ECU yanıt verdi (2. deneme)');
       return true;
     }
 
     // Daha hızlı tarama için timeout'u geçici olarak kısalt
     await this.sendCommand('ATST30');
+    await this.delay(100);
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     console.log('initializeELM327: Otomatik protokol başarısız, protokoller taranıyor...');
-    const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A'];
+    const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
     for (const proto of tryProtocols) {
       await this.sendCommandFast(`ATSP${proto}`);
-      await this.delay(200);
+      await this.delay(300);
+      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.sendCommandFast('ATE0');
+      await this.delay(100);
       const resp = await this.sendCommandFast('0100');
-      if (resp && resp.length > 0 && !resp.includes('UNABLE') && !resp.includes('NO DATA')) {
+      if (resp && resp.length > 0 && !resp.includes('UNABLE') && !resp.includes('NO DATA') && !resp.includes('?')) {
         this.currentProtocolLabel = PROTOCOL_LABELS[proto] || `SP ${proto}`;
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
         await this.sendCommand('ATSTFF');
+        await this.delay(100);
+        if (await this.transport.isAvailable() > 0) await this.transport.readAll();
         return true;
       }
     }
@@ -848,10 +893,13 @@ class OBD2Service {
     const protocols = ['3', '4', '5', '6', '7', '8', '9', 'A', '1', '2', 'B', 'C'];
     for (const p of protocols) {
       const label = PROTOCOL_LABELS[p] || `SP${p}`;
+      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.sendCommand(`ATSP${p}`);
       await this.delay(400);
+      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.sendCommand('ATE0');
       await this.delay(100);
+      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       const resp = await this.sendCommand('010C');
       const clean = resp.replace(/\s/g, '');
       const ok = clean.startsWith('410C') || clean.includes('410C');
@@ -862,8 +910,9 @@ class OBD2Service {
         return results;
       }
     }
+    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     await this.sendCommand('ATSP0');
-    await this.delay(200);
+    await this.delay(300);
     await this.detectProtocol();
     if (wasPolling) this.startPolling();
     return results;
@@ -916,6 +965,7 @@ class OBD2Service {
   private async sendCommandFast(cmd: string): Promise<string> {
     if (!this.transport || !this._isConnected) return '';
     try {
+      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.transport.write(cmd + '\r');
       await this.delay(this.FAST_WRITE_DELAY);
       let response = '';
@@ -993,6 +1043,32 @@ class OBD2Service {
         const egtR = await this.sendCommandFast('015F'); this.parseEGTBank1(egtR);
         const evapR = await this.sendCommandFast('0153'); this.parseEVAPVaporPressure(evapR);
         const pedalR = await this.sendCommandFast('015A'); this.parseRelativePedalPos(pedalR);
+        // Eksik sensörler (parse var ama poll edilmiyordu)
+        const absLdR = await this.sendCommandFast('0143'); this.parseAbsoluteLoad(absLdR);
+        const relThrR = await this.sendCommandFast('0145'); this.parseRelativeThrottlePos(relThrR);
+        const ethR = await this.sendCommandFast('0152'); this.parseEthanolPercent(ethR);
+        const fuelSysR = await this.sendCommandFast('0103'); this.parseFuelSystemStatus(fuelSysR);
+        const o2V2R = await this.sendCommandFast('0115'); this.parseO2Sensor2Voltage(o2V2R);
+        const stft2R = await this.sendCommandFast('0109'); this.parseShortTermFuelTrim2(stft2R);
+        const ltft2R = await this.sendCommandFast('010A'); this.parseLongTermFuelTrim2(ltft2R);
+        const distMilR = await this.sendCommandFast('0121'); this.parseDistanceWithMIL(distMilR);
+        const timeDtcR = await this.sendCommandFast('014F'); this.parseTimeSinceDTCClear(timeDtcR);
+        const warmR = await this.sendCommandFast('0130'); this.parseWarmUpsSinceDTCClear(warmR);
+        const fuelTyR = await this.sendCommandFast('0151'); this.parseFuelType(fuelTyR);
+        const timeMilR = await this.sendCommandFast('014E'); this.parseTimeWithMIL(timeMilR);
+        const catB2R = await this.sendCommandFast('013D'); this.parseCatalystTempBank2(catB2R);
+        const wideO2R = await this.sendCommandFast('0134'); this.parseWideRangeO2B1S1(wideO2R);
+        const accER = await this.sendCommandFast('014A'); this.parseAcceleratorPosE(accER);
+        const accFR = await this.sendCommandFast('014B'); this.parseAcceleratorPosF(accFR);
+        // Yeni sensörler
+        const cmdEgrR = await this.sendCommandFast('012C'); this.parseCommandedEgr(cmdEgrR);
+        const egrErrR = await this.sendCommandFast('012D'); this.parseEgrError(egrErrR);
+        const evapPurgeR = await this.sendCommandFast('012E'); this.parseCommandedEvapPurge(evapPurgeR);
+        const o2Eq1R = await this.sendCommandFast('0124'); this.parseO2B1S1EquivRatio(o2Eq1R);
+        const o2Eq2R = await this.sendCommandFast('0125'); this.parseO2B1S2EquivRatio(o2Eq2R);
+        const actEgrR = await this.sendCommandFast('0160'); this.parseActualEgr(actEgrR);
+        const egrDutyR = await this.sendCommandFast('0161'); this.parseEgrErrorDuty(egrDutyR);
+        const evapFlowR = await this.sendCommandFast('0162'); this.parseCommandedEvapPurgeFlow(evapFlowR);
       }
 
       this.updateTripData(this.currentData.speed);
@@ -1423,6 +1499,54 @@ class OBD2Service {
     if (val !== null) this.currentData.relativePedalPos = Math.round((val / 255) * 100);
   }
 
+  private parseCommandedEgr(response: string) {
+    const val = this.parseHexValue(response, '412C', 4, 2);
+    if (val !== null) this.currentData.commandedEgr = Math.round((val / 255) * 100);
+  }
+
+  private parseEgrError(response: string) {
+    const val = this.parseHexValue(response, '412D', 4, 2);
+    if (val !== null) this.currentData.egrError = Math.round(((val / 128) - 1) * 100);
+  }
+
+  private parseCommandedEvapPurge(response: string) {
+    const val = this.parseHexValue(response, '412E', 4, 2);
+    if (val !== null) this.currentData.commandedEvapPurge = Math.round((val / 255) * 100);
+  }
+
+  private parseO2B1S1EquivRatio(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4124') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.o2B1S1EquivRatio = Math.round(((A * 256 + B) / 32768) * 10) / 10;
+    }
+  }
+
+  private parseO2B1S2EquivRatio(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4125') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.o2B1S2EquivRatio = Math.round(((A * 256 + B) / 32768) * 10) / 10;
+    }
+  }
+
+  private parseActualEgr(response: string) {
+    const val = this.parseHexValue(response, '4160', 4, 2);
+    if (val !== null) this.currentData.actualEgr = Math.round((val / 255) * 100);
+  }
+
+  private parseEgrErrorDuty(response: string) {
+    const val = this.parseHexValue(response, '4161', 4, 2);
+    if (val !== null) this.currentData.egrErrorDuty = Math.round(((val / 128) - 1) * 100);
+  }
+
+  private parseCommandedEvapPurgeFlow(response: string) {
+    const val = this.parseHexValue(response, '4162', 4, 2);
+    if (val !== null) this.currentData.commandedEvapPurgeFlow = Math.round((val / 255) * 100);
+  }
+
   private parseMonitorStatusForPoll(response: string) {
     const clean = response.replace(/\s/g, '');
     if (clean.startsWith('4101') && clean.length >= 8) {
@@ -1824,7 +1948,7 @@ class OBD2Service {
     }
   }
 
-  async disconnect() {
+    async disconnect() {
     this.isSimulating = false;
     await this.disconnectTransport();
     this.currentData = {
@@ -1837,11 +1961,14 @@ class OBD2Service {
       distanceSinceDTCClear: 0, fuelRailPressureRelative: 0,
       runTime: 0, engineOilTemp: 0, fuelRate: 0, distanceWithMIL: 0,
       timeSinceDTCClear: 0, absoluteThrottleB: 0, absoluteThrottleC: 0,
-      commandedThrottleActuator: 0, acceleratorPosD: 0,       warmUpsSinceDTCClear: 0,
+      commandedThrottleActuator: 0, acceleratorPosD: 0, warmUpsSinceDTCClear: 0,
       fuelType: '',
       timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
-    wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
-    milOn: false, dtcCount: 0,
+      wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
+      fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
+      commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
+      o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
+      milOn: false, dtcCount: 0,
     };
     this.logBuffer = [];
     this.resetTripData();
