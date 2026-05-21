@@ -16,7 +16,8 @@ export type CheckResult =
 
 export async function checkForUpdate(currentVersion: string, signal?: AbortSignal): Promise<CheckResult> {
   try {
-    const resp = await fetch(UPDATE_URL, {method: 'GET', cache: 'no-cache', signal});
+    const ts = Date.now();
+    const resp = await fetch(`${UPDATE_URL}?t=${ts}`, {method: 'GET', cache: 'no-cache', signal});
     if (!resp.ok) return {found: false, reason: 'network'};
     const info: UpdateInfo = await resp.json();
     if (compareVersions(info.version, currentVersion) <= 0) return {found: false, reason: 'uptodate'};

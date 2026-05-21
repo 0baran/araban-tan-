@@ -26,7 +26,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.9.4';
+const APP_VERSION = '2.9.7';
 
 export default function App() {
   return (
@@ -104,8 +104,10 @@ function MainScreen() {
 
     if (!autoConnectDone.current) {
       autoConnectDone.current = true;
-      obd2Service.autoConnect().then(ok => {
-        if (ok) setStatusText('Otomatik bağlanıldı');
+      requestPermissions().then(() => {
+        obd2Service.autoConnect().then(ok => {
+          if (ok) setStatusText('Otomatik bağlanıldı');
+        });
       });
       setUpdateStatus('Güncelleme kontrol ediliyor...');
       const ac = new AbortController();

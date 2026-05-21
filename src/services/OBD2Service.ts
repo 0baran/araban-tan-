@@ -415,6 +415,27 @@ class OBD2Service {
   private currentProtocolLabel = 'Otomatik / Algılanıyor...';
   private _connectionType: ConnectionType = 'bluetooth';
   private _lastConfig: ConnectionConfig | null = null;
+  private supportedPids: Set<string> = new Set();
+
+  private parseSupportedPids(response: string, offsetHex: string) {
+    const clean = response.replace(/\s/g, '');
+    const prefix = '41' + offsetHex;
+    const idx = clean.indexOf(prefix);
+    if (idx === -1) return;
+    const data = clean.substring(idx + 4, idx + 12);
+    if (data.length < 8) return;
+    const val = parseInt(data, 16);
+    if (isNaN(val)) return;
+    const binary = val.toString(2).padStart(32, '0');
+    const offset = parseInt(offsetHex, 16);
+    for (let i = 0; i < 32; i++) {
+      if (binary[i] === '1') {
+        const pidNum = offset + i + 1;
+        const pidHex = '01' + pidNum.toString(16).toUpperCase().padStart(2, '0');
+        this.supportedPids.add(pidHex);
+      }
+    }
+  }
 
   get isConnected(): boolean {
     return this._isConnected;
@@ -807,7 +828,7 @@ class OBD2Service {
     await this.delay(200);
     await this.sendCommand('ATL0');
     await this.delay(100);
-    await this.sendCommand('ATSTFF');
+    await this.sendCommand('ATST32');
     await this.delay(100);
     await this.sendCommand('ATAT1');
     await this.delay(100);
@@ -815,10 +836,15 @@ class OBD2Service {
     await this.sendCommand('ATSP0');
     await this.delay(400);
 
-    // ECU ile iletişimi test et (PID 0100 = desteklenen PID'ler)
+    this.supportedPids.clear();
     let testResp = await this.sendCommand('0100');
     if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
       console.log('initializeELM327: ECU yanıt verdi (otomatik protokol)');
+      this.parseSupportedPids(testResp, '00');
+      const r20 = await this.sendCommand('0120');
+      if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
+      const r40 = await this.sendCommand('0140');
+      if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
       return true;
     }
 
@@ -826,6 +852,11 @@ class OBD2Service {
     testResp = await this.sendCommand('0100');
     if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
       console.log('initializeELM327: ECU yanıt verdi (2. deneme)');
+      this.parseSupportedPids(testResp, '00');
+      const r20 = await this.sendCommand('0120');
+      if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
+      const r40 = await this.sendCommand('0140');
+      if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
       return true;
     }
 
@@ -842,12 +873,17 @@ class OBD2Service {
       if (resp && resp.length > 0 && !resp.includes('UNABLE') && !resp.includes('NO DATA') && !resp.includes('?')) {
         this.currentProtocolLabel = PROTOCOL_LABELS[proto] || `SP ${proto}`;
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
-        await this.sendCommand('ATSTFF');
+        this.parseSupportedPids(resp, '00');
+        const r20 = await this.sendCommandFast('0120');
+        if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
+        const r40 = await this.sendCommandFast('0140');
+        if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
+        await this.sendCommand('ATST32');
         await this.delay(100);
         return true;
       }
     }
-    await this.sendCommand('ATSTFF');
+    await this.sendCommand('ATST32');
 
     console.error('initializeELM327: Hiçbir protokol ECU ile iletişim kuramadı');
     return false;
@@ -963,7 +999,14 @@ class OBD2Service {
   private FAST_POLL_INTERVAL = 40;
   private FAST_MAX_POLLS = 10;
 
+  private canPoll(pid: string): boolean {
+    return this.supportedPids.size === 0 || this.supportedPids.has(pid);
+  }
+
   private async sendCommandFast(cmd: string): Promise<string> {
+    if (cmd.startsWith('01') && cmd.length === 4) {
+      if (!this.canPoll(cmd)) return '';
+    }
     const t = this.transport;
     if (!t || !this._isConnected) return '';
     try {
@@ -2029,29 +2072,35 @@ class OBD2Service {
 
   private parseDTCs(response: string): DTC[] {
     const dtcs: DTC[] = [];
-    const lines = response.split('\n');
-    for (const line of lines) {
-      const clean = line.trim();
-      if ((clean.startsWith('43') || clean.startsWith('42')) && clean.length >= 6) {
-        const rawCodes = clean.substring(2).trim();
-        const parts = rawCodes.split(' ');
-        for (let i = 0; i < parts.length - 1; i += 2) {
-          const b1 = parts[i];
-          const b2 = parts[i + 1];
-          if (b1 && b2) {
-            const code = this.decodeDTC(b1, b2);
-            if (code) {
-              dtcs.push({
-                code,
-                description:
-                  DTC_DESCRIPTIONS[code] || `${code} - Tanımlanmamış hata kodu`,
-              });
-            }
-          }
-        }
+    const lines = response.split(/[\r\n]+/);
+    
+    let rawBytes: string[] = [];
+    for (let line of lines) {
+      line = line.trim();
+      // Çoklu çerçeve satır numaralarını (ör. "0: ", "1: ") temizle
+      line = line.replace(/^[0-9A-Fa-f]:\s*/, '');
+      const parts = line.split(/\s+/).filter(p => p.length === 2);
+      rawBytes.push(...parts);
+    }
+    
+    const startIndex = rawBytes.findIndex(b => b === '43' || b === '47' || b === '4A');
+    if (startIndex === -1) return dtcs;
+    
+    for (let i = startIndex + 1; i < rawBytes.length - 1; i += 2) {
+      const b1 = rawBytes[i];
+      const b2 = rawBytes[i + 1];
+      if (b1 === '00' && b2 === '00') continue;
+      
+      const code = this.decodeDTC(b1, b2);
+      if (code) {
+        dtcs.push({
+          code,
+          description: DTC_DESCRIPTIONS[code] || `${code} - Tanımlanmamış hata kodu`,
+        });
       }
     }
-    return dtcs;
+    
+    return dtcs.filter((d, index, self) => index === self.findIndex((t) => t.code === d.code));
   }
 
   private decodeDTC(byte1: string, byte2: string): string | null {
