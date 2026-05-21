@@ -1,5 +1,5 @@
 {
-  "version": "2.2.20260521.0417",
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v2.2.20260521.0417.apk",
-  "notes": "Bluetooth bağlantı hatası düzeltildi, performans iyileştirmeleri."
+  "version": "2.2.20260521.0424",
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v2.2.20260521.0424.apk",
+  "notes": "Bluetooth crash fix, simülasyon düzeltmesi, genel kod revizyonu."
 }

@@ -462,7 +462,6 @@ class OBD2Service {
   private _isConnected = false;
   private dataCallback: OBD2Callback | null = null;
   private connectionCallback: ConnectionCallback | null = null;
-  private pollingInterval: NodeJS.Timeout | null = null;
   private _vin: string = '';
   private currentData: OBD2Data = {
     rpm: 0, speed: 0, coolantTemp: 0, engineLoad: 0, intakeTemp: 0,
@@ -735,7 +734,11 @@ class OBD2Service {
     this.currentProtocolLabel = 'Simülasyon';
     this.setConnectionState('connected', 'Simülasyon Modu Aktif');
 
-    this.pollingInterval = setInterval(() => {
+    this.pollRunning = true;
+    this.currentData.speed = 0;
+
+    const simPoll = () => {
+      if (!this.pollRunning) return;
       this.currentData = {
         rpm: 800 + Math.floor(Math.random() * 2000),
         speed: this.currentData.speed < 120 ? this.currentData.speed + 1 : 0,
@@ -782,13 +785,17 @@ class OBD2Service {
         wideRangeO2B1S1: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
         acceleratorPosE: 5 + Math.floor(Math.random() * 30),
         acceleratorPosF: 3 + Math.floor(Math.random() * 20),
+        milOn: false,
+        dtcCount: 0,
       };
       this.updateTripData(this.currentData.speed);
       this.addLogEntry(this.currentData);
       if (this.dataCallback) {
         this.dataCallback({...this.currentData});
       }
-    }, 300);
+      this.pollTimer = setTimeout(simPoll, 300);
+    };
+    this.pollTimer = setTimeout(simPoll, 100);
   }
 
   private setConnectionState(state: ConnectionState, message?: string) {
