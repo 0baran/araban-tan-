@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.10',
+    date: '21 Mayıs 2026',
+    items: [
+      'Performans Güncellemesi: Ekrana veri basma frekansı (UI Throttling) optimize edildi. Kasma/donma sorunları çözülerek mükemmel akıcı bir deneyim sağlandı.',
+      'Uygulamanın motor resmi (App Icon) yapay zeka ile kırpılarak sınırlarına kadar dev boyuta getirildi.'
+    ],
+  },
+  {
     version: '2.9.9',
     date: '21 Mayıs 2026',
     items: [

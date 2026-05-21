@@ -26,7 +26,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.9.9';
+const APP_VERSION = '2.9.10';
 
 export default function App() {
   return (
@@ -67,18 +67,23 @@ function MainScreen() {
   useEffect(() => {
     initLogCapture();
     loadSettings();
+    let lastUiUpdate = 0;
     obd2Service.onDataUpdate((data: OBD2Data) => {
-      const s = getSettings();
-      setSpeedWarnActive(s.speedWarningEnabled && data.speed >= s.speedWarningThreshold);
-      setCoolantWarnActive(s.coolantWarningEnabled && data.coolantTemp >= s.coolantWarningThreshold);
-      setRpm(data.rpm);
-      setSpeed(data.speed);
-      setCoolant(data.coolantTemp);
-      setMaf(data.maf);
-      setHp(Math.round((data.maf / 0.73) * 1.15));
-      setMap(data.map);
-      setBatteryVoltage(data.batteryVoltage);
-      setDtcCount(data.dtcCount);
+      const now = Date.now();
+      if (now - lastUiUpdate > 250) {
+        lastUiUpdate = now;
+        const s = getSettings();
+        setSpeedWarnActive(s.speedWarningEnabled && data.speed >= s.speedWarningThreshold);
+        setCoolantWarnActive(s.coolantWarningEnabled && data.coolantTemp >= s.coolantWarningThreshold);
+        setRpm(data.rpm);
+        setSpeed(data.speed);
+        setCoolant(data.coolantTemp);
+        setMaf(data.maf);
+        setHp(Math.round((data.maf / 0.73) * 1.15));
+        setMap(data.map);
+        setBatteryVoltage(data.batteryVoltage);
+        setDtcCount(data.dtcCount);
+      }
     });
 
     obd2Service.onConnectionUpdate((state: ConnectionState, message?: string) => {
