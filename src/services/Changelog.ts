@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.9',
+    date: '21 Mayıs 2026',
+    items: [
+      'Uygulama motor ikonu tasarımı büyütüldü ve Sürüm Notları (Changelog) sayfası güncellendi.',
+      'Bağlantı ve OTA kararlılığı devam ediyor.'
+    ],
+  },
+  {
     version: '2.9.8',
     date: '21 Mayıs 2026',
     items: [
