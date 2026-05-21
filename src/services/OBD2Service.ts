@@ -125,18 +125,18 @@ export type ConnectionState =
 
 export const OBD2_PROTOCOLS: {value: string; label: string}[] = [
   {value: '0', label: 'Otomatik (Tüm Protokoller)'},
-  {value: '1', label: 'SAE J1850 PWM (41.6 kbaud)'},
-  {value: '2', label: 'SAE J1850 VPW (10.4 kbaud)'},
-  {value: '3', label: 'ISO 9141-2 (5 baud init, 10.4 kbaud)'},
-  {value: '4', label: 'ISO 14230-4 KWP (5 baud init)'},
-  {value: '5', label: 'ISO 14230-4 KWP (fast init)'},
-  {value: '6', label: 'ISO 15765-4 CAN (11 bit ID, 500 kbaud)'},
-  {value: '7', label: 'ISO 15765-4 CAN (29 bit ID, 500 kbaud)'},
-  {value: '8', label: 'ISO 15765-4 CAN (11 bit ID, 250 kbaud)'},
-  {value: '9', label: 'ISO 15765-4 CAN (29 bit ID, 250 kbaud)'},
-  {value: 'A', label: 'SAE J1939 CAN (29 bit ID, 250 kbaud)'},
-  {value: 'B', label: 'USER1 CAN (11 bit ID, 125 kbaud)'},
-  {value: 'C', label: 'USER2 CAN (11 bit ID, 50 kbaud)'},
+  {value: '1', label: 'SAE J1850 PWM (Eski Ford / Mazda)'},
+  {value: '2', label: 'SAE J1850 VPW (Eski GM / Chevrolet)'},
+  {value: '3', label: 'ISO 9141-2 (Eski Avrupa / Asya / Chrysler)'},
+  {value: '4', label: 'ISO 14230-4 KWP (VAG / Avrupa 5 baud)'},
+  {value: '5', label: 'ISO 14230-4 KWP (VAG / Avrupa fast init)'},
+  {value: '6', label: 'ISO 15765-4 CAN (Standart Modern Araçlar)'},
+  {value: '7', label: 'ISO 15765-4 CAN (Asya / HD 29 bit)'},
+  {value: '8', label: 'ISO 15765-4 CAN (11 bit, 250 kbaud)'},
+  {value: '9', label: 'ISO 15765-4 CAN (29 bit, 250 kbaud)'},
+  {value: 'A', label: 'SAE J1939 CAN (Ağır Vasıta / Kamyon)'},
+  {value: 'B', label: 'USER1 CAN (Ford MS-CAN / 125 kbaud)'},
+  {value: 'C', label: 'USER2 CAN (GM/Fiat SW-CAN / 50 kbaud)'},
 ];
 
 const PROTOCOL_LABELS: Record<string, string> = {
