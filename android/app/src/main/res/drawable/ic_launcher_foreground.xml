@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group android:translateY="2">
+        <!-- Gauge arc -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#00bfff"
+            android:strokeWidth="4"
+            android:pathData="M12,76 A42,42 0 0,1 96,76" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#1a5f7a"
+            android:strokeWidth="4"
+            android:pathData="M12,76 A42,42 0 0,0 96,76" />
+
+        <!-- Gauge ticks -->
+        <path
+            android:fillColor="#00bfff"
+            android:pathData="M22,72 L24,64" />
+        <path
+            android:fillColor="#556b8a"
+            android:pathData="M38,62 L42,56" />
+        <path
+            android:fillColor="#00bfff"
+            android:pathData="M54,58 L54,50" />
+        <path
+            android:fillColor="#556b8a"
+            android:pathData="M70,62 L66,56" />
+        <path
+            android:fillColor="#cc3b4a"
+            android:pathData="M86,72 L84,64" />
+
+        <!-- Needle -->
+        <path
+            android:fillColor="#ff4757"
+            android:pathData="M52,52 L50,26 L56,26 L54,52 Z" />
+        <path
+            android:fillColor="#ff4757"
+            android:pathData="M52,52 A2,2 0 1,1 56,52 A2,2 0 1,1 52,52 Z" />
+
+        <!-- Center cap -->
+        <path
+            android:fillColor="#ffffff"
+            android:pathData="M54,54 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+
+        <!-- Car silhouette -->
+        <path
+            android:fillColor="#00bfff"
+            android:pathData="M34,68 L38,60 L70,60 L74,68 Z" />
+        <path
+            android:fillColor="#2a2a3e"
+            android:pathData="M44,60 L48,52 L60,52 L64,60 Z" />
+        <path
+            android:fillColor="#1a1a2e"
+            android:pathData="M68,68 m-7,0 a7,7 0 1,1 14,0 a7,7 0 1,1 -14,0" />
+        <path
+            android:fillColor="#444444"
+            android:pathData="M68,68 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0" />
+        <path
+            android:fillColor="#1a1a2e"
+            android:pathData="M40,68 m-7,0 a7,7 0 1,1 14,0 a7,7 0 1,1 -14,0" />
+        <path
+            android:fillColor="#444444"
+            android:pathData="M40,68 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0" />
+
+        <!-- Scan waves from car -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#00ff7f"
+            android:strokeWidth="2"
+            android:pathData="M48,52 L44,46" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#00ff7f"
+            android:strokeWidth="2"
+            android:pathData="M52,50 L48,42" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#00ff7f"
+            android:strokeWidth="2"
+            android:pathData="M56,50 L60,42" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#00ff7f"
+            android:strokeWidth="2"
+            android:pathData="M60,52 L64,46" />
+    </group>
+</vector>
