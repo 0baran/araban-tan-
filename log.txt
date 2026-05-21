@@ -1,0 +1,103 @@
+--------- beginning of system
+05-21 18:11:14.795  4540  5747 I SDHMS:x : handleUpdatedDeltaLocked : 2026-05-21 18:00:53.671 ~ 2026-05-21 18:11:14.795   reason=POLLING
+05-21 18:11:14.795  4540  5747 I SDHMS:x : Polling event handleUpdatedDeltaLocked finished.
+05-21 18:11:14.796  4540  4716 I SDHMS:PowerAnomaly:BatteryStatsDBManager: BarTender DB  BulkInsert Start / size=2
+05-21 18:11:14.800  4540  4716 I SDHMS:PowerAnomaly:BatteryStatsDBManager: BarTender DB  BulkInsert End
+--------- beginning of main
+05-21 18:11:14.820  3701  3767 I DWBCacheFlow: cache value is null
+05-21 18:11:14.820  3701  3767 I DWBCacheFlow: init : lock before
+05-21 18:11:14.820  3701  3767 I DWBCacheFlow: init : lock start
+05-21 18:11:14.823   561   561 I SmWidget.Glance.UpdateMgr: glanceId : AppWidgetId(appWidgetId=4) , widgetId : 4
+05-21 18:11:14.825   561   561 W SmWidget.Glance.UpdateMgr: restored data empty
+05-21 18:11:14.826   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: appWidget-4, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:14.826   561   561 I GWT:GlanceStateDefinition: [lool] create PreferenceDataStore / appWidget-4 , CoroutineScope(coroutineContext=[s1{Active}@f4c7c42, Dispatchers.IO])
+05-21 18:11:14.829   561   561 I SmWidget.Glance.UpdateMgr: updateWidgetTimeAndStateKey glanceId : AppWidgetId(appWidgetId=4) update time : 1779376274829 and status : 1
+05-21 18:11:14.831  1272  4619 W ParceledListSlice: Element #47 is 23916 bytes.
+05-21 18:11:14.832  1272  4619 W ParceledListSlice: Element #48 is 21448 bytes.
+05-21 18:11:14.836  1272  2476 I AppWidgetServiceImpl: getAppWidgetInfo() 4, from 0
+05-21 18:11:14.840  3701  3767 I DWBLocalPkgRepositoryIm: getLocalPackages installed pkg size : 138
+05-21 18:11:14.841  3701  3754 I DWBPkgCategoryRepositor: getOrInsertPkgCategoriesByNames lock before
+05-21 18:11:14.841  3701  3754 I DWBPkgCategoryRepositor: getOrInsertPkgCategoriesByNames lock start
+05-21 18:11:14.843  1272  2476 W PackageManager: Cannot suspend package "com.android.vending": required for package verification
+05-21 18:11:14.843  1272  2476 W PackageManager: Cannot suspend package "com.samsung.android.dialer": is the default dialer
+05-21 18:11:14.844  1272  2476 I PackageManager: Cannot suspend package "com.android.settings": required system package
+05-21 18:11:14.849   936   954 E HeatmapThread: ECT Thread time in milliseconds: 1779376274
+05-21 18:11:14.850   936   954 D HeatmapThread: !@ batteryplugType : 2
+05-21 18:11:14.850   936   954 D HeatmapThread: !@ batteryLevel : 100  batteryTemperature : 354 
+05-21 18:11:14.850   936   954 D HeatmapThread: !@ Heatmap currtime: 29656271
+05-21 18:11:14.850   936   954 D HeatmapThread: !@ Heatmap prevtime: 29656270
+05-21 18:11:14.850   936   954 D HeatmapThread: !@ Heatmap plugstarttime: 29656258
+05-21 18:11:14.850   936   954 D HeatmapThread: !@ Heatmap prevv_dsoh_update_time: 29656245
+05-21 18:11:14.850   936   954 E HeatmapThread: !@ CAM New BSOH: 100
+05-21 18:11:14.850   936   954 E HeatmapThread: !@ CAM is Working
+05-21 18:11:14.860  3701  3767 I DWBPkgCategoryRepositor: getOrInsertPkgCategoriesByNames lock end
+05-21 18:11:14.871  1272  2302 W ParceledListSlice: Element #394 is 24220 bytes.
+05-21 18:11:14.879  1272  2302 W ParceledListSlice: Element #543 is 28040 bytes.
+05-21 18:11:14.913  2813  2957 I HoneySpace.StatusIconTracker: invokeEvent() called with: event = Mobile(bundle=Bundle[mParcelledData.dataSize=256])
+05-21 18:11:14.921  3701  3757 I DWBLocalPkgRepositoryIm: local package updated. size=138
+05-21 18:11:14.922  3701  3757 I DWBCacheFlow: init : lock end and subscriptionCount : 1
+05-21 18:11:14.922  3701  3767 I DWBCacheFlow: cache value is updated
+05-21 18:11:14.922   944  1009 I VSyncReactor: Current= 120, Period= 120, Distance= 0
+05-21 18:11:14.923   944   944 I SurfaceFlinger: SFWD update time=20047907265935
+05-21 18:11:14.927  4540  4716 I SDHMS:PowerAnomaly:Gatherer:BatteryStats: BarTender addStats To DB (14 ms) ExtDB (27 ms)
+05-21 18:11:14.927  4540  4716 I SDHMS:PowerAnomaly:Gatherer:BatteryStats:  BatteryStats refreshed (41 ms) analyzed (90 ms)
+05-21 18:11:14.929  3701  3754 I DWBGetAllPkgUseCase: all pkg size=138
+05-21 18:11:14.931   944  1009 I VSyncReactor: Current= 120, Period= 120, Distance= 120
+05-21 18:11:14.940  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.940  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.940  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.940  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.941  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.941  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.941  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.941  1272  2476 V Configuration: Updating configuration, locales updated from [] to [tr_TR]
+05-21 18:11:14.944   561   561 I GWT:SessionManager: [lool] isSessionRunning(appWidget-4)==false(false, false)
+05-21 18:11:14.944   561   561 I GWT:AppWidget: [lool] Update AppWidgetId(appWidgetId=4) widget / isRunning : false
+05-21 18:11:14.946  1272  2476 D IntervalStats: Unable to parse usage stats packages: [1730]
+05-21 18:11:14.946  1272  2476 D IntervalStats: Unable to parse event packages: [1730]
+05-21 18:11:14.963   561  3779 W JobInfo : Requested important-while-foreground flag for job50016058 is ignored and takes no effect
+05-21 18:11:14.973  1272  4619 I ActivityManager: Changes in 5009 10 to 8, 0 to 128
+05-21 18:11:14.995   561   561 I GWT:SessionManager: [lool] startSession appWidget-4 ENQUEUED + RUNNING : 1 / 1
+05-21 18:11:14.996   561   561 I SmWidget.Glance.UpdateMgr: glanceId : AppWidgetId(appWidgetId=4) update request done, status : 1
+05-21 18:11:14.996   561   561 I SmWidget.Glance.UpdateMgr: updateWidgetPreview main start
+05-21 18:11:14.997  1272  4619 I AppWidgetServiceImpl: getInstalledProvidersForProfiles lock in com.samsung.android.lool
+05-21 18:11:14.998  1272  4619 I AppWidgetServiceImpl: getInstalledProvidersForProfiles lock exit 3
+05-21 18:11:15.001   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-tiny, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:15.001   561   561 I GWT:GlanceStateDefinition: [lool] create PreferenceDataStore / preview-n-tiny , CoroutineScope(coroutineContext=[s1{Active}@18d448f, Dispatchers.IO])
+05-21 18:11:15.005   561   561 I GWT:SessionWorker: [lool] doWork appWidget-4 start 0
+05-21 18:11:15.015  3701  3765 I DWBGetUsageEvent: [2026-05-20T21:00+03:00[Europe/Istanbul] ~ 2026-05-21T18:11:14.737+03:00[Europe/Istanbul]] DeviceSerial(value=0) event size=2783
+05-21 18:11:15.022   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-small, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:15.022   561   561 I GWT:GlanceStateDefinition: [lool] create PreferenceDataStore / preview-n-small , CoroutineScope(coroutineContext=[s1{Active}@24849b, Dispatchers.IO])
+05-21 18:11:15.023   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: appWidget-4, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.023  1272  4619 I AppWidgetServiceImpl: getAppWidgetInfo() 4, from 0
+05-21 18:11:15.029   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-widesmall, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:15.029  3701  3757 I DWBUpdateUsageEventUseC: [CALL] --> UpdateUsageEventUseCase()
+05-21 18:11:15.029  3701  3757 I DWBPkgCategoryRepositor: getOrInsertPkgCategoriesByNames lock before
+05-21 18:11:15.029  3701  3757 I DWBPkgCategoryRepositor: getOrInsertPkgCategoriesByNames lock start
+05-21 18:11:15.029   561   561 I GWT:GlanceStateDefinition: [lool] create PreferenceDataStore / preview-n-widesmall , CoroutineScope(coroutineContext=[s1{Active}@30a5849, Dispatchers.IO])
+05-21 18:11:15.033  3701  3770 I DWBPkgCategoryRepositor: getOrInsertPkgCategoriesByNames lock end
+05-21 18:11:15.033   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-medium, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:15.034   561   561 I GWT:GlanceStateDefinition: [lool] create PreferenceDataStore / preview-n-medium , CoroutineScope(coroutineContext=[s1{Active}@8df285a, Dispatchers.IO])
+05-21 18:11:15.036   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-large, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:15.036   561   561 I GWT:GlanceStateDefinition: [lool] create PreferenceDataStore / preview-n-large , CoroutineScope(coroutineContext=[s1{Active}@25fc781, Dispatchers.IO])
+05-21 18:11:15.039   561   561 I GWT:PreviewState: [lool] isUpdateAvailable : true
+05-21 18:11:15.039   561   561 I GWT:PreviewState: [lool] request update preview size / mixed
+05-21 18:11:15.040   561   561 I GWT:PreviewState: [lool] updateAppWidgetPreview / oh.n@3f10003, class com.samsung.android.sm.widgetapp.SMGlanceWidgetProvider, AppWidgetProviderInfo(UserHandle{0}/ComponentInfo{com.samsung.android.lool/com.samsung.android.sm.widgetapp.SMGlanceWidgetProvider})
+05-21 18:11:15.041  3701  3767 I DWBGetDailyUsageDataUse: date : 2026-05-21T00:00+03:00[Europe/Istanbul], screenTime = 8241683, noti = 195, unlock = 188, app size = 32, category size = 8
+05-21 18:11:15.041   561   561 I GWT:CoroutineSession: [lool] runComposition oh.n widget / v3.o@f01b80
+05-21 18:11:15.043   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-tiny, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.043   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-small, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.043   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-widesmall, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.043   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-medium, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.043   561   561 I GWT:GlanceStateDefinition: [lool] getDataStore: preview-n-large, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.081  1272  4619 D SemContextService: lock : requestToUpdate
+05-21 18:11:15.081  1272  4619 D SemContext.CaeProvider.SensorStatusCheckImpl: Sensor Check Event is null!!
+05-21 18:11:15.081  1272  4619 D SemContextService:     .requestToUpdate() : service = Sensor Status Check
+05-21 18:11:15.081  1272  4619 D SemContextService: unlock : requestToUpdate
+05-21 18:11:15.091  3701  3767 I GWT:GlanceStateDefinition: [forest] getDataStore: appWidget-14, file exist: false, PreferenceStateDefinition type: true
+05-21 18:11:15.091  3701  3767 I GWT:GlanceStateDefinition: [forest] create PreferenceDataStore / appWidget-14 , CoroutineScope(coroutineContext=[y0{Active}@3a538be, Dispatchers.IO])
+05-21 18:11:15.097  3701  3767 I GWT:GlanceStateDefinition: [forest] getDataStore: appWidget-14, file exist: true, PreferenceStateDefinition type: true
+05-21 18:11:15.099  1272  4619 I AppWidgetServiceImpl: getAppWidgetInfo() 14, from 0
+05-21 18:11:15.103  3701  3767 I GWT:SessionManager: [forest] isSessionRunning(appWidget-14)==false(false, false)
+05-21 18:11:15.103  3701  3767 I GWT:AppWidget: [forest] Update AppWidgetId(appWidgetId=14) widget / isRunning : false
+05-21 18:11:15.117  3701  3737 W JobInfo : Requested important-while-foreground flag for job60014623 is ignored and takes no effect

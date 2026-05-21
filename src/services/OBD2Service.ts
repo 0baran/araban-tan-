@@ -178,15 +178,32 @@ class BluetoothTransport implements Transport {
   }
 
   async connect(): Promise<boolean> {
-    this.device = await RNBluetoothClassic.connectToDevice(this.address, {
-      CONNECTOR_TYPE: 'rfcomm',
-      DELIMITER: '\r',
-      SECURE_SOCKET: false,
-    });
-    if (!this.device) {
-      return false;
+    try {
+      this.device = await RNBluetoothClassic.connectToDevice(this.address, {
+        CONNECTOR_TYPE: 'rfcomm',
+        DELIMITER: '\r',
+        SECURE_SOCKET: false,
+      });
+      return !!this.device;
+    } catch (e1) {
+      console.log('BT connect try 1 failed:', e1);
+      try {
+        this.device = await RNBluetoothClassic.connectToDevice(this.address, {
+          SECURE_SOCKET: true,
+          DELIMITER: '\r',
+        });
+        return !!this.device;
+      } catch (e2) {
+        console.log('BT connect try 2 failed:', e2);
+        try {
+          this.device = await RNBluetoothClassic.connectToDevice(this.address);
+          return !!this.device;
+        } catch (e3) {
+          console.log('BT connect try 3 failed:', e3);
+          return false;
+        }
+      }
     }
-    return true;
   }
 
   async disconnect(): Promise<void> {
