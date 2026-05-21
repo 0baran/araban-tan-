@@ -178,7 +178,11 @@ class BluetoothTransport implements Transport {
   }
 
   async connect(): Promise<boolean> {
-    this.device = await RNBluetoothClassic.connectToDevice(this.address);
+    this.device = await RNBluetoothClassic.connectToDevice(this.address, {
+      CONNECTOR_TYPE: 'rfcomm',
+      DELIMITER: '\r',
+      SECURE_SOCKET: false,
+    });
     if (!this.device) {
       return false;
     }
