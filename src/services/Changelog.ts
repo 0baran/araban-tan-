@@ -6,6 +6,17 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.2.20260521.1237',
+    date: '21 Mayıs 2026',
+    items: [
+      '4 yeni sensör: mutlak yakıt basıncı, egzoz sıcaklığı, evap basıncı, rel. gaz pedalı',
+      'Otomatik DTC kontrolü (30sn aralıklarla)',
+      'Başlık "ARAÇLARIM" olarak değiştirildi',
+      'Tüm ekranlar tema desteğine kavuştu',
+      'Logo yeniden tasarlandı (sade sarı motor ışığı)',
+    ],
+  },
+  {
     version: '2.2.20260521.1236',
     date: '21 Mayıs 2026',
     items: [

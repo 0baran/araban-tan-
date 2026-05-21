@@ -62,6 +62,10 @@ const PARAM_META: {
   {key: 'wideRangeO2B1S1', label: 'Geniş Bant O2 B1S1', unit: 'λ', color: '#008000', category: 'egzoz'},
   {key: 'acceleratorPosE', label: 'Gaz Pedalı (Poz E)', unit: '%', color: '#9d4edd', category: 'sürüş'},
   {key: 'acceleratorPosF', label: 'Gaz Pedalı (Poz F)', unit: '%', color: '#7b2cbf', category: 'sürüş'},
+  {key: 'fuelRailPressureAbsolute', label: 'Yakıt Basıncı (Mutlak)', unit: 'kPa', color: '#e0aaff', category: 'yakıt'},
+  {key: 'egtBank1', label: 'Egzoz Sıcaklığı B1', unit: '°C', color: '#ff6d00', category: 'egzoz'},
+  {key: 'evapVaporPressure', label: 'Evap Buhar Basıncı', unit: 'Pa', color: '#80ffdb', category: 'yakıt'},
+  {key: 'relativePedalPos', label: 'Rel. Gaz Pedalı', unit: '%', color: '#c77dff', category: 'sürüş'},
 ];
 
 const CATEGORIES = [
@@ -92,6 +96,7 @@ export default function LiveDataScreen({onBack}: Props) {
     fuelType: '',
     timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
     wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
+    fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
   });
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');

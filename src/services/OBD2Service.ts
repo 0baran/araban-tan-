@@ -64,6 +64,10 @@ export type OBD2Data = {
   wideRangeO2B1S1: number;
   acceleratorPosE: number;
   acceleratorPosF: number;
+  fuelRailPressureAbsolute: number;
+  egtBank1: number;
+  evapVaporPressure: number;
+  relativePedalPos: number;
   milOn: boolean;
   dtcCount: number;
 };
@@ -371,6 +375,7 @@ class OBD2Service {
     fuelType: '',
     timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
     wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
+    fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
   };
   private logBuffer: string[] = [];
   private logMax = 6000;
@@ -682,6 +687,10 @@ class OBD2Service {
         wideRangeO2B1S1: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
         acceleratorPosE: 5 + Math.floor(Math.random() * 30),
         acceleratorPosF: 3 + Math.floor(Math.random() * 20),
+        fuelRailPressureAbsolute: 300 + Math.floor(Math.random() * 200),
+        egtBank1: 500 + Math.floor(Math.random() * 300),
+        evapVaporPressure: Math.floor(Math.random() * 1000) - 500,
+        relativePedalPos: 10 + Math.floor(Math.random() * 80),
         milOn: false,
         dtcCount: 0,
       };
@@ -980,6 +989,10 @@ class OBD2Service {
         const catR = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(catR);
         const dstR = await this.sendCommandFast('0131'); this.parseDistanceSinceDTCClear(dstR);
         const fuelRR = await this.sendCommandFast('0122'); this.parseFuelRailPressureRelative(fuelRR);
+        const fuelAR = await this.sendCommandFast('0159'); this.parseFuelRailPressureAbsolute(fuelAR);
+        const egtR = await this.sendCommandFast('015F'); this.parseEGTBank1(egtR);
+        const evapR = await this.sendCommandFast('0153'); this.parseEVAPVaporPressure(evapR);
+        const pedalR = await this.sendCommandFast('015A'); this.parseRelativePedalPos(pedalR);
       }
 
       this.updateTripData(this.currentData.speed);
@@ -1370,6 +1383,38 @@ class OBD2Service {
   private parseAcceleratorPosF(response: string) {
     const val = this.parseHexValue(response, '414B', 4, 2);
     if (val !== null) this.currentData.acceleratorPosF = Math.round((val / 255) * 100);
+  }
+
+  private parseFuelRailPressureAbsolute(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4159') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.fuelRailPressureAbsolute = Math.round(((A * 256 + B) * 10) / 200);
+    }
+  }
+
+  private parseEGTBank1(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('415F') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.egtBank1 = Math.round(((A * 256 + B) / 10) - 40);
+    }
+  }
+
+  private parseEVAPVaporPressure(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4153') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.evapVaporPressure = (A * 256 + B) - 32767;
+    }
+  }
+
+  private parseRelativePedalPos(response: string) {
+    const val = this.parseHexValue(response, '415A', 4, 2);
+    if (val !== null) this.currentData.relativePedalPos = Math.round((val / 255) * 100);
   }
 
   private parseMonitorStatusForPoll(response: string) {

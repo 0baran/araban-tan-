@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import {useTheme} from '../services/ThemeContext';
 import {obd2Service, FreezeFrameData, DTC} from '../services/OBD2Service';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function FreezeFrameScreen({onBack}: Props) {
+  const {colors} = useTheme();
   const [ff, setFf] = useState<FreezeFrameData | null>(null);
   const [pending, setPending] = useState<DTC[]>([]);
   const [loading, setLoading] = useState(false);
@@ -50,12 +52,12 @@ export default function FreezeFrameScreen({onBack}: Props) {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>← GERİ</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>DONMA NOKTASI</Text>
+        <Text style={[styles.title, {color: colors.text}]}>DONMA NOKTASI</Text>
         <TouchableOpacity onPress={fetchAll} style={styles.refreshBtn}>
           <Text style={styles.refreshText}>YENİLE</Text>
         </TouchableOpacity>
@@ -66,41 +68,41 @@ export default function FreezeFrameScreen({onBack}: Props) {
       ) : (
         <>
           {/* DTC that triggered freeze frame */}
-          <View style={styles.glassCard}>
-            <Text style={styles.cardLabel}>TETİKLEYEN HATA</Text>
+          <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={[styles.cardLabel, {color: colors.textMuted}]}>TETİKLEYEN HATA</Text>
             {ff?.dtc ? (
               <View style={styles.dtcBox}>
                 <Text style={styles.dtcCode}>{ff.dtc.code}</Text>
-                <Text style={styles.dtcDesc}>{ff.dtc.description}</Text>
+                <Text style={[styles.dtcDesc, {color: colors.textDim}]}>{ff.dtc.description}</Text>
               </View>
             ) : (
-              <Text style={styles.emptyText}>Donma noktası kaydı yok</Text>
+              <Text style={[styles.emptyText, {color: colors.textMuted}]}>Donma noktası kaydı yok</Text>
             )}
           </View>
 
           {/* Freeze frame sensor data */}
-          <View style={styles.glassCard}>
-            <Text style={styles.cardLabel}>SENSOR KAYDI</Text>
+          <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={[styles.cardLabel, {color: colors.textMuted}]}>SENSOR KAYDI</Text>
             <View style={styles.grid}>
               {rows.map(r => (
                 <View key={r.label} style={styles.sensorItem}>
                   <Text style={[styles.sensorValue, {color: r.color}]}>{r.value}</Text>
-                  <Text style={styles.sensorLabel}>{r.label}</Text>
+                  <Text style={[styles.sensorLabel, {color: colors.textMuted}]}>{r.label}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Pending DTCs */}
-          <View style={styles.glassCard}>
-            <Text style={styles.cardLabel}>BEKLEYEN HATA KODLARI</Text>
+          <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={[styles.cardLabel, {color: colors.textMuted}]}>BEKLEYEN HATA KODLARI</Text>
             {pending.length === 0 ? (
-              <Text style={styles.emptyText}>Bekleyen hata kodu yok</Text>
+              <Text style={[styles.emptyText, {color: colors.textMuted}]}>Bekleyen hata kodu yok</Text>
             ) : (
               pending.map(d => (
                 <View key={d.code} style={styles.pendingItem}>
                   <Text style={styles.pendingCode}>{d.code}</Text>
-                  <Text style={styles.pendingDesc}>{d.description}</Text>
+                  <Text style={[styles.pendingDesc, {color: colors.textDim}]}>{d.description}</Text>
                 </View>
               ))
             )}

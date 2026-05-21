@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
   FlatList, ActivityIndicator, Linking, Modal,
 } from 'react-native';
+import {useTheme} from '../services/ThemeContext';
 import {obd2Service, DTC} from '../services/OBD2Service';
 import {getDTCCategory, getDTCCategoryColor, getDTCSubCategory} from '../services/DTCDatabase';
 
@@ -19,6 +20,7 @@ const SEVERITY_LABELS: Record<string, string> = {
 };
 
 export default function ErrorCodesScreen({onBack}: Props) {
+  const {colors} = useTheme();
   const [dtcs, setDtcs] = useState<DTC[]>([]);
   const [pending, setPending] = useState<DTC[]>([]);
   const [loading, setLoading] = useState(false);
@@ -77,18 +79,18 @@ export default function ErrorCodesScreen({onBack}: Props) {
           </TouchableOpacity>
         </View>
         <Text style={[styles.dtcCode, {color}]}>⚠️ {item.code}</Text>
-        <Text style={styles.dtcDesc}>{item.description}</Text>
+        <Text style={[styles.dtcDesc, {color: colors.textDim}]}>{item.description}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>← GERİ</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>HATA KODLARI</Text>
+        <Text style={[styles.title, {color: colors.text}]}>HATA KODLARI</Text>
         <TouchableOpacity style={styles.refreshBtn} onPress={fetchDTCs}>
           <Text style={styles.refreshText}>YENİLE</Text>
         </TouchableOpacity>
@@ -115,13 +117,13 @@ export default function ErrorCodesScreen({onBack}: Props) {
                         <Text style={styles.pendingCode}>{p.code}</Text>
                         <Text style={[styles.pendingBadge, {color: getDTCCategoryColor(p.code), borderColor: getDTCCategoryColor(p.code)}]}>{getDTCCategory(p.code).split(' ')[0]}</Text>
                       </View>
-                      <Text style={styles.pendingDesc}>{p.description}</Text>
+                      <Text style={[styles.pendingDesc, {color: colors.textDim}]}>{p.description}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
               )}
               <View style={styles.cardHeader}>
-                <Text style={styles.sectionTitle}>AKTİF KODLAR ({dtcs.length})</Text>
+                <Text style={[styles.sectionTitle, {color: colors.text}]}>AKTİF KODLAR ({dtcs.length})</Text>
                 {dtcs.length > 0 && (
                   <TouchableOpacity
                     style={styles.clearButton}
@@ -147,7 +149,7 @@ export default function ErrorCodesScreen({onBack}: Props) {
           )}
           renderItem={renderDTC}
           ListEmptyComponent={() => (
-            <Text style={styles.emptyText}>
+            <Text style={[styles.emptyText, {color: colors.textDim}]}>
               {loading ? '' : '✅ Aktif hata kodu bulunamadı.'}
             </Text>
           )}
@@ -157,13 +159,13 @@ export default function ErrorCodesScreen({onBack}: Props) {
       {/* DTC Detail Modal */}
       <Modal visible={!!selected} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, {backgroundColor: colors.card}]}>
             {selected && (
               <>
                 <Text style={[styles.modalCode, {color: SEVERITY_COLORS[selected.code.charAt(0)] || '#ff4757'}]}>
                   {selected.code}
                 </Text>
-                <Text style={styles.modalDesc}>{selected.description}</Text>
+                <Text style={[styles.modalDesc, {color: colors.textDim}]}>{selected.description}</Text>
                 <View style={styles.modalActions}>
                   <TouchableOpacity
                     style={[styles.modalBtn, {backgroundColor: 'rgba(0,191,255,0.15)', borderColor: '#00bfff'}]}
@@ -173,7 +175,7 @@ export default function ErrorCodesScreen({onBack}: Props) {
                   <TouchableOpacity
                     style={styles.modalBtn}
                     onPress={() => setSelected(null)}>
-                    <Text style={styles.modalBtnText}>KAPAT</Text>
+                    <Text style={[styles.modalBtnText, {color: colors.text}]}>KAPAT</Text>
                   </TouchableOpacity>
                 </View>
               </>

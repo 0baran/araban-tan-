@@ -4,6 +4,7 @@ import {
   ScrollView, ActivityIndicator, Alert, TextInput,
 } from 'react-native';
 import {obd2Service} from '../services/OBD2Service';
+import {useTheme} from '../services/ThemeContext';
 import {
   detectManufacturer, getFeaturesForManufacturer, MANUFACTURER_NAMES,
   getManufacturerIcon, getAllManufacturers,
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function HiddenFeatureScreen({onBack}: Props) {
+  const {colors} = useTheme();
   const [vin, setVin] = useState('');
   const [manufacturer, setManufacturer] = useState<Manufacturer>('unknown');
   const [features, setFeatures] = useState<HiddenFeature[]>([]);
@@ -91,19 +93,19 @@ export default function HiddenFeatureScreen({onBack}: Props) {
   const allMfrs = getAllManufacturers();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>← GERİ</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>GİZLİ ÖZELLİKLER</Text>
+        <Text style={[styles.title, {color: colors.text}]}>GİZLİ ÖZELLİKLER</Text>
         <View style={{width: 60}} />
       </View>
 
       <ScrollView contentContainerStyle={{padding: 20, paddingBottom: 60}}>
-        <View style={styles.card}>
+        <View style={[styles.card, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
           <Text style={styles.cardIcon}>{getManufacturerIcon(manufacturer)}</Text>
-          <Text style={styles.cardTitle}>
+          <Text style={[styles.cardTitle, {color: colors.text}]}>
             {vinLoading ? 'VIN Okunuyor...' : vin ? MANUFACTURER_NAMES[manufacturer] : 'Araç Bağlı Değil'}
           </Text>
           {vin ? <Text style={styles.vinText}>VIN: {vin}</Text> : null}
@@ -113,8 +115,8 @@ export default function HiddenFeatureScreen({onBack}: Props) {
           )}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Marka Seç</Text>
+        <View style={[styles.card, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+          <Text style={[styles.cardTitle, {color: colors.text}]}>Marka Seç</Text>
           <View style={styles.mfrRow}>
             {allMfrs.map(m => (
               <TouchableOpacity key={m} style={[styles.mfrBtn, manufacturer === m && styles.mfrBtnActive]}
@@ -131,21 +133,21 @@ export default function HiddenFeatureScreen({onBack}: Props) {
         </View>
 
         {features.length === 0 && (
-          <View style={styles.card}>
-            <Text style={styles.cardDesc}>Seçilen marka için henüz özellik tanımlanmamış. Aşağıdan özel komut gönderebilirsiniz.</Text>
+          <View style={[styles.card, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={[styles.cardDesc, {color: colors.textDim}]}>Seçilen marka için henüz özellik tanımlanmamış. Aşağıdan özel komut gönderebilirsiniz.</Text>
           </View>
         )}
 
         {Object.entries(grouped).map(([category, catFeatures]) => (
           <View key={category} style={styles.featureGroup}>
             <TouchableOpacity style={styles.groupHeader} onPress={() => toggleSection(category)}>
-              <Text style={styles.groupTitle}>{category} ({catFeatures.length})</Text>
-              <Text style={styles.groupArrow}>{expandedSections[category] ? '▼' : '▶'}</Text>
+              <Text style={[styles.groupTitle, {color: colors.text}]}>{category} ({catFeatures.length})</Text>
+              <Text style={[styles.groupArrow, {color: colors.textMuted}]}>{expandedSections[category] ? '▼' : '▶'}</Text>
             </TouchableOpacity>
             {expandedSections[category] && catFeatures.map(f => (
               <View key={f.id} style={styles.featureCard}>
-                <Text style={styles.featureName}>{f.name}</Text>
-                <Text style={styles.featureDesc}>{f.description}</Text>
+                <Text style={[styles.featureName, {color: colors.text}]}>{f.name}</Text>
+                <Text style={[styles.featureDesc, {color: colors.textDim}]}>{f.description}</Text>
                 {f.compatibility ? <Text style={styles.compatText}>Uyum: {f.compatibility}</Text> : null}
                 {readResults[f.id] ? (
                   <View style={styles.resultBox}>
@@ -155,7 +157,7 @@ export default function HiddenFeatureScreen({onBack}: Props) {
                 ) : null}
                 <View style={styles.actions}>
                   <TouchableOpacity style={styles.actionBtn} onPress={() => readFeature(f)} disabled={loading[f.id]}>
-                    {loading[f.id] ? <ActivityIndicator size="small" color="#00bfff" /> : <Text style={styles.actionText}>OKU</Text>}
+                    {loading[f.id] ? <ActivityIndicator size="small" color="#00bfff" /> : <Text style={[styles.actionText, {color: colors.text}]}>OKU</Text>}
                   </TouchableOpacity>
                   {f.writeOn ? (
                     <TouchableOpacity style={[styles.actionBtn, styles.actionOn]} onPress={() => toggleFeature(f, true)} disabled={loading[f.id]}>
@@ -173,21 +175,21 @@ export default function HiddenFeatureScreen({onBack}: Props) {
           </View>
         ))}
 
-        <View style={[styles.card, {marginTop: 10}]}>
-          <Text style={styles.cardTitle}>Özel UDS Komutu</Text>
-          <Text style={styles.cardDesc}>CAN ID ve hex komut girerek kendi kodlamanızı gönderin</Text>
+        <View style={[styles.card, {backgroundColor: colors.card, borderColor: colors.cardBorder, marginTop: 10}]}>
+          <Text style={[styles.cardTitle, {color: colors.text}]}>Özel UDS Komutu</Text>
+          <Text style={[styles.cardDesc, {color: colors.textDim}]}>CAN ID ve hex komut girerek kendi kodlamanızı gönderin</Text>
           <View style={styles.customRow}>
             <View style={styles.headerInputGroup}>
-              <Text style={styles.inputLabel}>CAN ID</Text>
-              <TextInput style={styles.customInput} value={customHeader} onChangeText={setCustomHeader} placeholder="7E0" placeholderTextColor="rgba(255,255,255,0.3)" />
+              <Text style={[styles.inputLabel, {color: colors.textDim}]}>CAN ID</Text>
+              <TextInput style={[styles.customInput, {color: colors.text, backgroundColor: colors.inputBg, borderColor: colors.cardBorder}]} value={customHeader} onChangeText={setCustomHeader} placeholder="7E0" placeholderTextColor={colors.textMuted} />
             </View>
             <View style={styles.cmdInputGroup}>
-              <Text style={styles.inputLabel}>Komut (Hex)</Text>
-              <TextInput style={styles.customInput} value={customCmd} onChangeText={setCustomCmd} placeholder="22F00C" placeholderTextColor="rgba(255,255,255,0.3)" />
+              <Text style={[styles.inputLabel, {color: colors.textDim}]}>Komut (Hex)</Text>
+              <TextInput style={[styles.customInput, {color: colors.text, backgroundColor: colors.inputBg, borderColor: colors.cardBorder}]} value={customCmd} onChangeText={setCustomCmd} placeholder="22F00C" placeholderTextColor={colors.textMuted} />
             </View>
           </View>
           <TouchableOpacity style={[styles.actionBtn, {alignSelf: 'center', marginTop: 10}]} onPress={sendCustomCommand} disabled={loading._custom}>
-            {loading._custom ? <ActivityIndicator size="small" color="#00bfff" /> : <Text style={styles.actionText}>GÖNDER</Text>}
+            {loading._custom ? <ActivityIndicator size="small" color="#00bfff" /> : <Text style={[styles.actionText, {color: colors.text}]}>GÖNDER</Text>}
           </TouchableOpacity>
           {readResults._custom ? (
             <View style={[styles.resultBox, {marginTop: 10}]}>
@@ -198,8 +200,8 @@ export default function HiddenFeatureScreen({onBack}: Props) {
         </View>
 
         <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Uyarı</Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoTitle, {color: colors.text}]}>Uyarı</Text>
+          <Text style={[styles.infoText, {color: colors.textDim}]}>
             Kodlama işlemleri ELM327 üzerinden UDS komutları gönderir.{'\n\n'}
             • ELM327 aracın CAN/UDS protokolünü desteklemelidir{'\n'}
             • Her araç/ECU tüm komutları desteklemeyebilir{'\n'}

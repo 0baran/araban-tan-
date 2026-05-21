@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
   ScrollView, ActivityIndicator,
 } from 'react-native';
+import {useTheme} from '../services/ThemeContext';
 import {obd2Service, MonitorStatus} from '../services/OBD2Service';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function VehicleInfoScreen({onBack}: Props) {
+  const {colors} = useTheme();
   const [vin, setVin] = useState('');
   const [monitorStatus, setMonitorStatus] = useState<MonitorStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,12 +30,12 @@ export default function VehicleInfoScreen({onBack}: Props) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>← GERİ</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>ARAÇ BİLGİSİ</Text>
+        <Text style={[styles.title, {color: colors.text}]}>ARAÇ BİLGİSİ</Text>
         <TouchableOpacity onPress={fetchAll} style={styles.refreshBtn}>
           <Text style={styles.refreshText}>YENİLE</Text>
         </TouchableOpacity>
@@ -44,31 +46,31 @@ export default function VehicleInfoScreen({onBack}: Props) {
       ) : (
         <ScrollView contentContainerStyle={{padding: 16}}>
           {/* VIN */}
-          <View style={styles.glassCard}>
-            <Text style={styles.cardLabel}>KİMLİK NUMARASI (VIN)</Text>
+          <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={[styles.cardLabel, {color: colors.textMuted}]}>KİMLİK NUMARASI (VIN)</Text>
             <Text style={styles.vinText}>{vin}</Text>
-            <Text style={styles.hint}>
+            <Text style={[styles.hint, {color: colors.textMuted}]}>
               VIN aracın kimlik numarasıdır. Bağlantı sırasında otomatik okunur.
             </Text>
           </View>
 
           {/* Monitor Readiness */}
           {monitorStatus && (
-            <View style={styles.glassCard}>
-              <Text style={styles.cardLabel}>OBD2 MONİTÖR DURUMU</Text>
+            <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+              <Text style={[styles.cardLabel, {color: colors.textMuted}]}>OBD2 MONİTÖR DURUMU</Text>
               <View style={styles.monitorHeader}>
                 <View style={[styles.milBadge, monitorStatus.milOn ? styles.milOn : styles.milOff]}>
-                  <Text style={styles.milText}>
+                  <Text style={[styles.milText, {color: colors.text}]}>
                     MIL: {monitorStatus.milOn ? 'AÇIK' : 'KAPALI'}
                   </Text>
                 </View>
-                <Text style={styles.monitorCount}>
+                <Text style={[styles.monitorCount, {color: colors.textMuted}]}>
                   DTC: {monitorStatus.dtcCount}
                 </Text>
               </View>
               {monitorStatus.tests.map((t, i) => (
                 <View key={i} style={styles.monitorRow}>
-                  <Text style={styles.monitorName}>{t.name}</Text>
+                  <Text style={[styles.monitorName, {color: colors.text}]}>{t.name}</Text>
                   {!t.available ? (
                     <Text style={styles.na}>N/A</Text>
                   ) : (
@@ -80,15 +82,15 @@ export default function VehicleInfoScreen({onBack}: Props) {
                   )}
                 </View>
               ))}
-              <Text style={styles.hint}>
+              <Text style={[styles.hint, {color: colors.textMuted}]}>
                 Tüm monitörlerin ✔ olması araç emisyon testine hazır demektir.
               </Text>
             </View>
           )}
 
           {/* Connection Info */}
-          <View style={styles.glassCard}>
-            <Text style={styles.cardLabel}>BAĞLANTI</Text>
+          <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={[styles.cardLabel, {color: colors.textMuted}]}>BAĞLANTI</Text>
             <InfoRow icon="📶" label="Protokol" value={obd2Service.protocolLabel} />
             <InfoRow icon="🔗" label="Tip" value={obd2Service.connectionType === 'bluetooth' ? 'Bluetooth' : obd2Service.connectionType === 'wifi' ? 'WiFi' : 'Simülasyon'} />
             <InfoRow icon="📱" label="Bağlı" value={obd2Service.isConnected ? 'Evet' : 'Hayır'} />
@@ -100,11 +102,12 @@ export default function VehicleInfoScreen({onBack}: Props) {
 }
 
 function InfoRow({icon, label, value}: {icon: string; label: string; value: string}) {
+  const {colors} = useTheme();
   return (
     <View style={styles.infoRow}>
       <Text style={styles.infoIcon}>{icon}</Text>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue}>{value}</Text>
+      <Text style={[styles.infoLabel, {color: colors.textDim}]}>{label}</Text>
+      <Text style={[styles.infoValue, {color: colors.text}]}>{value}</Text>
     </View>
   );
 }

@@ -24,7 +24,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.2.20260521.1236';
+const APP_VERSION = '2.2.20260521.1237';
 
 export default function App() {
   return (
@@ -120,7 +120,15 @@ function MainScreen() {
       });
     }
 
-    return () => { obd2Service.disconnect(); };
+    // Otomatik DTC kontrolü (her 30sn)
+    const dtcInterval = setInterval(async () => {
+      if (obd2Service.isConnected) {
+        const status = await obd2Service.readMonitorStatus();
+        setDtcCount(status.dtcCount);
+      }
+    }, 30000);
+
+    return () => { obd2Service.disconnect(); clearInterval(dtcInterval); };
   }, []);
 
   useEffect(() => {
@@ -279,7 +287,7 @@ function MainScreen() {
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
               <View>
-                <Text style={[styles.title, {color: colors.text}]}>ARABANI TANI</Text>
+                <Text style={[styles.title, {color: colors.text}]}>ARAÇLARIM</Text>
                 <Text style={[styles.headerSub, {color: colors.textMuted}]}>OBD2 Diagnostik</Text>
               </View>
               <TouchableOpacity style={[styles.connectButton, {backgroundColor: colors.card, borderColor: colors.cardBorder}, isConnected && styles.connectButtonActive]} onPress={handleConnectPress}>
