@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.5.0',
+    date: '21 Mayıs 2026',
+    items: [
+      'Tüm ekran boyutları (çentikli, kavisli vs.) için SafeArea tam uyumluluğu.',
+      'WiFi OBD2 (V-Gate vb.) cihazlarına bağlanamama sorunu giderildi (tcp-socket eklentisi).',
+      'Uygulama temel mimarisi %100 Saf (Bare) React Native seviyesine çekilerek optimize edildi.',
+      'Yeni ve hızlı cihaz tarama algoritması eklendi.'
+    ],
+  },
+  {
     version: '2.3.20260521.1300',
     date: '21 Mayıs 2026',
     items: [

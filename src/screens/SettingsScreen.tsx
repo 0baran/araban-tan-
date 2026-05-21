@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert, Switch, TextInput, ActivityIndicator,
+  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert, Switch, TextInput, ActivityIndicator, Platform,
 } from 'react-native';
 import {obd2Service, OBD2_PROTOCOLS} from '../services/OBD2Service';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';

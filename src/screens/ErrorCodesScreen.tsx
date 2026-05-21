@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
-  FlatList, ActivityIndicator, Linking, Modal,
+  FlatList, ActivityIndicator, Linking, Modal, Platform,
 } from 'react-native';
 import {useTheme} from '../services/ThemeContext';
 import {obd2Service, DTC} from '../services/OBD2Service';

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Platform} from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
 import {loadSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';

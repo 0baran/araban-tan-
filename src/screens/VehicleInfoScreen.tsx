@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
-  ScrollView, ActivityIndicator,
+  ScrollView, ActivityIndicator, Platform,
 } from 'react-native';
 import {useTheme} from '../services/ThemeContext';
 import {obd2Service, MonitorStatus} from '../services/OBD2Service';
