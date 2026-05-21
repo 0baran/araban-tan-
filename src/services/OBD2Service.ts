@@ -168,11 +168,18 @@ class BluetoothTransport implements Transport {
     if (!this.device) {
       return false;
     }
-    this.dataSubscription = this.device.onDataReceived((event: any) => {
-      if (event && event.data) {
-        this.buffer += event.data;
-      }
-    });
+    try {
+      this.dataSubscription = this.device.onDataReceived((event: any) => {
+        if (event && event.data) {
+          this.buffer += event.data;
+        }
+      });
+    } catch (e) {
+      console.warn('Bluetooth onDataReceived failed, device may not be fully connected:', e);
+      try { await this.device.disconnect(); } catch (_) {}
+      this.device = null;
+      return false;
+    }
     return true;
   }
 
