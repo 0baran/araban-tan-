@@ -13,6 +13,10 @@ export const CHANGELOG: VersionEntry[] = [
       'Her marka icin CAN modul adresleri ve genisletilmis PID listeleri',
       'Guncelleme kontrolu duzeltildi: ekranda gorunur uyari, 8sn zaman asimi',
       "'01' komut hatası duzeltildi (0101 olmaliydi)",
+      'Baglanti iyilestirme: sendCommandFast 12x50ms, _isConnected init sonrasi',
+      'Protokol tarama hizlandi (kisa timeout + sendCommandFast)',
+      'version.json Gradle tarafindan dogru yoldan okunur',
+      'APK her zaman ayni isimle: ArabaniTani-latest.apk',
     ],
   },
   {
