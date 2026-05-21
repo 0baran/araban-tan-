@@ -16,37 +16,37 @@ function createMILSVG(size) {
   const cx = size / 2;
   const cy = size / 2;
 
-  // Simple bold engine icon - scaled for visibility at small sizes
-  const bw = 128 * s;
-  const bh = 92 * s;
+  // Classic dashboard check engine light - solid yellow on transparent
+  const bw = 120 * s;
+  const bh = 80 * s;
   const bx = cx - bw / 2;
-  const by = cy - bh / 2 + 6 * s;
-  const tw = 72 * s;
-  const th = 22 * s;
-  const tx = cx - tw / 2;
-  const ty = by - th + 2 * s;
+  const by = cy - 36 * s;
+  const vw = 70 * s;
+  const vh = 24 * s;
+  const vx = cx - vw / 2;
+  const vy = by - vh + 4 * s;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
     <defs>
       <radialGradient id="bg" cx="50%" cy="50%" r="55%">
-        <stop offset="0%" style="stop-color:#0f0c29"/>
-        <stop offset="100%" style="stop-color:#1a1a2e"/>
+        <stop offset="0%" style="stop-color:#1a1a2e"/>
+        <stop offset="100%" style="stop-color:#0f0c29"/>
       </radialGradient>
       <linearGradient id="mil" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" style="stop-color:#FFD54F"/>
-        <stop offset="50%" style="stop-color:#FFC107"/>
-        <stop offset="100%" style="stop-color:#FFA000"/>
+        <stop offset="0%" style="stop-color:#FFEB3B"/>
+        <stop offset="40%" style="stop-color:#FFC107"/>
+        <stop offset="100%" style="stop-color:#FF8F00"/>
       </linearGradient>
     </defs>
     <rect width="${size}" height="${size}" rx="${28 * s}" fill="url(#bg)"/>
-    <!-- Engine block - main body -->
-    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="${12 * s}" fill="url(#mil)"/>
-    <!-- Top section (valve cover) -->
-    <rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="${6 * s}" fill="url(#mil)"/>
-    <!-- Dark internal contrast line -->
-    <rect x="${bx + 14 * s}" y="${by + 18 * s}" width="${bw - 28 * s}" height="${4 * s}" rx="${2 * s}" fill="#0f0c29" opacity="0.3"/>
-    <rect x="${bx + 14 * s}" y="${by + 38 * s}" width="${bw - 28 * s}" height="${4 * s}" rx="${2 * s}" fill="#0f0c29" opacity="0.3"/>
-    <rect x="${bx + 14 * s}" y="${by + 58 * s}" width="${bw - 28 * s}" height="${4 * s}" rx="${2 * s}" fill="#0f0c29" opacity="0.3"/>
+    <!-- Engine block outline -->
+    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="${10 * s}" fill="url(#mil)" stroke="#E65100" stroke-width="${3 * s}"/>
+    <!-- Valve cover -->
+    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" rx="${6 * s}" fill="url(#mil)" stroke="#E65100" stroke-width="${3 * s}"/>
+    <!-- Horizontal detail lines -->
+    <rect x="${bx + 16 * s}" y="${by + 16 * s}" width="${bw - 32 * s}" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
+    <rect x="${bx + 16 * s}" y="${by + 36 * s}" width="${bw - 32 * s}" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
+    <rect x="${bx + 16 * s}" y="${by + 56 * s}" width="${bw - 32 * s}" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
   </svg>`;
 }
 
