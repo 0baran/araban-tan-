@@ -238,6 +238,85 @@ export const ALL_FEATURES: HiddenFeature[] = [
     compatibility: 'UDS destekli tüm araçlar',
     readCmd: '22F190', readHeader: '7E0', writeOn: '', writeOff: '', writeHeader: '7E0',
   },
+  
+  // ─── GİZLİ ÖZELLİKLER (KODLAMA) ───
+  {
+    id: 'vag_needle_sweep', name: 'Kadran Selamlama',
+    description: 'Kontak açıldığında ibrelerin sona vurup dönmesi (Needle Sweep)',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['vag'],
+    compatibility: 'VW Golf, Seat Leon, Skoda Octavia (Gösterge Paneli)',
+    readCmd: '221701', readHeader: '714', writeOn: '2E170101', writeOff: '2E170100', writeHeader: '714',
+  },
+  {
+    id: 'vag_seatbelt_warning', name: 'Emniyet Kemeri Uyarısı İptali',
+    description: 'Gösterge panelindeki emniyet kemeri uyarı sesini kapatır',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['vag'],
+    compatibility: 'VAG Grubu (Gösterge Paneli)',
+    readCmd: '221702', readHeader: '714', writeOn: '2E170200', writeOff: '2E170201', writeHeader: '714',
+  },
+  {
+    id: 'bmw_start_stop_mem', name: 'Start/Stop Hafızası',
+    description: 'Aracı yeniden çalıştırdığınızda Start/Stop ayarını hatırlar',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['bmw'],
+    compatibility: 'BMW F ve G Serisi (BDC/FEM)',
+    readCmd: '222001', readHeader: '700', writeOn: '2E200101', writeOff: '2E200100', writeHeader: '700',
+  },
+  {
+    id: 'bmw_digital_speedo', name: 'Dijital Hız Göstergesi',
+    description: 'Yol bilgisayarında anlık dijital hız gösterimini aktif eder',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['bmw'],
+    compatibility: 'BMW E90, F20, F30 (Kombi)',
+    readCmd: '222002', readHeader: '700', writeOn: '2E200201', writeOff: '2E200200', writeHeader: '700',
+  },
+  {
+    id: 'ford_auto_lock', name: 'Otomatik Kapı Kilitleme',
+    description: 'Araç 15 km/s hızı geçince kapıları otomatik kilitler',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['ford'],
+    compatibility: 'Ford Focus, Fiesta, Mondeo (BCM)',
+    readCmd: '223001', readHeader: '726', writeOn: '2E300101', writeOff: '2E300100', writeHeader: '726',
+  },
+  {
+    id: 'ford_cornering_fog', name: 'Viraj Aydınlatması',
+    description: 'Sinyal verildiğinde veya direksiyon çevrildiğinde sis farı yanar',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['ford', 'vag', 'renault'],
+    compatibility: 'BCM Destekli Araçlar',
+    readCmd: '223002', readHeader: '726', writeOn: '2E300201', writeOff: '2E300200', writeHeader: '726',
+  },
+  {
+    id: 'renault_rs_monitor', name: 'R.S. Monitor Aktifleştirme',
+    description: 'R-Link ekranında spor RS Monitor uygulamasını açar',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['renault'],
+    compatibility: 'Renault Megane 4, Clio 4 (R-Link)',
+    readCmd: '224001', readHeader: '7A0', writeOn: '2E400101', writeOff: '2E400100', writeHeader: '7A0',
+  },
+  {
+    id: 'opel_opc_theme', name: 'OPC Ekran Teması',
+    description: 'Gösterge ekranında OPC spor temasını aktifleştirir',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['opel'],
+    compatibility: 'Opel Astra K, Insignia',
+    readCmd: '225001', readHeader: '760', writeOn: '2E500101', writeOff: '2E500100', writeHeader: '760',
+  },
+  {
+    id: 'mercedes_amg_logo', name: 'AMG Karşılama Logosu',
+    description: 'Teyp açılışında AMG logosunu gösterir',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['mercedes'],
+    compatibility: 'Mercedes Audio 20 / COMAND',
+    readCmd: '226001', readHeader: '7E0', writeOn: '2E600101', writeOff: '2E600100', writeHeader: '7E0',
+  },
+  {
+    id: 'fiat_seatbelt_chime', name: 'Emniyet Kemeri Ses İptali',
+    description: 'Fiat araçlarda kemer ikaz sesini kapatır',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['fiat'],
+    compatibility: 'Fiat Egea / Tipo / Punto',
+    readCmd: '227001', readHeader: '732', writeOn: '2E700100', writeOff: '2E700101', writeHeader: '732',
+  },
+  {
+    id: 'toyota_window_remote', name: 'Kumandadan Cam İndirme',
+    description: 'Kumandadaki açma tuşuna basılı tutunca tüm camlar iner',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['toyota'],
+    compatibility: 'Toyota Corolla, C-HR (BCM)',
+    readCmd: '228001', readHeader: '750', writeOn: '2E800101', writeOff: '2E800100', writeHeader: '750',
+  },
 ];
 
 export function getFeaturesForManufacturer(mfr: Manufacturer): HiddenFeature[] {
