@@ -100,7 +100,12 @@ android.defaultConfig.versionCode = newVCode
 // Read versionName from version.json (written by build script)
 def versionJsonFile = file('../version.json')
 try {
-    def versionJson = new groovy.json.JsonSlurper().parse(versionJsonFile)
+    def rawText = versionJsonFile.text
+    // Strip BOM (UTF-8 Byte Order Mark) if present
+    if (rawText.length() > 0 && rawText.charAt(0) == '\uFEFF') {
+        rawText = rawText.substring(1)
+    }
+    def versionJson = new groovy.json.JsonSlurper().parseText(rawText)
     android.defaultConfig.versionName = versionJson.version
     println "Version set to ${newVCode} / ${versionJson.version}"
 } catch (Exception e) {
