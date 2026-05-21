@@ -23,7 +23,7 @@ import ChangelogScreen from './src/screens/ChangelogScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.2.20260521.1224';
+const APP_VERSION = '2.2.20260521.1233';
 
 export default function App() {
   return (
@@ -104,11 +104,14 @@ function MainScreen() {
       });
       setUpdateStatus('Güncelleme kontrol ediliyor...');
       const ac = new AbortController();
-      setTimeout(() => ac.abort(), 8000);
-      checkForUpdate(APP_VERSION, ac.signal).then(updateInfo => {
-        if (updateInfo) {
+      setTimeout(() => ac.abort(), 20000);
+      checkForUpdate(APP_VERSION, ac.signal).then(result => {
+        if (result.found) {
           setUpdateStatus('');
-          promptUpdate(updateInfo);
+          promptUpdate(result.info);
+        } else if (result.reason === 'network') {
+          setUpdateStatus('Güncelleme kontrol edilemedi');
+          setTimeout(() => setUpdateStatus(''), 3000);
         } else {
           setUpdateStatus('En son sürüm kullanılıyor');
           setTimeout(() => setUpdateStatus(''), 3000);

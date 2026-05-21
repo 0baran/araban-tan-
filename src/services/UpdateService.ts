@@ -10,17 +10,21 @@ type UpdateInfo = {
   notes: string;
 };
 
-export async function checkForUpdate(currentVersion: string, signal?: AbortSignal): Promise<UpdateInfo | null> {
+export type CheckResult =
+  | {found: true; info: UpdateInfo}
+  | {found: false; reason: 'uptodate' | 'skipped' | 'network'};
+
+export async function checkForUpdate(currentVersion: string, signal?: AbortSignal): Promise<CheckResult> {
   try {
     const resp = await fetch(UPDATE_URL, {method: 'GET', cache: 'no-cache', signal});
-    if (!resp.ok) return null;
+    if (!resp.ok) return {found: false, reason: 'network'};
     const info: UpdateInfo = await resp.json();
-    if (compareVersions(info.version, currentVersion) <= 0) return null;
+    if (compareVersions(info.version, currentVersion) <= 0) return {found: false, reason: 'uptodate'};
     const skipped = await AsyncStorage.getItem(SKIPPED_KEY);
-    if (skipped === info.version) return null;
-    return info;
+    if (skipped === info.version) return {found: false, reason: 'skipped'};
+    return {found: true, info};
   } catch {
-    return null;
+    return {found: false, reason: 'network'};
   }
 }
 

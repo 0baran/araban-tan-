@@ -246,9 +246,10 @@ export default function SettingsScreen({onBack}: Props) {
           </View>
           <TouchableOpacity style={styles.row} onPress={async () => {
             const ac = new AbortController();
-            setTimeout(() => ac.abort(), 8000);
-            const info = await checkForUpdate(APP_VERSION, ac.signal);
-            if (info) promptUpdate(info);
+            setTimeout(() => ac.abort(), 20000);
+            const result = await checkForUpdate(APP_VERSION, ac.signal);
+            if (result.found) promptUpdate(result.info);
+            else if (result.reason === 'network') Alert.alert('Hata', 'Güncelleme kontrol edilemedi. İnternet bağlantınızı kontrol edin.');
             else Alert.alert('Güncel', 'En son sürüm kullanılıyor.');
           }}>
             <Text style={styles.rowIcon}>📥</Text>

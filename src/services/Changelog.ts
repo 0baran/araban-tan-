@@ -6,12 +6,12 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
-    version: '2.2.20260521.1224',
+    version: '2.2.20260521.1233',
     date: '21 Mayıs 2026',
     items: [
       'Markaya ozel protokoller eklendi (VAG, BMW, Mercedes, Ford, Toyota, Hyundai, Renault, Opel, PSA, Fiat)',
       'Her marka icin CAN modul adresleri ve genisletilmis PID listeleri',
-      'Guncelleme kontrolu duzeltildi: ekranda gorunur uyari, 8sn zaman asimi',
+      'Guncelleme kontrolu duzeltildi: ekranda gorunur uyari, 20sn zaman asimi, network hata ayrimi',
       "'01' komut hatası duzeltildi (0101 olmaliydi)",
       'Baglanti iyilestirme: sendCommandFast 12x50ms, _isConnected init sonrasi',
       'Protokol tarama hizlandi (kisa timeout + sendCommandFast)',
