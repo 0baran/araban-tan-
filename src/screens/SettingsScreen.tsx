@@ -7,6 +7,7 @@ import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';
 import {checkForUpdate, promptUpdate} from '../services/UpdateService';
 import {dataLogService} from '../services/DataLogService';
+const APP_VERSION = require('../../version.json').version as string;
 
 interface Props {
   onBack: () => void;
@@ -236,8 +237,15 @@ export default function SettingsScreen({onBack}: Props) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>GÜNCELLEME</Text>
+          <View style={styles.row}>
+            <Text style={styles.rowIcon}>ℹ️</Text>
+            <View style={styles.rowContent}>
+              <Text style={styles.rowLabel}>Sürüm</Text>
+              <Text style={styles.rowDesc}>v{APP_VERSION}</Text>
+            </View>
+          </View>
           <TouchableOpacity style={styles.row} onPress={async () => {
-            const info = await checkForUpdate('2.2.20260521');
+            const info = await checkForUpdate(APP_VERSION);
             if (info) promptUpdate(info);
             else Alert.alert('Güncel', 'En son sürüm kullanılıyor.');
           }}>
