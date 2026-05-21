@@ -9,7 +9,7 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
 $version = "2.2.$versionSuffix"
-$apkName = "ArabaniTani-v$version.apk"
+$apkName = "ArabaniTani-latest.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
 
 Write-Host "==> Version: $version" -ForegroundColor Cyan
