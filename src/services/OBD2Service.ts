@@ -342,120 +342,7 @@ class WiFiTransport implements Transport {
   }
 }
 
-const DTC_DESCRIPTIONS: Record<string, string> = {
-  P0001: 'Fuel Volume Regulator Control Circuit/Open',
-  P0100: 'Mass or Volume Air Flow Circuit Malfunction',
-  P0101: 'Mass or Volume Air Flow Circuit Range/Performance Problem',
-  P0102: 'Mass or Volume Air Flow Circuit Low Input',
-  P0103: 'Mass or Volume Air Flow Circuit High Input',
-  P0104: 'Mass or Volume Air Flow Circuit Intermittent',
-  P0105: 'Manifold Absolute Pressure/Barometric Pressure Circuit Malfunction',
-  P0110: 'Intake Air Temperature Circuit Malfunction',
-  P0115: 'Engine Coolant Temperature Circuit Malfunction',
-  P0120: 'Throttle/Pedal Position Sensor/Switch A Circuit Malfunction',
-  P0125: 'Insufficient Coolant Temperature for Closed Loop Fuel Control',
-  P0130: 'O2 Sensor Circuit Malfunction (Bank 1 Sensor 1)',
-  P0135: 'O2 Sensor Heater Circuit Malfunction (Bank 1 Sensor 1)',
-  P0140: 'O2 Sensor Circuit No Activity Detected (Bank 1 Sensor 2)',
-  P0171: 'System Too Lean (Bank 1)',
-  P0172: 'System Too Rich (Bank 1)',
-  P0174: 'System Too Lean (Bank 2)',
-  P0175: 'System Too Rich (Bank 2)',
-  P0201: 'Injector Circuit/Open - Cylinder 1',
-  P0202: 'Injector Circuit/Open - Cylinder 2',
-  P0203: 'Injector Circuit/Open - Cylinder 3',
-  P0204: 'Injector Circuit/Open - Cylinder 4',
-  P0300: 'Random/Multiple Cylinder Misfire Detected',
-  P0301: 'Cylinder 1 Misfire Detected',
-  P0302: 'Cylinder 2 Misfire Detected',
-  P0303: 'Cylinder 3 Misfire Detected',
-  P0304: 'Cylinder 4 Misfire Detected',
-  P0320: 'Ignition/Distributor Engine Speed Input Circuit Malfunction',
-  P0335: 'Crankshaft Position Sensor A Circuit Malfunction',
-  P0340: 'Camshaft Position Sensor Circuit Malfunction',
-  P0400: 'Exhaust Gas Recirculation Flow Malfunction',
-  P0401: 'Exhaust Gas Recirculation Flow Insufficient Detected',
-  P0420: 'Catalyst System Efficiency Below Threshold (Bank 1)',
-  P0430: 'Catalyst System Efficiency Below Threshold (Bank 2)',
-  P0440: 'Evaporative Emission Control System Malfunction',
-  P0442: 'Evaporative Emission Control System Leak Detected (Small Leak)',
-  P0455: 'Evaporative Emission Control System Leak Detected (Gross Leak)',
-  P0500: 'Vehicle Speed Sensor Malfunction',
-  P0505: 'Idle Control System Malfunction',
-  P0510: 'Closed Throttle Position Switch Malfunction',
-  P0600: 'Serial Communication Link Malfunction',
-  P0601: 'Internal Control Module Memory Check Sum Error',
-  P0606: 'ECM/PCM Processor Fault',
-  P0700: 'Transmission Control System Malfunction',
-  P0705: 'Transmission Range Sensor Circuit Malfunction (PRNDL Input)',
-  P0715: 'Input/Turbine Speed Sensor Circuit Malfunction',
-  P0720: 'Output Speed Sensor Circuit Malfunction',
-  P0725: 'Engine Speed Input Circuit Malfunction',
-  P0730: 'Incorrect Gear Ratio',
-  P0740: 'Torque Converter Clutch Circuit Malfunction',
-  P0750: 'Shift Solenoid A Malfunction',
-  P0755: 'Shift Solenoid B Malfunction',
-  P0760: 'Shift Solenoid C Malfunction',
-  P0765: 'Shift Solenoid D Malfunction',
-  P0770: 'Shift Solenoid E Malfunction',
-  P1000: 'OBD-II Monitor Testing Not Complete',
-  P1100: 'Mass Air Flow Sensor Intermittent',
-  P1101: 'Mass Air Flow Sensor Out of Range',
-  P1110: 'Intake Air Temperature Circuit Intermittent',
-  P1120: 'Throttle Position Sensor Circuit',
-  P1125: 'Throttle Position Sensor Intermittent',
-  P1130: 'Ho2S Heater Circuit (Bank 1 Sensor 1)',
-  P1135: 'Ho2S Heater Circuit (Bank 1 Sensor 2)',
-  P1155: 'Ho2S Heater Circuit (Bank 2 Sensor 1)',
-  P1170: 'Heated O2 Sensor 1 Heater Circuit',
-  P1220: 'Fuel Pump Control Circuit Malfunction',
-  P1221: 'Fuel Pump Secondary Circuit Low',
-  P1222: 'Fuel Pump Secondary Circuit High',
-  P1250: 'Fuel Pump Control Circuit',
-  P1300: 'Ignition Timing Adjustment Circuit',
-  P1335: 'Crankshaft Position Sensor Circuit',
-  P1340: 'Camshaft Position Sensor Circuit',
-  P1350: 'Ignition Control System',
-  P1400: 'Exhaust Gas Recirculation Circuit Malfunction',
-  P1440: 'EVAP Canister Vent Solenoid',
-  P1450: 'Unable to Bleed Up Fuel Tank Vacuum',
-  P1500: 'Vehicle Speed Sensor Circuit',
-  P1510: 'Idle Air Control Actuator Circuit',
-  P1520: 'Park/Neutral Switch Circuit',
-  P1530: 'Air Conditioning Refrigerant Pressure Sensor Circuit',
-  P1600: 'ECM Battery Circuit',
-  P1610: 'ECM Internal Fault',
-  P1620: 'System Security ECM Data',
-  P1630: 'Theft Deterrent System Fault',
-  P1640: 'Engine Control Module Fault',
-  P1650: 'Power Steering Pressure Switch',
-  P1700: 'Transmission System Failure',
-  P1710: 'Transmission Fluid Temperature Sensor Circuit',
-  U0001: 'High Speed CAN Communication Bus',
-  U0002: 'High Speed CAN Communication Bus Performance',
-  U0003: 'High Speed CAN Communication Bus + Bus Off',
-  U0100: 'Lost Communication With ECM/PCM A',
-  U0101: 'Lost Communication With TCM',
-  U0120: 'Lost Communication With SCM',
-  U0121: 'Lost Communication With ABS Control Module',
-  U0140: 'Lost Communication With Body Control Module',
-  U0151: 'Lost Communication With SRS Control Module',
-  U0164: 'Lost Communication With HVAC Control Module',
-  U1000: 'CAN Communication Network Malfunction',
-  U1100: 'Lost Communication With Engine Control Module',
-  U1200: 'Lost Communication With Transmission Control Module',
-  U1300: 'Lost Communication With ABS Module',
-  U1400: 'Lost Communication With Instrument Cluster',
-  C0000: 'Vehicle Speed Sensor - Front Left',
-  C0010: 'Vehicle Speed Sensor - Front Right',
-  C0020: 'Vehicle Speed Sensor - Rear Left',
-  C0030: 'Vehicle Speed Sensor - Rear Right',
-  C0040: 'Brake System Malfunction',
-  C0045: 'ABS System Malfunction',
-  B0000: 'Airbag System Malfunction',
-  B0010: 'Driver Frontal Stage 1 Deployment Control',
-  B0020: 'Passenger Frontal Stage 1 Deployment Control',
-};
+import {DTC_DESCRIPTIONS} from './DTCDatabase';
 
 class OBD2Service {
   private transport: Transport | null = null;
@@ -1056,6 +943,23 @@ class OBD2Service {
         const frtR = await this.sendCommandFast('015E'); this.parseFuelRate(frtR);
         const runR = await this.sendCommandFast('011F'); this.parseRunTime(runR);
         const injR = await this.sendCommandFast('015D'); this.parseInjectionTiming(injR);
+        // Ekstra sensörler (her 6 döngü)
+        const stftR = await this.sendCommandFast('0107'); this.parseShortTermFuelTrim(stftR);
+        const ltftR = await this.sendCommandFast('0108'); this.parseLongTermFuelTrim(ltftR);
+        const fuelPR = await this.sendCommandFast('0123'); this.parseFuelPressure(fuelPR);
+        const thrtBR = await this.sendCommandFast('0147'); this.parseAbsoluteThrottleB(thrtBR);
+        const thrtCR = await this.sendCommandFast('0148'); this.parseAbsoluteThrottleC(thrtCR);
+        const cmdThrR = await this.sendCommandFast('014C'); this.parseCommandedThrottleActuator(cmdThrR);
+        const accDR = await this.sendCommandFast('0149'); this.parseAcceleratorPosD(accDR);
+      }
+
+      // Süper genişletilmiş (her 12 döngü)
+      const isSuperExtended = this.pollCycle % 12 === 0;
+      if (isSuperExtended) {
+        const o2R = await this.sendCommandFast('0114'); this.parseO2Sensor1Voltage(o2R);
+        const catR = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(catR);
+        const dstR = await this.sendCommandFast('0131'); this.parseDistanceSinceDTCClear(dstR);
+        const fuelRR = await this.sendCommandFast('0122'); this.parseFuelRailPressureRelative(fuelRR);
       }
 
       this.updateTripData(this.currentData.speed);

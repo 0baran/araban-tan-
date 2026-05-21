@@ -6,6 +6,22 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.2.20260521.1144',
+    date: '21 Mayıs 2026',
+    items: [
+      'Sürüm çakışması düzeltildi (Gradle version.json okur)',
+      'Logo: sarı motor ışığı (MIL) eklendi',
+      'Otomatik veri kaydı (OBD2 bağlanınca kayıt başlasın)',
+      'Kapsamlı DTC veritabanı (400+ kod, Türkçe açıklama)',
+      'DTC kategorileri ve alt kategoriler (P/C/B/U)',
+      'Gizli özellikler yenilendi: DPF izleme, boğaz kalibrasyonu, servis sıfırlama',
+      'Ekstra sensör PID\'leri eklendi (short/long term fuel trim, fuel pressure)',
+      'ErrorCodesScreen: kategori özet kartları, badge gösterimi',
+      'SettingsScreen: Otomatik Kayıt aç/kapa',
+      'build-and-push.ps1 otomatik scripti',
+    ],
+  },
+  {
     version: '2.2.20260521.1121',
     date: '21 Mayıs 2026',
     items: [

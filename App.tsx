@@ -8,6 +8,7 @@ import {
   obd2Service, OBD2Data, ConnectionState,
 } from './src/services/OBD2Service';
 import {loadSettings, getSettings} from './src/services/AppSettings';
+import {dataLogService} from './src/services/DataLogService';
 import {initLogCapture} from './src/services/AppLog';
 import ErrorCodesScreen from './src/screens/ErrorCodesScreen';
 import LiveDataScreen from './src/screens/LiveDataScreen';
@@ -22,7 +23,7 @@ import ChangelogScreen from './src/screens/ChangelogScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.2.20260521.1144';
+const APP_VERSION = '2.2.20260521.1158';
 
 export default function App() {
   return (
@@ -77,8 +78,21 @@ function MainScreen() {
     obd2Service.onConnectionUpdate((state: ConnectionState, message?: string) => {
       setConnectionState(state);
       if (message) setStatusText(message);
-      if (state === 'connected') { setIsConnected(true); setProtocolLabel(obd2Service.protocolLabel); readDtcOnConnect(); }
-      if (state === 'disconnected') { setIsConnected(false); setStatusText('Bağlantı Kesildi.'); setDtcCount(0); }
+      if (state === 'connected') {
+        setIsConnected(true);
+        setProtocolLabel(obd2Service.protocolLabel);
+        readDtcOnConnect();
+        if (getSettings().autoRecord && !dataLogService.isRecording) {
+          dataLogService.setFuelPrice(getSettings().fuelPricePerLiter);
+          dataLogService.start();
+        }
+      }
+      if (state === 'disconnected') {
+        setIsConnected(false);
+        setStatusText('Bağlantı Kesildi.');
+        setDtcCount(0);
+        if (dataLogService.isRecording) dataLogService.stop();
+      }
       if (state === 'error') setStatusText('Bağlantı Hatası!');
     });
 

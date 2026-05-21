@@ -6,6 +6,7 @@ import {obd2Service, OBD2_PROTOCOLS} from '../services/OBD2Service';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';
 import {checkForUpdate, promptUpdate} from '../services/UpdateService';
+import {dataLogService} from '../services/DataLogService';
 
 interface Props {
   onBack: () => void;
@@ -19,6 +20,7 @@ export default function SettingsScreen({onBack}: Props) {
   const [coolantWarnOn, setCoolantWarnOn] = useState(false);
   const [coolantWarnVal, setCoolantWarnVal] = useState('100');
   const [fuelPrice, setFuelPrice] = useState('0');
+  const [autoRecord, setAutoRecord] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanResults, setScanResults] = useState<{protocol: string; label: string; success: boolean}[] | null>(null);
   const [settingProto, setSettingProto] = useState(false);
@@ -31,6 +33,7 @@ export default function SettingsScreen({onBack}: Props) {
       setCoolantWarnOn(s.coolantWarningEnabled);
       setCoolantWarnVal(String(s.coolantWarningThreshold));
       setFuelPrice(String(s.fuelPricePerLiter || 0));
+      setAutoRecord(s.autoRecord || false);
     });
   }, []);
 
@@ -54,6 +57,11 @@ export default function SettingsScreen({onBack}: Props) {
     setCoolantWarnVal(t);
     const n = parseInt(t, 10);
     if (!isNaN(n) && n > 0) saveSettings({coolantWarningThreshold: n});
+  };
+
+  const toggleAutoRecord = (v: boolean) => {
+    setAutoRecord(v);
+    saveSettings({autoRecord: v});
   };
 
   const setFuelPriceVal = (t: string) => {
@@ -162,6 +170,18 @@ export default function SettingsScreen({onBack}: Props) {
             <Text style={styles.settingLabel}>Fiyat</Text>
             <TextInput style={styles.settingInput} value={fuelPrice} onChangeText={setFuelPriceVal} keyboardType="decimal-pad" placeholderTextColor="rgba(255,255,255,0.3)" />
             <Text style={styles.settingUnit}>₺/L</Text>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>VERİ KAYDI</Text>
+          <View style={styles.row}>
+            <Text style={styles.rowIcon}>⏺</Text>
+            <View style={styles.rowContent}>
+              <Text style={styles.rowLabel}>Otomatik Kayıt</Text>
+              <Text style={styles.rowDesc}>OBD2 bağlanınca otomatik veri kaydı başlasın</Text>
+            </View>
+            <Switch value={autoRecord} onValueChange={toggleAutoRecord} trackColor={{false: 'rgba(255,255,255,0.1)', true: 'rgba(0,191,255,0.4)'}} thumbColor={autoRecord ? '#00bfff' : '#666'} />
           </View>
         </View>
 

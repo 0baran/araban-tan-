@@ -17,6 +17,7 @@ export type AppSettings = {
   pinnedSensors: string[];
   fuelPricePerLiter: number;
   darkMode: boolean;
+  autoRecord: boolean;
 };
 
 const DEFAULTS: AppSettings = {
@@ -27,6 +28,7 @@ const DEFAULTS: AppSettings = {
   pinnedSensors: [],
   fuelPricePerLiter: 0,
   darkMode: true,
+  autoRecord: false,
 };
 
 let cached: AppSettings = {...DEFAULTS};

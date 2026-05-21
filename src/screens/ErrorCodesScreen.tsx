@@ -4,6 +4,7 @@ import {
   FlatList, ActivityIndicator, Linking, Modal,
 } from 'react-native';
 import {obd2Service, DTC} from '../services/OBD2Service';
+import {getDTCCategory, getDTCCategoryColor, getDTCSubCategory} from '../services/DTCDatabase';
 
 interface Props {
   onBack: () => void;
@@ -52,16 +53,23 @@ export default function ErrorCodesScreen({onBack}: Props) {
     Linking.openURL(url).catch(() => {});
   };
 
+  const groupedDTCs = dtcs.reduce<Record<string, DTC[]>>((acc, d) => {
+    const cat = getDTCSubCategory(d.code);
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(d);
+    return acc;
+  }, {});
+
   const renderDTC = ({item}: {item: DTC}) => {
     const prefix = item.code.charAt(0);
-    const color = SEVERITY_COLORS[prefix] || '#ff4757';
+    const color = getDTCCategoryColor(item.code);
     return (
       <TouchableOpacity
         style={[styles.dtcItem, {borderLeftColor: color}]}
         onPress={() => setSelected(item)}
         onLongPress={() => handleSearch(item.code)}>
         <View style={[styles.dtcHeader, {backgroundColor: color + '15', borderBottomColor: color + '30'}]}>
-          <Text style={[styles.dtcSeverity, {color}]}>⚠️ {SEVERITY_LABELS[prefix] || prefix}</Text>
+          <Text style={[styles.dtcSeverity, {color}]}>⚠️ {getDTCCategory(item.code)}</Text>
           <TouchableOpacity
             style={[styles.searchBtn, {borderColor: color + '44'}]}
             onPress={() => handleSearch(item.code)}>
@@ -103,14 +111,17 @@ export default function ErrorCodesScreen({onBack}: Props) {
                       key={p.code}
                       style={styles.pendingItem}
                       onLongPress={() => handleSearch(p.code)}>
-                      <Text style={styles.pendingCode}>{p.code}</Text>
+                      <View style={styles.pendingCodeRow}>
+                        <Text style={styles.pendingCode}>{p.code}</Text>
+                        <Text style={[styles.pendingBadge, {color: getDTCCategoryColor(p.code), borderColor: getDTCCategoryColor(p.code)}]}>{getDTCCategory(p.code).split(' ')[0]}</Text>
+                      </View>
                       <Text style={styles.pendingDesc}>{p.description}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
               )}
               <View style={styles.cardHeader}>
-                <Text style={styles.sectionTitle}>AKTİF KODLAR</Text>
+                <Text style={styles.sectionTitle}>AKTİF KODLAR ({dtcs.length})</Text>
                 {dtcs.length > 0 && (
                   <TouchableOpacity
                     style={styles.clearButton}
@@ -122,6 +133,16 @@ export default function ErrorCodesScreen({onBack}: Props) {
                   </TouchableOpacity>
                 )}
               </View>
+              {Object.keys(groupedDTCs).length > 1 && (
+                <View style={styles.categorySummary}>
+                  {Object.entries(groupedDTCs).map(([cat, codes]) => (
+                    <View key={cat} style={[styles.categoryBadge, {borderColor: getDTCCategoryColor(codes[0].code) + '44'}]}>
+                      <Text style={{color: getDTCCategoryColor(codes[0].code), fontSize: 10, fontWeight: '800'}}>{cat}</Text>
+                      <Text style={[styles.badgeCount, {color: getDTCCategoryColor(codes[0].code)}]}>{codes.length}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </>
           )}
           renderItem={renderDTC}
@@ -193,7 +214,9 @@ const styles = StyleSheet.create({
   pendingItem: {
     paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.04)',
   },
+  pendingCodeRow: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'},
   pendingCode: {color: '#ffa502', fontSize: 15, fontWeight: '800', letterSpacing: 1},
+  pendingBadge: {fontSize: 9, fontWeight: '800', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, borderWidth: 1},
   pendingDesc: {color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 2},
   dtcItem: {
     backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 14, padding: 16, marginBottom: 10,
@@ -226,4 +249,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
   },
   modalBtnText: {color: '#fff', fontWeight: '800', fontSize: 14, letterSpacing: 1},
+  categorySummary: {flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12},
+  categoryBadge: {flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1},
+  badgeCount: {fontSize: 11, fontWeight: '900', marginLeft: 4},
 });
