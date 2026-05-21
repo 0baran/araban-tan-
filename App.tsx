@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView,
   Modal, ActivityIndicator, FlatList, Platform, Alert, PermissionsAndroid,
   TextInput, BackHandler, AppState, StatusBar,
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   obd2Service, OBD2Data, ConnectionState,
 } from './src/services/OBD2Service';
@@ -28,9 +29,11 @@ const APP_VERSION = '2.5.0';
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <MainScreen />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <MainScreen />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
@@ -316,7 +319,7 @@ function MainScreen() {
       {currentScreen === 'vehicles' && <VehiclesScreen {...screenProps} />}
 
       {!currentScreen && (
-        <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}, Platform.OS === 'android' && {paddingBottom: 48}]}>
+        <SafeAreaView edges={['top', 'bottom']} style={[styles.container, {backgroundColor: colors.bg}]}>
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
               <TouchableOpacity onPress={() => navigate('vehicles')}>

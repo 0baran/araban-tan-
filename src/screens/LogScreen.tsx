@@ -1,5 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Share} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Share} from 'react-native';
 import {getLogs, clearLogs} from '../services/AppLog';
 import {useTheme} from '../services/ThemeContext';
 
@@ -33,7 +34,7 @@ export default function LogScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView style={[s.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[s.container, {backgroundColor: colors.bg}]}>
       <View style={s.header}>
         <TouchableOpacity onPress={onBack} style={s.backBtn}>
           <Text style={[s.backText, {color: colors.accent}]}>← GERİ</Text>

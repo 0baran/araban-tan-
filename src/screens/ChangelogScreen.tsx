@@ -1,5 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {CHANGELOG} from '../services/Changelog';
 import {useTheme} from '../services/ThemeContext';
 
@@ -11,7 +12,7 @@ export default function ChangelogScreen({onBack}: Props) {
   const {colors} = useTheme();
 
   return (
-    <SafeAreaView style={[s.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[s.container, {backgroundColor: colors.bg}]}>
       <View style={s.header}>
         <TouchableOpacity onPress={onBack} style={s.backBtn}>
           <Text style={[s.backText, {color: colors.accent}]}>← GERİ</Text>

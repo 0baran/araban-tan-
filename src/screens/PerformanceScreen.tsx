@@ -1,5 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Platform} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
 import {loadSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';
@@ -106,7 +107,7 @@ export default function PerformanceScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>

@@ -1,6 +1,7 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, {useState, useEffect} from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert, Switch, TextInput, ActivityIndicator, Platform,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Switch, TextInput, ActivityIndicator, Platform,
 } from 'react-native';
 import {obd2Service, OBD2_PROTOCOLS} from '../services/OBD2Service';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
@@ -102,7 +103,7 @@ export default function SettingsScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>← GERİ</Text>

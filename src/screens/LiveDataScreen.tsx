@@ -1,6 +1,7 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, {useEffect, useState, useMemo, useCallback, useRef} from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Platform,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Platform,
 } from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
@@ -169,7 +170,7 @@ export default function LiveDataScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>

@@ -1,5 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Share} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Share} from 'react-native';
 import {obd2Service} from '../services/OBD2Service';
 import {dataLogService} from '../services/DataLogService';
 import {loadSettings, getSettings} from '../services/AppSettings';
@@ -81,7 +82,7 @@ export default function DataLogScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>

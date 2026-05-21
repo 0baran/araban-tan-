@@ -1,6 +1,7 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, {useState, useEffect, useCallback} from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
+  View, Text, StyleSheet, TouchableOpacity,
   ScrollView, ActivityIndicator, Alert, TextInput,
 } from 'react-native';
 import {obd2Service} from '../services/OBD2Service';
@@ -93,7 +94,7 @@ export default function HiddenFeatureScreen({onBack}: Props) {
   const allMfrs = getAllManufacturers();
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>← GERİ</Text>
