@@ -1,7 +1,7 @@
 import {Alert, Linking, Platform} from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 
-const UPDATE_URL = 'https://raw.githubusercontent.com/BALKAN/arabanitani-releases/main/version.json';
+const UPDATE_URL = 'https://raw.githubusercontent.com/0baran/araban-tan-/main/version.json';
 
 type UpdateInfo = {
   version: string;
