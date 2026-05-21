@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView,
   Modal, ActivityIndicator, FlatList, Platform, Alert, PermissionsAndroid,
-  TextInput, BackHandler,
+  TextInput, BackHandler, AppState,
 } from 'react-native';
 import {
   obd2Service, OBD2Data, ConnectionState,
@@ -128,7 +128,25 @@ function MainScreen() {
       }
     }, 30000);
 
-    return () => { obd2Service.disconnect(); clearInterval(dtcInterval); };
+    // Arka planda pil tasarrufu
+    let bgTimer: ReturnType<typeof setTimeout> | null = null;
+    const sub = AppState.addEventListener('change', nextState => {
+      if (nextState === 'background' || nextState === 'inactive') {
+        obd2Service.pausePolling();
+        clearInterval(dtcInterval);
+        if (bgTimer) clearTimeout(bgTimer);
+      } else if (nextState === 'active') {
+        obd2Service.resumePolling();
+        if (bgTimer) clearTimeout(bgTimer);
+      }
+    });
+
+    return () => {
+      obd2Service.disconnect();
+      clearInterval(dtcInterval);
+      sub.remove();
+      if (bgTimer) clearTimeout(bgTimer);
+    };
   }, []);
 
   useEffect(() => {

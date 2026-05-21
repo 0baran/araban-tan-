@@ -1016,6 +1016,12 @@ class OBD2Service {
     }
   }
 
+  pausePolling() { this.stopPolling(); }
+
+  resumePolling() {
+    if (this._isConnected && this.transport) this.startPolling();
+  }
+
   private parseHexValue(
     response: string,
     prefix: string,
