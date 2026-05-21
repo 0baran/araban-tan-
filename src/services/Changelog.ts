@@ -6,6 +6,23 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.8',
+    date: '21 Mayıs 2026',
+    items: [
+      'Uygulama ikonu (motor resmi) daha büyük ve belirgin hale getirildi.',
+      'Bağlantı ve OTA kararlılığı devam ediyor.'
+    ],
+  },
+  {
+    version: '2.9.7',
+    date: '21 Mayıs 2026',
+    items: [
+      'Hata kodu (DTC) okuma algoritması iyileştirildi, tüm araç kodları sorunsuz okunuyor.',
+      'Otomatik bağlantı izni sistemi eklendi.',
+      'Kullanılmayan sensör sorguları tamamen iptal edilerek hız & RPM gecikmeleri ortadan kaldırıldı.'
+    ],
+  },
+  {
     version: '2.5.0',
     date: '21 Mayıs 2026',
     items: [
