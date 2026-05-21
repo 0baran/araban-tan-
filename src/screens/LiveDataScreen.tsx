@@ -106,6 +106,9 @@ export default function LiveDataScreen({onBack}: Props) {
     timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
     wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
     fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
+    commandedEgr: 0, egrError: 0, commandedEvapPurge: 0, o2B1S1EquivRatio: 0,
+    o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
+    milOn: false, dtcCount: 0,
   });
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
@@ -219,7 +222,7 @@ export default function LiveDataScreen({onBack}: Props) {
         {CATEGORIES.map(c => (
           <TouchableOpacity
             key={c.key}
-            style={[styles.catBtn, {backgroundColor: colors.darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'}, category === c.key && {backgroundColor: colors.accent + '33'}]}
+            style={[styles.catBtn, {backgroundColor: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'}, category === c.key && {backgroundColor: colors.accent + '33'}]}
             onPress={() => setCategory(category === c.key ? '' : c.key)}>
             <Text style={[styles.catText, {color: colors.textDim}, category === c.key && {color: colors.accent}]}>
               {c.label}

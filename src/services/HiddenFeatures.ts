@@ -30,6 +30,7 @@ export const MANUFACTURER_NAMES: Record<Manufacturer, string> = {
 };
 
 const WMI_LISTS: Record<Manufacturer, string[]> = {
+  unknown: [],
   universal: [],
   vag: ['WVW', 'WV1', 'WV2', 'WAU', 'VSS', 'TMB', 'TMS', '1VW', '2VW', '3VW', 'XW8'],
   ford: ['1FA', '1FB', '1FT', 'WF0', 'WF1', 'MAJ', 'VS6'],
@@ -247,7 +248,7 @@ export function getFeaturesForManufacturer(mfr: Manufacturer): HiddenFeature[] {
 
 export function getManufacturerIcon(mfr: Manufacturer): string {
   const icons: Record<Manufacturer, string> = {
-    universal: '🔧', vag: '🏎️', ford: '🐎', bmw: '🌀', mercedes: '⭐',
+    unknown: '❓', universal: '🔧', vag: '🏎️', ford: '🐎', bmw: '🌀', mercedes: '⭐',
     renault: '💎', opel: '⚡', peugeot: '🦁', fiat: '🔴', toyota: '🌐', hyundai: '🔷',
   };
   return icons[mfr] || '🔧';

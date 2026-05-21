@@ -373,6 +373,7 @@ class OBD2Service {
     fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
     commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
     o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
+    milOn: false, dtcCount: 0,
   };
   private logBuffer: string[] = [];
   private logMax = 6000;
@@ -924,6 +925,7 @@ class OBD2Service {
   }
 
   private pollRunning = false;
+  private pollTimer: any = null;
   private pollCycle = 0;
   private pollErrorCount = 0;
 

@@ -122,7 +122,7 @@ export default function HiddenFeatureScreen({onBack}: Props) {
             {allMfrs.map(m => (
               <TouchableOpacity key={m} style={[styles.mfrBtn, manufacturer === m && styles.mfrBtnActive]}
                 onPress={() => selectManufacturer(m)}>
-                <Text style={[styles.mfrBtnLabel, manufacturer === m && styles.mfrBtnLabelActive]}>
+                <Text style={styles.mfrBtnLabel}>
                   {getManufacturerIcon(m)}
                 </Text>
                 <Text style={[styles.mfrBtnText, manufacturer === m && styles.mfrBtnTextActive]}>
