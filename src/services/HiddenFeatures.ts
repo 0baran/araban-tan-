@@ -1,4 +1,4 @@
-export type Manufacturer = 'universal' | 'vag' | 'ford' | 'bmw' | 'mercedes' | 'renault' | 'opel' | 'peugeot' | 'fiat' | 'toyota' | 'hyundai';
+export type Manufacturer = 'unknown' | 'universal' | 'vag' | 'ford' | 'bmw' | 'mercedes' | 'renault' | 'opel' | 'peugeot' | 'fiat' | 'toyota' | 'hyundai';
 
 export type HiddenFeature = {
   id: string;
@@ -15,6 +15,7 @@ export type HiddenFeature = {
 };
 
 export const MANUFACTURER_NAMES: Record<Manufacturer, string> = {
+  unknown: 'Tanımlanamadı',
   universal: 'Tüm Araçlar',
   vag: 'VAG (VW / Audi / Seat / Skoda)',
   ford: 'Ford',

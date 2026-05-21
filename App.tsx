@@ -20,10 +20,11 @@ import VehicleInfoScreen from './src/screens/VehicleInfoScreen';
 import DataLogScreen from './src/screens/DataLogScreen';
 import LogScreen from './src/screens/LogScreen';
 import ChangelogScreen from './src/screens/ChangelogScreen';
+import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.2.20260521.1235';
+const APP_VERSION = '2.2.20260521.1236';
 
 export default function App() {
   return (
@@ -223,6 +224,7 @@ function MainScreen() {
   };
 
   const connectToDevice = async (device: any) => {
+    if (!device.address) { Alert.alert('Hata', 'Cihaz adresi bulunamadı'); return; }
     setModalVisible(false);
     setStatusText('Bağlanıyor: ' + device.name);
     const success = await obd2Service.connectBluetooth(device.address, device.name);
@@ -270,6 +272,7 @@ function MainScreen() {
       {currentScreen === 'datalog' && <DataLogScreen {...screenProps} />}
       {currentScreen === 'log' && <LogScreen {...screenProps} />}
       {currentScreen === 'changelog' && <ChangelogScreen {...screenProps} />}
+      {currentScreen === 'vehicles' && <VehiclesScreen {...screenProps} />}
 
       {!currentScreen && (
         <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
@@ -339,6 +342,11 @@ function MainScreen() {
                 <Text style={styles.featureIcon}>🚗</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
                 <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Monitör</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('vehicles')}>
+                <Text style={styles.featureIcon}>📋</Text>
+                <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇLARIM</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Kayıtlı Araçlar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
                 <Text style={styles.featureIcon}>❄️</Text>

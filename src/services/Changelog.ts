@@ -6,6 +6,19 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.2.20260521.1236',
+    date: '21 Mayıs 2026',
+    items: [
+      'Araclarim eklendi (kayitli araclari listele/ekle/sil)',
+      'USB veri dinleyicisi eklendi (USB baglanti calisir)',
+      'Freeze frame DTC duzeltildi (42 prefix)',
+      'Protokol taramada poll durdurma (command karismasi onlendi)',
+      'Baglanti adres kontrolu (undefined adres korumasi)',
+      'DataLogService cift intakeTemp kaldirildi',
+      'HiddenFeature unknown tipi eklendi',
+    ],
+  },
+  {
     version: '2.2.20260521.1235',
     date: '21 Mayıs 2026',
     items: [

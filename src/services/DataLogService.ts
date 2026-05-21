@@ -9,7 +9,7 @@ const LOG_PIDS: (keyof OBD2Data)[] = [
   'rpm', 'speed', 'coolantTemp', 'engineLoad', 'maf', 'throttlePos',
   'fuelLevel', 'fuelPressure', 'timingAdvance', 'map', 'batteryVoltage',
   'intakeTemp', 'shortTermFuelTrim', 'longTermFuelTrim', 'commandedAFR',
-  'o2Sensor1Voltage', 'fuelRate', 'engineOilTemp', 'intakeTemp',
+  'o2Sensor1Voltage', 'fuelRate', 'engineOilTemp',
   'absoluteLoad', 'relativeThrottlePos', 'fuelRailPressureRelative',
   'distanceSinceDTCClear', 'runTime', 'wideRangeO2B1S1', 'injectionTiming',
 ];

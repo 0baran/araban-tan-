@@ -220,6 +220,7 @@ class BluetoothTransport implements Transport {
 class UsbTransport implements Transport {
   private RNSerialport: any = null;
   private buffer = '';
+  private _subscription: any = null;
 
   async connect(): Promise<boolean> {
     const mod = require('react-native-usb-serialport');
@@ -232,10 +233,16 @@ class UsbTransport implements Transport {
     if (!devId) throw new Error('USB cihaz ID alınamadı');
     await this.RNSerialport.openDevice(devId);
     await this.RNSerialport.setParams(38400, 8, 1, 0, 0);
+    if (this.RNSerialport.onReceived) {
+      this._subscription = this.RNSerialport.onReceived((data: string) => {
+        this.buffer += data;
+      });
+    }
     return true;
   }
 
   async disconnect(): Promise<void> {
+    if (this._subscription) { try { this._subscription.remove(); } catch {} this._subscription = null; }
     if (this.RNSerialport) {
       try { await this.RNSerialport.closeDevice(); } catch {}
       this.RNSerialport = null;
@@ -826,6 +833,8 @@ class OBD2Service {
   }
 
   async scanAllProtocols(): Promise<{protocol: string; label: string; success: boolean}[]> {
+    const wasPolling = this.pollRunning;
+    if (wasPolling) this.stopPolling();
     const results: {protocol: string; label: string; success: boolean}[] = [];
     const protocols = ['3', '4', '5', '6', '7', '8', '9', 'A', '1', '2', 'B', 'C'];
     for (const p of protocols) {
@@ -840,12 +849,14 @@ class OBD2Service {
       results.push({protocol: p, label, success: ok});
       if (ok) {
         this.currentProtocolLabel = `${label} (CAN)`;
+        if (wasPolling) this.startPolling();
         return results;
       }
     }
     await this.sendCommand('ATSP0');
     await this.delay(200);
     await this.detectProtocol();
+    if (wasPolling) this.startPolling();
     return results;
   }
 
@@ -1692,7 +1703,7 @@ class OBD2Service {
     const lines = response.split('\n');
     for (const line of lines) {
       const clean = line.trim();
-      if (clean.startsWith('43') && clean.length >= 6) {
+      if ((clean.startsWith('43') || clean.startsWith('42')) && clean.length >= 6) {
         const rawCodes = clean.substring(2).trim();
         const parts = rawCodes.split(' ');
         for (let i = 0; i < parts.length - 1; i += 2) {
