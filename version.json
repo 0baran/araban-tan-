@@ -1,5 +1,5 @@
 {
-  "version": "2.2.20260521.0424",
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v2.2.20260521.0424.apk",
-  "notes": "Bluetooth crash fix, simülasyon düzeltmesi, genel kod revizyonu."
+  "version": "2.2.20260521.1125",
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v2.2.20260521.1124.apk",
+  "notes": "Bluetooth bağlantı hatası düzeltildi, simülasyon yenilendi, polling optimize edildi (kritik 3 sensör her döngü, genişletilmiş her 6 döngü), güncelleme spam'i düzeltildi, gauge daireler kaldırıldı düz metin gösterim, saatlik versiyon formatı, logo yenilendi, gereksiz sensörler çıkarıldı, hız/hararet bannerları kaldırıldı."
 }

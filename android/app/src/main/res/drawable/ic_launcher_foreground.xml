@@ -5,89 +5,77 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <group android:translateY="2">
-        <!-- Gauge arc -->
-        <path
-            android:fillColor="#00000000"
-            android:strokeColor="#00bfff"
-            android:strokeWidth="4"
-            android:pathData="M12,76 A42,42 0 0,1 96,76" />
-        <path
-            android:fillColor="#00000000"
-            android:strokeColor="#1a5f7a"
-            android:strokeWidth="4"
-            android:pathData="M12,76 A42,42 0 0,0 96,76" />
+    <!-- Outer glow ring -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#0d4f6e"
+        android:strokeWidth="1.5"
+        android:pathData="M14,54 A40,40 0 1,1 94,54 A40,40 0 1,1 14,54" />
 
-        <!-- Gauge ticks -->
-        <path
-            android:fillColor="#00bfff"
-            android:pathData="M22,72 L24,64" />
-        <path
-            android:fillColor="#556b8a"
-            android:pathData="M38,62 L42,56" />
-        <path
-            android:fillColor="#00bfff"
-            android:pathData="M54,58 L54,50" />
-        <path
-            android:fillColor="#556b8a"
-            android:pathData="M70,62 L66,56" />
-        <path
-            android:fillColor="#cc3b4a"
-            android:pathData="M86,72 L84,64" />
+    <!-- Gauge arc left (cyan) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00d4ff"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M16,72 A38,38 0 0,1 54,16" />
 
-        <!-- Needle -->
-        <path
-            android:fillColor="#ff4757"
-            android:pathData="M52,52 L50,26 L56,26 L54,52 Z" />
-        <path
-            android:fillColor="#ff4757"
-            android:pathData="M52,52 A2,2 0 1,1 56,52 A2,2 0 1,1 52,52 Z" />
+    <!-- Gauge arc right (green) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00ff88"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M54,16 A38,38 0 0,1 92,72" />
 
-        <!-- Center cap -->
-        <path
-            android:fillColor="#ffffff"
-            android:pathData="M54,54 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+    <!-- Gauge ticks -->
+    <path android:fillColor="#00d4ff" android:pathData="M27,68 L30,61" />
+    <path android:fillColor="#556b8a" android:pathData="M39,56 L44,51" />
+    <path android:fillColor="#00d4ff" android:pathData="M54,49 L54,42" />
+    <path android:fillColor="#556b8a" android:pathData="M69,56 L64,51" />
+    <path android:fillColor="#ff4757" android:pathData="M81,68 L78,61" />
 
-        <!-- Car silhouette -->
-        <path
-            android:fillColor="#00bfff"
-            android:pathData="M34,68 L38,60 L70,60 L74,68 Z" />
-        <path
-            android:fillColor="#2a2a3e"
-            android:pathData="M44,60 L48,52 L60,52 L64,60 Z" />
-        <path
-            android:fillColor="#1a1a2e"
-            android:pathData="M68,68 m-7,0 a7,7 0 1,1 14,0 a7,7 0 1,1 -14,0" />
-        <path
-            android:fillColor="#444444"
-            android:pathData="M68,68 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0" />
-        <path
-            android:fillColor="#1a1a2e"
-            android:pathData="M40,68 m-7,0 a7,7 0 1,1 14,0 a7,7 0 1,1 -14,0" />
-        <path
-            android:fillColor="#444444"
-            android:pathData="M40,68 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0" />
+    <!-- Needle pointing to mid-high RPM -->
+    <path
+        android:fillColor="#ff4757"
+        android:pathData="M52,52 L46,22 L56,22 L56,52 Z" />
+    <path
+        android:fillColor="#ff4757"
+        android:pathData="M52,52 A3,3 0 1,1 58,52 A3,3 0 1,1 52,52 Z" />
 
-        <!-- Scan waves from car -->
-        <path
-            android:fillColor="#00000000"
-            android:strokeColor="#00ff7f"
-            android:strokeWidth="2"
-            android:pathData="M48,52 L44,46" />
-        <path
-            android:fillColor="#00000000"
-            android:strokeColor="#00ff7f"
-            android:strokeWidth="2"
-            android:pathData="M52,50 L48,42" />
-        <path
-            android:fillColor="#00000000"
-            android:strokeColor="#00ff7f"
-            android:strokeWidth="2"
-            android:pathData="M56,50 L60,42" />
-        <path
-            android:fillColor="#00000000"
-            android:strokeColor="#00ff7f"
-            android:strokeWidth="2"
-            android:pathData="M60,52 L64,46" />
-    </group>
+    <!-- Center hub -->
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M54,54 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+
+    <!-- Car silhouette (side view, sleek) -->
+    <path
+        android:fillColor="#00d4ff"
+        android:pathData="M28,74 L32,65 L42,62 L62,62 L72,65 L80,74 Z" />
+    <path
+        android:fillColor="#1a2a3a"
+        android:pathData="M42,62 L46,55 L60,55 L64,62 Z" />
+    <path
+        android:fillColor="#1a1a2e"
+        android:pathData="M36,74 m-6,0 a6,6 0 1,1 12,0 a6,6 0 1,1 -12,0" />
+    <path
+        android:fillColor="#333333"
+        android:pathData="M36,74 m-3,0 a3,3 0 1,1 6,0 a3,3 0 1,1 -6,0" />
+    <path
+        android:fillColor="#1a1a2e"
+        android:pathData="M72,74 m-6,0 a6,6 0 1,1 12,0 a6,6 0 1,1 -12,0" />
+    <path
+        android:fillColor="#333333"
+        android:pathData="M72,74 m-3,0 a3,3 0 1,1 6,0 a3,3 0 1,1 -6,0" />
+
+    <!-- Scan signal bars -->
+    <path android:fillColor="#00000000" android:strokeColor="#00ff88" android:strokeWidth="2" android:strokeLineCap="round"
+        android:pathData="M46,60 L44,55" />
+    <path android:fillColor="#00000000" android:strokeColor="#00ff88" android:strokeWidth="2" android:strokeLineCap="round"
+        android:pathData="M50,58 L48,51" />
+    <path android:fillColor="#00000000" android:strokeColor="#00ff88" android:strokeWidth="2" android:strokeLineCap="round"
+        android:pathData="M58,58 L60,51" />
+    <path android:fillColor="#00000000" android:strokeColor="#00ff88" android:strokeWidth="2" android:strokeLineCap="round"
+        android:pathData="M62,60 L64,55" />
+
 </vector>

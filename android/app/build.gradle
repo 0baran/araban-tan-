@@ -96,14 +96,15 @@ def buildNum = (versionProps['buildNumber'] ?: '0').toInteger()
 def newVCode = vCode + 1
 def newBuildNum = buildNum + 1
 def today = new Date().format('yyyyMMdd')
+def now = new Date().format('HHmm')
 android.defaultConfig.versionCode = newVCode
-android.defaultConfig.versionName = "2.2.${today}.${newBuildNum}"
+android.defaultConfig.versionName = "2.2.${today}.${now}"
 
 // Write incremented values back to file
 versionProps['versionCode'] = newVCode.toString()
 versionProps['buildNumber'] = newBuildNum.toString()
 versionPropsFile.withWriter { w -> versionProps.store(w, null) }
-println "Version set to ${newVCode} / 2.2.${today}.${newBuildNum}"
+println "Version set to ${newVCode} / 2.2.${today}.${now}"
 
 dependencies {
     implementation("com.facebook.react:react-android")

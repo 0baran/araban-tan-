@@ -6,6 +6,21 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.2.20260521.1121',
+    date: '21 Mayıs 2026',
+    items: [
+      'Bluetooth bağlantı hatası düzeltildi (onDataReceived try-catch)',
+      'Simülasyon recursive setTimeout ile yenilendi',
+      'Güncelleme spam\'i düzeltildi (AsyncStorage ile 1 kere bildirim)',
+      'Polling optimize edildi: kritik 3 sensör her döngü, genişletilmiş her 6 döngü',
+      'Gauge daireler kaldırıldı, düz metin gösterim',
+      'Saatlik versiyon formatı (2.2.YYYYMMDD.SSdd)',
+      'Logo yenilendi (çift renkli gauge arkı + araç silueti)',
+      'Gereksiz sensörler polling\'den çıkarıldı',
+      'Hız ve hararet uyarı bannerları kaldırıldı',
+    ],
+  },
+  {
     version: '2.2.20260521',
     date: '21 Mayıs 2026',
     items: [
