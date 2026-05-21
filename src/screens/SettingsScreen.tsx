@@ -245,7 +245,9 @@ export default function SettingsScreen({onBack}: Props) {
             </View>
           </View>
           <TouchableOpacity style={styles.row} onPress={async () => {
-            const info = await checkForUpdate(APP_VERSION);
+            const ac = new AbortController();
+            setTimeout(() => ac.abort(), 8000);
+            const info = await checkForUpdate(APP_VERSION, ac.signal);
             if (info) promptUpdate(info);
             else Alert.alert('Güncel', 'En son sürüm kullanılıyor.');
           }}>

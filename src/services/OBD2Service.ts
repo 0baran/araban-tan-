@@ -930,7 +930,7 @@ class OBD2Service {
         const mafR = await this.sendCommandFast('0110'); this.parseMAF(mafR);
         const mapR = await this.sendCommandFast('010B'); this.parseMAP(mapR);
         const vltR = await this.sendCommandFast('0142'); this.parseBatteryVoltage(vltR);
-        const monR = await this.sendCommandFast('01'); this.parseMonitorStatusForPoll(monR);
+        const monR = await this.sendCommandFast('0101'); this.parseMonitorStatusForPoll(monR);
         const lodR = await this.sendCommandFast('0104'); this.parseEngineLoad(lodR);
         const iatR = await this.sendCommandFast('010F'); this.parseIntakeTemp(iatR);
         const thtR = await this.sendCommandFast('0111'); this.parseThrottlePos(thtR);
@@ -1384,7 +1384,7 @@ class OBD2Service {
       return {milOn: false, dtcCount: 0, tests: []};
     }
     try {
-      const resp = await this.sendCommand('01');
+      const resp = await this.sendCommand('0101');
       const clean = resp.replace(/\s/g, '');
       let milOn = false;
       let dtcCount = 0;

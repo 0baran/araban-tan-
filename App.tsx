@@ -23,7 +23,7 @@ import ChangelogScreen from './src/screens/ChangelogScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.2.20260521.1203';
+const APP_VERSION = '2.2.20260521.1215';
 
 export default function App() {
   return (
@@ -55,6 +55,7 @@ function MainScreen() {
   const [speedWarnActive, setSpeedWarnActive] = useState(false);
   const [coolantWarnActive, setCoolantWarnActive] = useState(false);
   const [dtcCount, setDtcCount] = useState(0);
+  const [updateStatus, setUpdateStatus] = useState('');
   const autoConnectDone = useRef(false);
   const {colors} = useTheme();
 
@@ -101,9 +102,16 @@ function MainScreen() {
       obd2Service.autoConnect().then(ok => {
         if (ok) setStatusText('Otomatik bağlanıldı');
       });
-      checkForUpdate(APP_VERSION).then(updateInfo => {
+      setUpdateStatus('Güncelleme kontrol ediliyor...');
+      const ac = new AbortController();
+      setTimeout(() => ac.abort(), 8000);
+      checkForUpdate(APP_VERSION, ac.signal).then(updateInfo => {
         if (updateInfo) {
+          setUpdateStatus('');
           promptUpdate(updateInfo);
+        } else {
+          setUpdateStatus('En son sürüm kullanılıyor');
+          setTimeout(() => setUpdateStatus(''), 3000);
         }
       });
     }
@@ -277,8 +285,14 @@ function MainScreen() {
             <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
               <Text style={[styles.cardLabel, {color: colors.textDim}]}>ARAÇ DURUMU</Text>
               <Text style={[styles.vehicleText, {color: colors.text}, isConnected && styles.textNeonGreen]}>{statusText}</Text>
+              {updateStatus ? (
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6}}>
+                  <ActivityIndicator size="small" color="#00bfff" />
+                  <Text style={[styles.protocolText, {color: '#00bfff'}]}>{updateStatus}</Text>
+                </View>
+              ) : null}
               {isConnected && <Text style={[styles.protocolText, {color: colors.textMuted}]}>Protokol: {protocolLabel}</Text>}
-              {!isConnected && <Text style={[styles.protocolText, {color: colors.textMuted}]}>Bluetooth / WiFi / Simülasyon ile bağlanın.</Text>}
+              {!isConnected && !updateStatus && <Text style={[styles.protocolText, {color: colors.textMuted}]}>Bluetooth / WiFi / Simülasyon ile bağlanın.</Text>}
               {isConnected && (
                 <View style={styles.vehicleInfoRow}>
                   <Text style={[styles.vehicleInfoItem, {color: colors.textDim}]}>⚡ {batteryVoltage.toFixed(1)}V</Text>

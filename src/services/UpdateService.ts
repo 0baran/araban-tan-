@@ -10,9 +10,9 @@ type UpdateInfo = {
   notes: string;
 };
 
-export async function checkForUpdate(currentVersion: string): Promise<UpdateInfo | null> {
+export async function checkForUpdate(currentVersion: string, signal?: AbortSignal): Promise<UpdateInfo | null> {
   try {
-    const resp = await fetch(UPDATE_URL, {method: 'GET', cache: 'no-cache'});
+    const resp = await fetch(UPDATE_URL, {method: 'GET', cache: 'no-cache', signal});
     if (!resp.ok) return null;
     const info: UpdateInfo = await resp.json();
     if (compareVersions(info.version, currentVersion) <= 0) return null;

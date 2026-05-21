@@ -37,7 +37,8 @@ Write-Host "==> App.tsx updated" -ForegroundColor Green
 
 # --- Update version.json ---
 $vjPath = Join-Path $root "version.json"
-@{ version = $version; url = $apkUrl; notes = $fullNotes } | ConvertTo-Json -Compress | Set-Content -LiteralPath $vjPath -NoNewline
+$vjContent = @{ version = $version; url = $apkUrl; notes = $fullNotes } | ConvertTo-Json -Compress
+[System.IO.File]::WriteAllText($vjPath, $vjContent)
 Write-Host "==> version.json updated" -ForegroundColor Green
 
 # --- Build APK ---
