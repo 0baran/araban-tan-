@@ -1,7 +1,8 @@
-import {Alert, Linking, Platform} from 'react-native';
-import {PermissionsAndroid} from 'react-native';
+import {Alert, Linking} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UPDATE_URL = 'https://raw.githubusercontent.com/0baran/araban-tan-/main/version.json';
+const SKIPPED_KEY = '@update_skipped_version';
 
 type UpdateInfo = {
   version: string;
@@ -14,8 +15,10 @@ export async function checkForUpdate(currentVersion: string): Promise<UpdateInfo
     const resp = await fetch(UPDATE_URL, {method: 'GET', cache: 'no-cache'});
     if (!resp.ok) return null;
     const info: UpdateInfo = await resp.json();
-    if (compareVersions(info.version, currentVersion) > 0) return info;
-    return null;
+    if (compareVersions(info.version, currentVersion) <= 0) return null;
+    const skipped = await AsyncStorage.getItem(SKIPPED_KEY);
+    if (skipped === info.version) return null;
+    return info;
   } catch {
     return null;
   }
@@ -27,7 +30,7 @@ export function promptUpdate(info: UpdateInfo) {
     `v${info.version}\n\n${info.notes}`,
     [
       {text: 'Şimdi Güncelle', onPress: () => downloadAndInstall(info.url)},
-      {text: 'Daha Sonra', style: 'cancel'},
+      {text: 'Daha Sonra', style: 'cancel', onPress: () => AsyncStorage.setItem(SKIPPED_KEY, info.version)},
     ],
   );
 }

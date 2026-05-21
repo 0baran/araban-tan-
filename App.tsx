@@ -22,7 +22,7 @@ import ChangelogScreen from './src/screens/ChangelogScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.2.20260521.26';
+const APP_VERSION = '2.2.20260521.0410';
 
 export default function App() {
   return (

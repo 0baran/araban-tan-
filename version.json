@@ -1,5 +1,5 @@
 {
-  "version": "2.2.20260521.99",
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v2.2.20260521.26.apk",
-  "notes": "Test güncellemesi - daireler kaldırıldı, düz metin gösterim."
+  "version": "2.2.20260521.0411",
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v2.2.20260521.0410.apk",
+  "notes": "Optimizasyon: pil dostu polling, gereksiz sensörler kaldırıldı, güncelleme spam'i düzeltildi."
 }

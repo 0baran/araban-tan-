@@ -1017,58 +1017,31 @@ class OBD2Service {
       if (!this.pollRunning || !this._isConnected || !this.transport) return;
 
       this.pollCycle++;
-      const isExtended = this.pollCycle % 4 === 0;
+      const isExtended = this.pollCycle % 6 === 0;
 
       // Kritik sensörler (her döngü)
       const rpmR = await this.sendCommandFast('010C'); this.parseRPM(rpmR);
       const spdR = await this.sendCommandFast('010D'); this.parseSpeed(spdR);
       const cltR = await this.sendCommandFast('0105'); this.parseCoolantTemp(cltR);
-      const mafR = await this.sendCommandFast('0110'); this.parseMAF(mafR);
-      const mapR = await this.sendCommandFast('010B'); this.parseMAP(mapR);
-      const vltR = await this.sendCommandFast('0142'); this.parseBatteryVoltage(vltR);
-      const monR = await this.sendCommandFast('01'); this.parseMonitorStatusForPoll(monR);
 
       if (isExtended) {
-        // Genişletilmiş sensörler (her 4 döngüde bir)
+        // Genişletilmiş sensörler (her 6 döngüde bir)
+        const mafR = await this.sendCommandFast('0110'); this.parseMAF(mafR);
+        const mapR = await this.sendCommandFast('010B'); this.parseMAP(mapR);
+        const vltR = await this.sendCommandFast('0142'); this.parseBatteryVoltage(vltR);
+        const monR = await this.sendCommandFast('01'); this.parseMonitorStatusForPoll(monR);
         const lodR = await this.sendCommandFast('0104'); this.parseEngineLoad(lodR);
         const iatR = await this.sendCommandFast('010F'); this.parseIntakeTemp(iatR);
         const thtR = await this.sendCommandFast('0111'); this.parseThrottlePos(thtR);
         const fulR = await this.sendCommandFast('012F'); this.parseFuelLevel(fulR);
         const timR = await this.sendCommandFast('010E'); this.parseTimingAdvance(timR);
-        const fprR = await this.sendCommandFast('0123'); this.parseFuelPressure(fprR);
         const ambR = await this.sendCommandFast('0146'); this.parseAmbientTemp(ambR);
-        const stfR = await this.sendCommandFast('0107'); this.parseShortTermFuelTrim(stfR);
-        const ltfR = await this.sendCommandFast('0108'); this.parseLongTermFuelTrim(ltfR);
         const afrR = await this.sendCommandFast('0144'); this.parseCommandedAFR(afrR);
         const barR = await this.sendCommandFast('0133'); this.parseBarometricPressure(barR);
-        const ablR = await this.sendCommandFast('0143'); this.parseAbsoluteLoad(ablR);
-        const rtpR = await this.sendCommandFast('0145'); this.parseRelativeThrottlePos(rtpR);
-        const ethR = await this.sendCommandFast('0152'); this.parseEthanolPercent(ethR);
-        const fssR = await this.sendCommandFast('0103'); this.parseFuelSystemStatus(fssR);
-        const o2rR = await this.sendCommandFast('0114'); this.parseO2Sensor1Voltage(o2rR);
-        const o2sR = await this.sendCommandFast('0115'); this.parseO2Sensor2Voltage(o2sR);
-        const ct1R = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(ct1R);
-        const st2R = await this.sendCommandFast('0109'); this.parseShortTermFuelTrim2(st2R);
-        const lt2R = await this.sendCommandFast('010A'); this.parseLongTermFuelTrim2(lt2R);
-        const dstR = await this.sendCommandFast('0131'); this.parseDistanceSinceDTCClear(dstR);
-        const frpR = await this.sendCommandFast('0122'); this.parseFuelRailPressureRelative(frpR);
-        const rntR = await this.sendCommandFast('011F'); this.parseRunTime(rntR);
         const oilR = await this.sendCommandFast('015C'); this.parseEngineOilTemp(oilR);
         const frtR = await this.sendCommandFast('015E'); this.parseFuelRate(frtR);
-        const dmlR = await this.sendCommandFast('0121'); this.parseDistanceWithMIL(dmlR);
-        const tdcR = await this.sendCommandFast('014F'); this.parseTimeSinceDTCClear(tdcR);
-        const atbR = await this.sendCommandFast('0147'); this.parseAbsoluteThrottleB(atbR);
-        const atcR = await this.sendCommandFast('0148'); this.parseAbsoluteThrottleC(atcR);
-        const ctaR = await this.sendCommandFast('014C'); this.parseCommandedThrottleActuator(ctaR);
-        const accR = await this.sendCommandFast('0149'); this.parseAcceleratorPosD(accR);
-        const wrmR = await this.sendCommandFast('0130'); this.parseWarmUpsSinceDTCClear(wrmR);
-        const ftpR = await this.sendCommandFast('0151'); this.parseFuelType(ftpR);
-        const tmlR = await this.sendCommandFast('014E'); this.parseTimeWithMIL(tmlR);
+        const runR = await this.sendCommandFast('011F'); this.parseRunTime(runR);
         const injR = await this.sendCommandFast('015D'); this.parseInjectionTiming(injR);
-        const ct2R = await this.sendCommandFast('013D'); this.parseCatalystTempBank2(ct2R);
-        const wo2R = await this.sendCommandFast('0134'); this.parseWideRangeO2B1S1(wo2R);
-        const apeR = await this.sendCommandFast('014A'); this.parseAcceleratorPosE(apeR);
-        const apfR = await this.sendCommandFast('014B'); this.parseAcceleratorPosF(apfR);
       }
 
       this.updateTripData(this.currentData.speed);
@@ -1078,10 +1051,10 @@ class OBD2Service {
         this.dataCallback({...this.currentData});
       }
 
-      this.pollTimer = setTimeout(poll, 250);
+      this.pollTimer = setTimeout(poll, 300);
     };
 
-    this.pollTimer = setTimeout(poll, 100);
+    this.pollTimer = setTimeout(poll, 200);
   }
 
   private stopPolling() {
