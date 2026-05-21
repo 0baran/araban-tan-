@@ -109,6 +109,7 @@ export default function LiveDataScreen({onBack}: Props) {
     commandedEgr: 0, egrError: 0, commandedEvapPurge: 0, o2B1S1EquivRatio: 0,
     o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
     milOn: false, dtcCount: 0,
+    actualEngineTorque: 0, driverDemandTorque: 0, engineReferenceTorque: 0, turboBoostPressure: 0,
   });
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');

@@ -255,6 +255,20 @@ export const ALL_FEATURES: HiddenFeature[] = [
     readCmd: '221702', readHeader: '714', writeOn: '2E170200', writeOff: '2E170201', writeHeader: '714',
   },
   {
+    id: 'vag_mirror_dip', name: 'Geri Viteste Ayna İnmesi',
+    description: 'Geri vitese takıldığında sağ aynanın aşağıyı göstermesini sağlar (Mirror Dip)',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['vag'],
+    compatibility: 'VAG Grubu (Kapı Modülü - 52)',
+    readCmd: '225201', readHeader: '752', writeOn: '2E520101', writeOff: '2E520100', writeHeader: '752',
+  },
+  {
+    id: 'vag_offroad_display', name: 'Off-Road Bilgi Ekranı',
+    description: 'Teyp menüsüne Off-Road ekranını ekler (Açı, pusula, vs.)',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['vag'],
+    compatibility: 'Discover Media / Pro (5F Modülü)',
+    readCmd: '225F01', readHeader: '75F', writeOn: '2E5F0101', writeOff: '2E5F0100', writeHeader: '75F',
+  },
+  {
     id: 'bmw_start_stop_mem', name: 'Start/Stop Hafızası',
     description: 'Aracı yeniden çalıştırdığınızda Start/Stop ayarını hatırlar',
     category: 'Gizli Özellik (Kodlama)', manufacturer: ['bmw'],
@@ -267,6 +281,13 @@ export const ALL_FEATURES: HiddenFeature[] = [
     category: 'Gizli Özellik (Kodlama)', manufacturer: ['bmw'],
     compatibility: 'BMW E90, F20, F30 (Kombi)',
     readCmd: '222002', readHeader: '700', writeOn: '2E200201', writeOff: '2E200200', writeHeader: '700',
+  },
+  {
+    id: 'bmw_video_in_motion', name: 'Hareket Halinde Video',
+    description: 'Araç hareket halindeyken iDrive üzerinden video izlemeyi aktif eder',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['bmw'],
+    compatibility: 'BMW NBT / NBT EVO / MGU',
+    readCmd: '226301', readHeader: '763', writeOn: '2E630101', writeOff: '2E630100', writeHeader: '763',
   },
   {
     id: 'ford_auto_lock', name: 'Otomatik Kapı Kilitleme',
@@ -283,11 +304,25 @@ export const ALL_FEATURES: HiddenFeature[] = [
     readCmd: '223002', readHeader: '726', writeOn: '2E300201', writeOff: '2E300200', writeHeader: '726',
   },
   {
+    id: 'ford_global_windows', name: 'Kumandadan Cam Kontrolü',
+    description: 'Kumandanın açma/kilitleme tuşuna basılı tutarak tüm camları kontrol etme',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['ford'],
+    compatibility: 'Ford Focus, Mondeo, Kuga',
+    readCmd: '223004', readHeader: '726', writeOn: '2E300401', writeOff: '2E300400', writeHeader: '726',
+  },
+  {
     id: 'renault_rs_monitor', name: 'R.S. Monitor Aktifleştirme',
     description: 'R-Link ekranında spor RS Monitor uygulamasını açar',
     category: 'Gizli Özellik (Kodlama)', manufacturer: ['renault'],
     compatibility: 'Renault Megane 4, Clio 4 (R-Link)',
     readCmd: '224001', readHeader: '7A0', writeOn: '2E400101', writeOff: '2E400100', writeHeader: '7A0',
+  },
+  {
+    id: 'renault_fatigue_warning', name: 'Yorgunluk Algılayıcı (Fatigue)',
+    description: 'Yorgunluk uyarı sistemini gösterge panelinde aktif eder',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['renault'],
+    compatibility: 'Renault Megane 4, Kadjar, Talisman',
+    readCmd: '224002', readHeader: '7A0', writeOn: '2E400201', writeOff: '2E400200', writeHeader: '7A0',
   },
   {
     id: 'opel_opc_theme', name: 'OPC Ekran Teması',

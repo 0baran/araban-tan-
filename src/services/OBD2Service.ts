@@ -78,6 +78,10 @@ export type OBD2Data = {
   commandedEvapPurgeFlow: number;
   milOn: boolean;
   dtcCount: number;
+  actualEngineTorque: number;
+  driverDemandTorque: number;
+  engineReferenceTorque: number;
+  turboBoostPressure: number;
 };
 
 export type MonitorStatus = {
@@ -374,6 +378,7 @@ class OBD2Service {
     commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
     o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
     milOn: false, dtcCount: 0,
+    actualEngineTorque: 0, driverDemandTorque: 0, engineReferenceTorque: 0, turboBoostPressure: 0,
   };
   private logBuffer: string[] = [];
   private logMax = 6000;
@@ -699,6 +704,10 @@ class OBD2Service {
         commandedEvapPurgeFlow: Math.floor(Math.random() * 50),
         milOn: false,
         dtcCount: 0,
+        actualEngineTorque: 20 + Math.floor(Math.random() * 60),
+        driverDemandTorque: 25 + Math.floor(Math.random() * 70),
+        engineReferenceTorque: 300,
+        turboBoostPressure: Math.floor(Math.random() * 150),
       };
       this.updateTripData(this.currentData.speed);
       this.addLogEntry(this.currentData);
@@ -1039,6 +1048,7 @@ class OBD2Service {
             const r2 = await this.sendCommandFast('0148'); this.parseAbsoluteThrottleC(r2);
             const r3 = await this.sendCommandFast('014C'); this.parseCommandedThrottleActuator(r3);
             const r4 = await this.sendCommandFast('0149'); this.parseAcceleratorPosD(r4);
+            const r5 = await this.sendCommandFast('0161'); this.parseDriverDemandTorque(r5);
             break;
           }
         }
@@ -1111,7 +1121,8 @@ class OBD2Service {
             const r2 = await this.sendCommandFast('0125'); this.parseO2B1S2EquivRatio(r2);
             const r3 = await this.sendCommandFast('0160'); this.parseActualEgr(r3);
             const r4 = await this.sendCommandFast('0161'); this.parseEgrErrorDuty(r4);
-            const r5 = await this.sendCommandFast('0162'); this.parseCommandedEvapPurgeFlow(r5);
+            const r5 = await this.sendCommandFast('0162'); this.parseActualEngineTorque(r5);
+            const r6 = await this.sendCommandFast('0163'); this.parseEngineReferenceTorque(r6);
             break;
           }
         }
@@ -1286,6 +1297,9 @@ class OBD2Service {
     const val = this.parseHexValue(response, '410B', 4, 2);
     if (val !== null) {
       this.currentData.map = val;
+      if (this.currentData.barometricPressure > 0) {
+        this.currentData.turboBoostPressure = Math.max(0, val - this.currentData.barometricPressure);
+      }
     }
   }
 
@@ -1475,6 +1489,25 @@ class OBD2Service {
       const A = parseInt(clean.substring(4, 6), 16);
       const B = parseInt(clean.substring(6, 8), 16);
       if (!isNaN(A) && !isNaN(B)) this.currentData.distanceWithMIL = A * 256 + B;
+    }
+  }
+
+  private parseActualEngineTorque(response: string) {
+    const val = this.parseHexValue(response, '4162', 4, 2);
+    if (val !== null) this.currentData.actualEngineTorque = val - 125;
+  }
+
+  private parseDriverDemandTorque(response: string) {
+    const val = this.parseHexValue(response, '4161', 4, 2);
+    if (val !== null) this.currentData.driverDemandTorque = val - 125;
+  }
+
+  private parseEngineReferenceTorque(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4163') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.engineReferenceTorque = A * 256 + B;
     }
   }
 
@@ -2069,6 +2102,7 @@ class OBD2Service {
       commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
       o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
       milOn: false, dtcCount: 0,
+      actualEngineTorque: 0, driverDemandTorque: 0, engineReferenceTorque: 0, turboBoostPressure: 0,
     };
     this.logBuffer = [];
     this.resetTripData();
