@@ -317,6 +317,20 @@ export const ALL_FEATURES: HiddenFeature[] = [
     compatibility: 'Toyota Corolla, C-HR (BCM)',
     readCmd: '228001', readHeader: '750', writeOn: '2E800101', writeOff: '2E800100', writeHeader: '750',
   },
+  {
+    id: 'bmw_seatbelt_chime', name: 'BMW Kemer İkaz İptali',
+    description: 'BMW araçlarda emniyet kemeri sesini (Gong) kalıcı olarak susturur.',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['bmw'],
+    compatibility: 'BMW F ve G Serisi',
+    readCmd: '222003', readHeader: '700', writeOn: '2E200300', writeOff: '2E200301', writeHeader: '700',
+  },
+  {
+    id: 'ford_st_logo', name: 'Ford ST/RS Ekran Logosu',
+    description: 'SYNC ekranında veya kadranda açılışta ST/RS logosunu gösterir.',
+    category: 'Gizli Özellik (Kodlama)', manufacturer: ['ford'],
+    compatibility: 'Ford Focus 3/4, Fiesta MK8',
+    readCmd: '223003', readHeader: '726', writeOn: '2E300301', writeOff: '2E300300', writeHeader: '726',
+  },
 ];
 
 export function getFeaturesForManufacturer(mfr: Manufacturer): HiddenFeature[] {
