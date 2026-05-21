@@ -11,57 +11,45 @@ const SIZES = {
 
 const ICON_DIR = 'android/app/src/main/res';
 
-const MIL_YELLOW = '#FFC107';
-const MIL_YELLOW2 = '#FFA000';
-const BG_DARK = '#1a1a2e';
-
 function createMILSVG(size) {
-  const cx = size / 2;
   const s = size / 192;
+  const cx = size / 2;
   const cy = size / 2;
+  const x = (v) => Math.round(v * s);
 
-  // Engine block dimensions (relative to 192 base)
-  const ew = 120 * s;   // engine width
-  const eh = 80 * s;    // engine height
-  const th = 24 * s;    // top (valve cover) height
-  const tw = 76 * s;    // top width
-  const sw = 8 * s;     // stroke width
-  const r = 10 * s;     // corner radius
-
-  const ex = cx - ew / 2;  // engine x
-  const ey = cy - eh / 2 + 8 * s;  // engine y (shifted down slightly)
-  const tx = cx - tw / 2;  // top x
-  const ty = ey - th + 4 * s;  // top y
-  const bx = cx - ew * 0.35;  // bolt x
+  const ew = 116 * s;
+  const eh = 88 * s;
+  const ex = cx - ew / 2;
+  const ey = cy - eh / 2;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
     <defs>
-      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#0f0c29"/>
-        <stop offset="100%" style="stop-color:#1a1a2e"/>
-      </linearGradient>
+      <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" style="stop-color:#1a1a2e"/>
+        <stop offset="100%" style="stop-color:#0f0c29"/>
+      </radialGradient>
       <linearGradient id="mil" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" style="stop-color:${MIL_YELLOW}"/>
-        <stop offset="100%" style="stop-color:${MIL_YELLOW2}"/>
+        <stop offset="0%" style="stop-color:#FFD54F"/>
+        <stop offset="50%" style="stop-color:#FFC107"/>
+        <stop offset="100%" style="stop-color:#FF8F00"/>
       </linearGradient>
       <filter id="glow">
-        <feGaussianBlur stdDeviation="${4 * s}" result="blur"/>
+        <feGaussianBlur stdDeviation="${x(6)}" result="blur"/>
         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
-    <rect width="${size}" height="${size}" rx="${24 * s}" fill="url(#bg)"/>
-    <g filter="url(#glow)" fill="url(#mil)">
-      <!-- Engine block outline -->
-      <rect x="${ex}" y="${ey}" width="${ew}" height="${eh}" rx="${r}" fill="url(#mil)" stroke="${MIL_YELLOW}" stroke-width="${Math.max(1.5, sw)}"/>
-      <!-- Valve cover on top -->
-      <rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="${r * 0.5}" fill="url(#mil)" stroke="${MIL_YELLOW}" stroke-width="${Math.max(1.5, sw * 0.7)}"/>
-      <!-- Horizontal detail lines inside block -->
-      <line x1="${ex + 10 * s}" y1="${ey + 20 * s}" x2="${ex + ew - 10 * s}" y2="${ey + 20 * s}" stroke="${BG_DARK}" stroke-width="${Math.max(1, s * 2)}" opacity="0.5"/>
-      <line x1="${ex + 10 * s}" y1="${ey + 40 * s}" x2="${ex + ew - 10 * s}" y2="${ey + 40 * s}" stroke="${BG_DARK}" stroke-width="${Math.max(1, s * 2)}" opacity="0.5"/>
-      <line x1="${ex + 10 * s}" y1="${ey + 60 * s}" x2="${ex + ew - 10 * s}" y2="${ey + 60 * s}" stroke="${BG_DARK}" stroke-width="${Math.max(1, s * 2)}" opacity="0.5"/>
-      <!-- Bolts on top -->
-      <circle cx="${tx + 10 * s}" cy="${ty + th / 2}" r="${3 * s}" fill="${BG_DARK}" opacity="0.4"/>
-      <circle cx="${tx + tw - 10 * s}" cy="${ty + th / 2}" r="${3 * s}" fill="${BG_DARK}" opacity="0.4"/>
+    <!-- Rounded square background -->
+    <rect width="${size}" height="${size}" rx="${x(28)}" fill="url(#bg)"/>
+    <!-- Engine icon -->
+    <g filter="url(#glow)" fill="url(#mil)" stroke="#FFC107" stroke-linejoin="round">
+      <!-- Main engine block: a slightly taller rectangle with rounded corners -->
+      <rect x="${ex}" y="${ey}" width="${ew}" height="${eh}" rx="${x(8)}" fill="url(#mil)" stroke-width="${x(3)}"/>
+      <!-- Top bump (valve cover / cylinder head) -->
+      <rect x="${ex + ew * 0.22}" y="${ey - x(14)}" width="${ew * 0.56}" height="${x(20)}" rx="${x(4)}" fill="url(#mil)" stroke-width="${x(3)}"/>
+      <!-- Left ear (accessory mount detail) -->
+      <rect x="${ex - x(10)}" y="${ey + eh * 0.25}" width="${x(14)}" height="${eh * 0.35}" rx="${x(3)}" fill="url(#mil)" stroke-width="${x(2.5)}"/>
+      <!-- Internal line detail: oil pan line at bottom -->
+      <line x1="${ex + x(12)}" y1="${ey + eh - x(12)}" x2="${ex + ew - x(12)}" y2="${ey + eh - x(12)}" stroke="#0f0c29" stroke-width="${x(3)}" opacity="0.35" stroke-linecap="round"/>
     </g>
   </svg>`;
 }

@@ -6,10 +6,11 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
-    version: '2.2.20260521.1234',
+    version: '2.2.20260521.1235',
     date: '21 Mayıs 2026',
     items: [
-      'Logo: sadece sari motor isigi (MIL) ikonu',
+      'Baglanti duzeltildi: _isConnected init oncesi true, sendCommand calisir',
+      'Logo: sadece sari motor isigi (MIL) ikonu (yeniden tasarlandi)',
     ],
   },
   {

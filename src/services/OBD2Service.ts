@@ -504,13 +504,14 @@ class OBD2Service {
         return false;
       }
       this.isSimulating = false;
+      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
+        this._isConnected = false;
         this.setConnectionState('error', 'ELM327 başlatılamadı');
         return false;
       }
-      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -539,13 +540,14 @@ class OBD2Service {
       this.transport = new UsbTransport();
       await this.transport.connect();
       this.isSimulating = false;
+      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
+        this._isConnected = false;
         this.setConnectionState('error', 'USB ELM327 başlatılamadı');
         return false;
       }
-      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -570,13 +572,14 @@ class OBD2Service {
       this.transport = new WiFiTransport(ip, port);
       await this.transport.connect();
       this.isSimulating = false;
+      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
+        this._isConnected = false;
         this.setConnectionState('error', 'ELM327 WiFi başlatılamadı');
         return false;
       }
-      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
