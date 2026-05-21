@@ -276,17 +276,13 @@ function MainScreen() {
             <View style={styles.gaugesContainer}>
               <View style={[styles.glassCard, styles.gaugeCard, {backgroundColor: colors.card}]}>
                 <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>MOTOR DEVRİ</Text>
-                <View style={[styles.gaugeCircle, {backgroundColor: colors.gaugeBg}]}>
-                  <Text style={[styles.gaugeValue, {color: colors.accent}]}>{rpm}</Text>
-                  <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>RPM</Text>
-                </View>
+                <Text style={[styles.gaugeValue, {color: colors.accent}]}>{rpm}</Text>
+                <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>RPM</Text>
               </View>
               <View style={[styles.glassCard, styles.gaugeCard, {backgroundColor: colors.card}]}>
                 <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>HIZ</Text>
-                <View style={[styles.gaugeCircle, {backgroundColor: speedWarnActive ? 'rgba(255,71,87,0.15)' : colors.gaugeBg, borderColor: speedWarnActive ? '#ff4757' : 'rgba(0, 191, 255, 0.3)'}]}>
-                  <Text style={[styles.gaugeValue, {color: speedWarnActive ? '#ff4757' : '#2ed573'}]}>{speed}</Text>
-                  <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>KM/H</Text>
-                </View>
+                <Text style={[styles.gaugeValue, {color: speedWarnActive ? '#ff4757' : '#2ed573'}]}>{speed}</Text>
+                <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>KM/H</Text>
               </View>
             </View>
 
