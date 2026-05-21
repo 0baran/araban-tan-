@@ -24,7 +24,7 @@ import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 
-const APP_VERSION = '2.3.20260521.1300';
+const APP_VERSION = '2.4.20260521.1500';
 
 export default function App() {
   return (
@@ -166,12 +166,21 @@ function MainScreen() {
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
+      const perms = [
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      ];
+      const apiLevel = Platform.Version;
+      if (typeof apiLevel !== 'number' || apiLevel < 31) {
+        perms.push(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      }
+      if (typeof apiLevel === 'number' && apiLevel >= 33) {
+        try {
+          await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        } catch (_) {}
+      }
       try {
-        await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        ]);
+        await PermissionsAndroid.requestMultiple(perms);
       } catch (err) { console.warn(err); }
     }
   };

@@ -733,20 +733,18 @@ class OBD2Service {
       return '';
     }
     try {
-      if (await t.isAvailable() > 0) await t.readAll();
+      const stale = await t.readAll();
+      if (stale) {}
       await t.write(cmd + '\r');
-      await this.delay(200);
+      await this.delay(150);
       let response = '';
       let emptyCount = 0;
-      for (let i = 0; i < 30; i++) {
-        await this.delay(100);
-        const available = await t.isAvailable();
-        if (available > 0) {
-          const chunk = await t.readAll();
-          if (chunk) {
-            response += chunk;
-            emptyCount = 0;
-          }
+      for (let i = 0; i < 25; i++) {
+        await this.delay(80);
+        const chunk = await t.readAll();
+        if (chunk) {
+          response += chunk;
+          emptyCount = 0;
         } else {
           emptyCount++;
           if (emptyCount > 5 && response.length > 0) break;
@@ -772,25 +770,19 @@ class OBD2Service {
   }
 
   private async initializeELM327(): Promise<boolean> {
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     await this.sendCommand('ATZ');
     await this.delay(500);
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     await this.sendCommand('ATE0');
     await this.delay(200);
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     await this.sendCommand('ATL0');
     await this.delay(100);
     await this.sendCommand('ATSTFF');
     await this.delay(100);
     await this.sendCommand('ATAT1');
     await this.delay(100);
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
 
-    // Otomatik protokol seç
     await this.sendCommand('ATSP0');
     await this.delay(400);
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
 
     // ECU ile iletişimi test et (PID 0100 = desteklenen PID'ler)
     let testResp = await this.sendCommand('0100');
@@ -806,16 +798,13 @@ class OBD2Service {
       return true;
     }
 
-    // Daha hızlı tarama için timeout'u geçici olarak kısalt
     await this.sendCommand('ATST30');
     await this.delay(100);
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     console.log('initializeELM327: Otomatik protokol başarısız, protokoller taranıyor...');
     const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
     for (const proto of tryProtocols) {
       await this.sendCommandFast(`ATSP${proto}`);
       await this.delay(300);
-      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.sendCommandFast('ATE0');
       await this.delay(100);
       const resp = await this.sendCommandFast('0100');
@@ -824,7 +813,6 @@ class OBD2Service {
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
         await this.sendCommand('ATSTFF');
         await this.delay(100);
-        if (await this.transport.isAvailable() > 0) await this.transport.readAll();
         return true;
       }
     }
@@ -880,24 +868,17 @@ class OBD2Service {
     const protocols = ['3', '4', '5', '6', '7', '8', '9', 'A', '1', '2', 'B', 'C'];
     for (const p of protocols) {
       const label = PROTOCOL_LABELS[p] || `SP${p}`;
-      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.sendCommand(`ATSP${p}`);
       await this.delay(400);
-      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       await this.sendCommand('ATE0');
       await this.delay(100);
-      if (await this.transport.isAvailable() > 0) await this.transport.readAll();
       const resp = await this.sendCommand('010C');
-      const clean = resp.replace(/\s/g, '');
-      const ok = clean.startsWith('410C') || clean.includes('410C');
-      results.push({protocol: p, label, success: ok});
-      if (ok) {
+      if (resp.startsWith('410C') || resp.includes('410C')) {
         this.currentProtocolLabel = `${label} (CAN)`;
         if (wasPolling) this.startPolling();
         return results;
       }
     }
-    if (await this.transport.isAvailable() > 0) await this.transport.readAll();
     await this.sendCommand('ATSP0');
     await this.delay(300);
     await this.detectProtocol();
@@ -944,26 +925,26 @@ class OBD2Service {
 
   private pollRunning = false;
   private pollCycle = 0;
+  private pollErrorCount = 0;
 
-  private FAST_WRITE_DELAY = 30;
-  private FAST_POLL_INTERVAL = 50;
-  private FAST_MAX_POLLS = 12;
+  private FAST_WRITE_DELAY = 20;
+  private FAST_POLL_INTERVAL = 40;
+  private FAST_MAX_POLLS = 10;
 
   private async sendCommandFast(cmd: string): Promise<string> {
     const t = this.transport;
     if (!t || !this._isConnected) return '';
     try {
-      if (await t.isAvailable() > 0) await t.readAll();
+      const stale = await t.readAll();
+      if (stale) {}
+
       await t.write(cmd + '\r');
       await this.delay(this.FAST_WRITE_DELAY);
       let response = '';
       for (let i = 0; i < this.FAST_MAX_POLLS; i++) {
         await this.delay(this.FAST_POLL_INTERVAL);
-        const avail = await t.isAvailable();
-        if (avail > 0) {
-          const chunk = await t.readAll();
-          if (chunk) response += chunk;
-        }
+        const chunk = await t.readAll();
+        if (chunk) response += chunk;
         if (response.includes('>')) break;
       }
       return response.replace(/>/g, '').trim();
@@ -977,102 +958,172 @@ class OBD2Service {
     }
   }
 
+  private async sendCritical(): Promise<boolean> {
+    const r1 = await this.sendCommandFast('010C'); this.parseRPM(r1);
+    if (!this.pollRunning) return false;
+    const r2 = await this.sendCommandFast('010D'); this.parseSpeed(r2);
+    if (!this.pollRunning) return false;
+    const r3 = await this.sendCommandFast('0105'); this.parseCoolantTemp(r3);
+    if (!this.pollRunning) return false;
+
+    this.updateTripData(this.currentData.speed);
+    this.addLogEntry(this.currentData);
+    if (this.dataCallback) {
+      this.dataCallback({...this.currentData});
+    }
+    return true;
+  }
+
   private startPolling() {
     this.pollRunning = true;
     this.pollCycle = 0;
+    this.pollErrorCount = 0;
 
     const poll = async () => {
       try {
         if (!this.pollRunning || !this._isConnected || !this.transport) return;
 
-      this.pollCycle++;
-      const isExtended = this.pollCycle % 6 === 0;
+        this.pollCycle++;
+        const cycle = this.pollCycle;
 
-      // Kritik sensörler (her döngü)
-      const rpmR = await this.sendCommandFast('010C'); this.parseRPM(rpmR);
-      const spdR = await this.sendCommandFast('010D'); this.parseSpeed(spdR);
-      const cltR = await this.sendCommandFast('0105'); this.parseCoolantTemp(cltR);
+        const isIdle = this.currentData.speed === 0 && this.currentData.rpm < 1200;
 
-      if (isExtended) {
-        // Genişletilmiş sensörler (her 6 döngüde bir)
-        const mafR = await this.sendCommandFast('0110'); this.parseMAF(mafR);
-        const mapR = await this.sendCommandFast('010B'); this.parseMAP(mapR);
-        const vltR = await this.sendCommandFast('0142'); this.parseBatteryVoltage(vltR);
-        const monR = await this.sendCommandFast('0101'); this.parseMonitorStatusForPoll(monR);
-        const lodR = await this.sendCommandFast('0104'); this.parseEngineLoad(lodR);
-        const iatR = await this.sendCommandFast('010F'); this.parseIntakeTemp(iatR);
-        const thtR = await this.sendCommandFast('0111'); this.parseThrottlePos(thtR);
-        const fulR = await this.sendCommandFast('012F'); this.parseFuelLevel(fulR);
-        const timR = await this.sendCommandFast('010E'); this.parseTimingAdvance(timR);
-        const ambR = await this.sendCommandFast('0146'); this.parseAmbientTemp(ambR);
-        const afrR = await this.sendCommandFast('0144'); this.parseCommandedAFR(afrR);
-        const barR = await this.sendCommandFast('0133'); this.parseBarometricPressure(barR);
-        const oilR = await this.sendCommandFast('015C'); this.parseEngineOilTemp(oilR);
-        const frtR = await this.sendCommandFast('015E'); this.parseFuelRate(frtR);
-        const runR = await this.sendCommandFast('011F'); this.parseRunTime(runR);
-        const injR = await this.sendCommandFast('015D'); this.parseInjectionTiming(injR);
-        // Ekstra sensörler (her 6 döngü)
-        const stftR = await this.sendCommandFast('0107'); this.parseShortTermFuelTrim(stftR);
-        const ltftR = await this.sendCommandFast('0108'); this.parseLongTermFuelTrim(ltftR);
-        const fuelPR = await this.sendCommandFast('0123'); this.parseFuelPressure(fuelPR);
-        const thrtBR = await this.sendCommandFast('0147'); this.parseAbsoluteThrottleB(thrtBR);
-        const thrtCR = await this.sendCommandFast('0148'); this.parseAbsoluteThrottleC(thrtCR);
-        const cmdThrR = await this.sendCommandFast('014C'); this.parseCommandedThrottleActuator(cmdThrR);
-        const accDR = await this.sendCommandFast('0149'); this.parseAcceleratorPosD(accDR);
+        const ok = await this.sendCritical();
+        if (!ok || !this.pollRunning) return;
+
+        if (isIdle) {
+          this.pollTimer = setTimeout(poll, 2500);
+          return;
+        }
+
+        // Genişletilmiş sensörler - döngü başına 3-4 adet dağıtıldı
+        switch (cycle % 6) {
+          case 1: {
+            const r1 = await this.sendCommandFast('0110'); this.parseMAF(r1);
+            const r2 = await this.sendCommandFast('010B'); this.parseMAP(r2);
+            const r3 = await this.sendCommandFast('0104'); this.parseEngineLoad(r3);
+            const r4 = await this.sendCommandFast('010F'); this.parseIntakeTemp(r4);
+            break;
+          }
+          case 2: {
+            const r1 = await this.sendCommandFast('0142'); this.parseBatteryVoltage(r1);
+            const r2 = await this.sendCommandFast('0101'); this.parseMonitorStatusForPoll(r2);
+            const r3 = await this.sendCommandFast('0111'); this.parseThrottlePos(r3);
+            const r4 = await this.sendCommandFast('012F'); this.parseFuelLevel(r4);
+            break;
+          }
+          case 3: {
+            const r1 = await this.sendCommandFast('010E'); this.parseTimingAdvance(r1);
+            const r2 = await this.sendCommandFast('0146'); this.parseAmbientTemp(r2);
+            const r3 = await this.sendCommandFast('0144'); this.parseCommandedAFR(r3);
+            const r4 = await this.sendCommandFast('0133'); this.parseBarometricPressure(r4);
+            break;
+          }
+          case 4: {
+            const r1 = await this.sendCommandFast('015C'); this.parseEngineOilTemp(r1);
+            const r2 = await this.sendCommandFast('015E'); this.parseFuelRate(r2);
+            const r3 = await this.sendCommandFast('011F'); this.parseRunTime(r3);
+            const r4 = await this.sendCommandFast('015D'); this.parseInjectionTiming(r4);
+            break;
+          }
+          case 5: {
+            const r1 = await this.sendCommandFast('0107'); this.parseShortTermFuelTrim(r1);
+            const r2 = await this.sendCommandFast('0108'); this.parseLongTermFuelTrim(r2);
+            const r3 = await this.sendCommandFast('0123'); this.parseFuelPressure(r3);
+            break;
+          }
+          case 0: {
+            const r1 = await this.sendCommandFast('0147'); this.parseAbsoluteThrottleB(r1);
+            const r2 = await this.sendCommandFast('0148'); this.parseAbsoluteThrottleC(r2);
+            const r3 = await this.sendCommandFast('014C'); this.parseCommandedThrottleActuator(r3);
+            const r4 = await this.sendCommandFast('0149'); this.parseAcceleratorPosD(r4);
+            break;
+          }
+        }
+        if (!this.pollRunning) return;
+
+        // Süper genişletilmiş sensörler - döngü başına 2-5 adet dağıtıldı
+        switch ((cycle - 1) % 12 + 1) {
+          case 1: {
+            const r1 = await this.sendCommandFast('0114'); this.parseO2Sensor1Voltage(r1);
+            const r2 = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(r2);
+            break;
+          }
+          case 2: {
+            const r1 = await this.sendCommandFast('0131'); this.parseDistanceSinceDTCClear(r1);
+            const r2 = await this.sendCommandFast('0122'); this.parseFuelRailPressureRelative(r2);
+            break;
+          }
+          case 3: {
+            const r1 = await this.sendCommandFast('0159'); this.parseFuelRailPressureAbsolute(r1);
+            const r2 = await this.sendCommandFast('015F'); this.parseEGTBank1(r2);
+            break;
+          }
+          case 4: {
+            const r1 = await this.sendCommandFast('0153'); this.parseEVAPVaporPressure(r1);
+            const r2 = await this.sendCommandFast('015A'); this.parseRelativePedalPos(r2);
+            break;
+          }
+          case 5: {
+            const r1 = await this.sendCommandFast('0143'); this.parseAbsoluteLoad(r1);
+            const r2 = await this.sendCommandFast('0145'); this.parseRelativeThrottlePos(r2);
+            break;
+          }
+          case 6: {
+            const r1 = await this.sendCommandFast('0152'); this.parseEthanolPercent(r1);
+            const r2 = await this.sendCommandFast('0103'); this.parseFuelSystemStatus(r2);
+            break;
+          }
+          case 7: {
+            const r1 = await this.sendCommandFast('0115'); this.parseO2Sensor2Voltage(r1);
+            const r2 = await this.sendCommandFast('0109'); this.parseShortTermFuelTrim2(r2);
+            const r3 = await this.sendCommandFast('010A'); this.parseLongTermFuelTrim2(r3);
+            break;
+          }
+          case 8: {
+            const r1 = await this.sendCommandFast('0121'); this.parseDistanceWithMIL(r1);
+            const r2 = await this.sendCommandFast('014F'); this.parseTimeSinceDTCClear(r2);
+            break;
+          }
+          case 9: {
+            const r1 = await this.sendCommandFast('0130'); this.parseWarmUpsSinceDTCClear(r1);
+            const r2 = await this.sendCommandFast('0151'); this.parseFuelType(r2);
+            const r3 = await this.sendCommandFast('014E'); this.parseTimeWithMIL(r3);
+            break;
+          }
+          case 10: {
+            const r1 = await this.sendCommandFast('013D'); this.parseCatalystTempBank2(r1);
+            const r2 = await this.sendCommandFast('0134'); this.parseWideRangeO2B1S1(r2);
+            const r3 = await this.sendCommandFast('014A'); this.parseAcceleratorPosE(r3);
+            const r4 = await this.sendCommandFast('014B'); this.parseAcceleratorPosF(r4);
+            break;
+          }
+          case 11: {
+            const r1 = await this.sendCommandFast('012C'); this.parseCommandedEgr(r1);
+            const r2 = await this.sendCommandFast('012D'); this.parseEgrError(r2);
+            const r3 = await this.sendCommandFast('012E'); this.parseCommandedEvapPurge(r3);
+            break;
+          }
+          case 12: {
+            const r1 = await this.sendCommandFast('0124'); this.parseO2B1S1EquivRatio(r1);
+            const r2 = await this.sendCommandFast('0125'); this.parseO2B1S2EquivRatio(r2);
+            const r3 = await this.sendCommandFast('0160'); this.parseActualEgr(r3);
+            const r4 = await this.sendCommandFast('0161'); this.parseEgrErrorDuty(r4);
+            const r5 = await this.sendCommandFast('0162'); this.parseCommandedEvapPurgeFlow(r5);
+            break;
+          }
+        }
+
+        this.pollTimer = setTimeout(poll, 400);
+        this.pollErrorCount = 0;
+
+      } catch (e) {
+        console.error('Polling hatası:', e);
+        this.pollErrorCount++;
+        const delay = Math.min(1000 * Math.pow(2, this.pollErrorCount - 1), 30000);
+        if (this.pollRunning) this.pollTimer = setTimeout(poll, delay);
       }
-
-      // Süper genişletilmiş (her 12 döngü)
-      const isSuperExtended = this.pollCycle % 12 === 0;
-      if (isSuperExtended) {
-        const o2R = await this.sendCommandFast('0114'); this.parseO2Sensor1Voltage(o2R);
-        const catR = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(catR);
-        const dstR = await this.sendCommandFast('0131'); this.parseDistanceSinceDTCClear(dstR);
-        const fuelRR = await this.sendCommandFast('0122'); this.parseFuelRailPressureRelative(fuelRR);
-        const fuelAR = await this.sendCommandFast('0159'); this.parseFuelRailPressureAbsolute(fuelAR);
-        const egtR = await this.sendCommandFast('015F'); this.parseEGTBank1(egtR);
-        const evapR = await this.sendCommandFast('0153'); this.parseEVAPVaporPressure(evapR);
-        const pedalR = await this.sendCommandFast('015A'); this.parseRelativePedalPos(pedalR);
-        // Eksik sensörler (parse var ama poll edilmiyordu)
-        const absLdR = await this.sendCommandFast('0143'); this.parseAbsoluteLoad(absLdR);
-        const relThrR = await this.sendCommandFast('0145'); this.parseRelativeThrottlePos(relThrR);
-        const ethR = await this.sendCommandFast('0152'); this.parseEthanolPercent(ethR);
-        const fuelSysR = await this.sendCommandFast('0103'); this.parseFuelSystemStatus(fuelSysR);
-        const o2V2R = await this.sendCommandFast('0115'); this.parseO2Sensor2Voltage(o2V2R);
-        const stft2R = await this.sendCommandFast('0109'); this.parseShortTermFuelTrim2(stft2R);
-        const ltft2R = await this.sendCommandFast('010A'); this.parseLongTermFuelTrim2(ltft2R);
-        const distMilR = await this.sendCommandFast('0121'); this.parseDistanceWithMIL(distMilR);
-        const timeDtcR = await this.sendCommandFast('014F'); this.parseTimeSinceDTCClear(timeDtcR);
-        const warmR = await this.sendCommandFast('0130'); this.parseWarmUpsSinceDTCClear(warmR);
-        const fuelTyR = await this.sendCommandFast('0151'); this.parseFuelType(fuelTyR);
-        const timeMilR = await this.sendCommandFast('014E'); this.parseTimeWithMIL(timeMilR);
-        const catB2R = await this.sendCommandFast('013D'); this.parseCatalystTempBank2(catB2R);
-        const wideO2R = await this.sendCommandFast('0134'); this.parseWideRangeO2B1S1(wideO2R);
-        const accER = await this.sendCommandFast('014A'); this.parseAcceleratorPosE(accER);
-        const accFR = await this.sendCommandFast('014B'); this.parseAcceleratorPosF(accFR);
-        // Yeni sensörler
-        const cmdEgrR = await this.sendCommandFast('012C'); this.parseCommandedEgr(cmdEgrR);
-        const egrErrR = await this.sendCommandFast('012D'); this.parseEgrError(egrErrR);
-        const evapPurgeR = await this.sendCommandFast('012E'); this.parseCommandedEvapPurge(evapPurgeR);
-        const o2Eq1R = await this.sendCommandFast('0124'); this.parseO2B1S1EquivRatio(o2Eq1R);
-        const o2Eq2R = await this.sendCommandFast('0125'); this.parseO2B1S2EquivRatio(o2Eq2R);
-        const actEgrR = await this.sendCommandFast('0160'); this.parseActualEgr(actEgrR);
-        const egrDutyR = await this.sendCommandFast('0161'); this.parseEgrErrorDuty(egrDutyR);
-        const evapFlowR = await this.sendCommandFast('0162'); this.parseCommandedEvapPurgeFlow(evapFlowR);
-      }
-
-      this.updateTripData(this.currentData.speed);
-      this.addLogEntry(this.currentData);
-
-      if (this.dataCallback) {
-        this.dataCallback({...this.currentData});
-      }
-
-      this.pollTimer = setTimeout(poll, 300);
-    } catch (e) {
-      console.error('Polling hatası:', e);
-      if (this.pollRunning) this.pollTimer = setTimeout(poll, 1000);
-    }
-  };
+    };
 
     this.pollTimer = setTimeout(poll, 200);
   }
@@ -1110,14 +1161,27 @@ class OBD2Service {
     }
   }
 
+  private _lastReconnectAttempt = 0;
+
   async goForeground() {
     if (this.isSimulating) {
       this.startSimulation();
       return;
     }
+    const now = Date.now();
+    if (now - this._lastReconnectAttempt < 15000) return;
+    this._lastReconnectAttempt = now;
     const config = await this.loadLastDevice();
     if (!config) return;
     this._lastConfig = config;
+    if (config.type === 'bluetooth') {
+      try {
+        if (!await this.isBluetoothEnabled()) {
+          this.setConnectionState('disconnected', 'Bluetooth kapalı');
+          return;
+        }
+      } catch (_) {}
+    }
     this.setConnectionState('connecting', 'Yeniden bağlanıyor...');
     let ok = false;
     if (config.type === 'bluetooth' && config.address) {
