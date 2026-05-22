@@ -1,5 +1,5 @@
 {
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.10.apk",
-  "version": "2.9.10",
-  "notes": "v2.9.10: Uygulama performansı 10 kat artırıldı (UI Throttling eklendi) ve Ana Ekran Logosu tamamen büyütülerek belirginleştirildi!\n\nv2.9.9: Uygulama motor ikonu tasarımı büyütüldü ve sürüm notları eklendi. (Zorunlu Güncelleme Tetiklemesi)\n\nv2.9.8: Uygulama ikonu (motor resmi) daha belirgin hale getirildi.\n\nv2.9.7: Hata kodu (DTC) okuma algoritması iyileştirildi, otomatik bağlantı izni eklendi ve kullanılmayan sensör sorguları iptal edildi."
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.11.apk",
+  "version": "2.9.11",
+  "notes": "v2.9.11: Veri okuma sorunları giderildi - CAN çok parçalı yanıt desteği, ELM327 zaman aşımı iyileştirmesi, rölantide sensör donması düzeltildi.\n\nv2.9.10: Uygulama performansı 10 kat artırıldı (UI Throttling eklendi) ve Ana Ekran Logosu tamamen büyütülerek belirginleştirildi!\n\nv2.9.9: Uygulama motor ikonu tasarımı büyütüldü ve sürüm notları eklendi. (Zorunlu Güncelleme Tetiklemesi)\n\nv2.9.8: Uygulama ikonu (motor resmi) daha belirgin hale getirildi.\n\nv2.9.7: Hata kodu (DTC) okuma algoritması iyileştirildi, otomatik bağlantı izni eklendi ve kullanılmayan sensör sorguları iptal edildi."
 }
