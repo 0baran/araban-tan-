@@ -28,7 +28,7 @@ import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 
-const APP_VERSION = '2.9.28';
+const APP_VERSION = '2.9.29';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
   state = {hasError: false};
@@ -424,8 +424,15 @@ function MainScreen() {
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('vehicleinfo')}>
                 <Text style={styles.featureIcon}>🚗</Text>
+                <Text style={[styles.featureValue, {fontSize: 20, color: colors.text}]}>BİLGİ</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Emisyon</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Mode 09</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('imreadiness')}>
+                <Text style={styles.featureIcon}>🌍</Text>
+                <Text style={[styles.featureValue, {fontSize: 18, color: '#1dd1a1'}]}>EMİSYON</Text>
+                <Text style={[styles.featureLabel, {color: colors.textDim}]}>TESTE HAZIRLIK</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Smog Check (I/M)</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
                 <Text style={styles.featureIcon}>❄️</Text>

@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.29',
+    date: '22 Mayıs 2026',
+    items: [
+      '⚡ İleri Seviye Sensör Paketi: Turbo, DPF, Egzoz, NOx ve Geniş Bant O2 gibi toplam 23 yeni profesyonel sensör (PID) eklendi.',
+      '🛠️ Akıllı Canlı Veri: Artık Canlı Veri ekranında sadece aracınızın desteklediği (okunabilen) sensörler filtrelenerek gösteriliyor.',
+      '🌍 Emisyon Testi: I/M Readiness (Emisyon Testine Hazırlık) ekranına ana menüden erişim kısayolu eklendi.'
+    ],
+  },
+  {
     version: '2.9.28',
     date: '22 Mayıs 2026',
     items: [

@@ -93,6 +93,29 @@ export type OBD2Data = {
   engineFrictionTorque: number;
   distanceSinceDTCClearHighRes: number;
   throttlePositionG: number;
+  secondaryAirStatus: string;
+  obdStandard: string;
+  evapVaporPressureAbsolute: number;
+  egtBank2: number;
+  turboCompressorInletPressure: number;
+  vgtControl: number;
+  wastegateControl: number;
+  turboTemp: number;
+  fuelPressureControl: number;
+  injectionPressureControl: number;
+  catalystTempBank1Sensor2: number;
+  catalystTempBank2Sensor2: number;
+  boostPressureControl: number;
+  dpfBypassPressure: number;
+  noxNTEControlStatus: number;
+  pmNTEControlStatus: number;
+  engineAuxiliarySupported: string;
+  o2Sensor3Voltage: number;
+  o2Sensor4Voltage: number;
+  o2Sensor5Voltage: number;
+  o2Sensor6Voltage: number;
+  o2Sensor7Voltage: number;
+  o2Sensor8Voltage: number;
   _validKeys?: string[];
 };
 
@@ -436,6 +459,13 @@ class OBD2Service {
     engineReferenceTorque: 0, turboBoostPressure: 0, odometer: 0, hybridBatteryLife: 0,
     dpfDifferentialPressure: 0, dpfTemp: 0, exhaustPressure: 0, turboRpm: 0, chargeAirCoolerTemp: 0,
     fuelRailGaugePressure: 0, engineFrictionTorque: 0, distanceSinceDTCClearHighRes: 0, throttlePositionG: 0,
+    secondaryAirStatus: '', obdStandard: '', evapVaporPressureAbsolute: 0, egtBank2: 0,
+    turboCompressorInletPressure: 0, vgtControl: 0, wastegateControl: 0, turboTemp: 0,
+    fuelPressureControl: 0, injectionPressureControl: 0,
+    catalystTempBank1Sensor2: 0, catalystTempBank2Sensor2: 0, boostPressureControl: 0,
+    dpfBypassPressure: 0, noxNTEControlStatus: 0, pmNTEControlStatus: 0,
+    engineAuxiliarySupported: '', o2Sensor3Voltage: 0, o2Sensor4Voltage: 0,
+    o2Sensor5Voltage: 0, o2Sensor6Voltage: 0, o2Sensor7Voltage: 0, o2Sensor8Voltage: 0,
   } as OBD2Data, {
     set: (target, prop, value) => {
       if (typeof prop === 'string' && prop !== '_validKeys' && !this.validKeys.has(prop)) {
@@ -847,6 +877,29 @@ class OBD2Service {
       d.turboRpm = 0;
       d.chargeAirCoolerTemp = 0;
       d.throttlePositionG = 0;
+      d.secondaryAirStatus = 'Upstream';
+      d.obdStandard = 'OBD-II (CARB)';
+      d.evapVaporPressureAbsolute = 40 + Math.random() * 20;
+      d.egtBank2 = 500 + Math.floor(Math.random() * 300);
+      d.turboCompressorInletPressure = 90 + Math.random() * 20;
+      d.vgtControl = 10 + Math.random() * 50;
+      d.wastegateControl = 20 + Math.random() * 40;
+      d.turboTemp = 300 + Math.floor(Math.random() * 400);
+      d.fuelPressureControl = 10 + Math.random() * 80;
+      d.injectionPressureControl = 20 + Math.random() * 60;
+      d.catalystTempBank1Sensor2 = 300 + Math.random() * 200;
+      d.catalystTempBank2Sensor2 = 300 + Math.random() * 200;
+      d.boostPressureControl = 50 + Math.random() * 50;
+      d.dpfBypassPressure = 10 + Math.random() * 10;
+      d.noxNTEControlStatus = 1;
+      d.pmNTEControlStatus = 1;
+      d.engineAuxiliarySupported = 'PTO Active';
+      d.o2Sensor3Voltage = Math.random();
+      d.o2Sensor4Voltage = Math.random();
+      d.o2Sensor5Voltage = Math.random();
+      d.o2Sensor6Voltage = Math.random();
+      d.o2Sensor7Voltage = Math.random();
+      d.o2Sensor8Voltage = Math.random();
       this.updateTripData(d.speed);
       this.addLogEntry(d);
       if (this.dataCallback) {
@@ -1260,7 +1313,7 @@ class OBD2Service {
         if (!this.pollRunning) return;
 
         // Süper genişletilmiş sensörler - döngü başına 2-5 adet dağıtıldı
-        switch ((cycle - 1) % 15 + 1) {
+        switch ((cycle - 1) % 21 + 1) {
           case 1: {
             const r1 = await this.sendCommandFast('0114'); this.parseO2Sensor1Voltage(r1);
             const r2 = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(r2);
@@ -1349,6 +1402,47 @@ class OBD2Service {
             const r2 = await this.sendCommandFast('018E'); this.parseEngineFrictionTorque(r2);
             const r3 = await this.sendCommandFast('018B'); this.parseDistanceSinceDTCClearHighRes(r3);
             const r4 = await this.sendCommandFast('018D'); this.parseThrottlePositionG(r4);
+            break;
+          }
+          case 16: {
+            const r1 = await this.sendCommandFast('0112'); this.parseSecondaryAirStatus(r1);
+            const r2 = await this.sendCommandFast('011C'); this.parseObdStandard(r2);
+            const r3 = await this.sendCommandFast('0154'); this.parseEvapVaporPressureAbsolute(r3);
+            const r4 = await this.sendCommandFast('0179'); this.parseEgtBank2(r4);
+            break;
+          }
+          case 17: {
+            const r1 = await this.sendCommandFast('016F'); this.parseTurboCompressorInletPressure(r1);
+            const r2 = await this.sendCommandFast('0171'); this.parseVgtControl(r2);
+            const r3 = await this.sendCommandFast('0172'); this.parseWastegateControl(r3);
+            break;
+          }
+          case 18: {
+            const r1 = await this.sendCommandFast('0175'); this.parseTurboTemp(r1);
+            const r2 = await this.sendCommandFast('016D'); this.parseFuelPressureControl(r2);
+            const r3 = await this.sendCommandFast('016E'); this.parseInjectionPressureControl(r3);
+            break;
+          }
+          case 19: {
+            const r1 = await this.sendCommandFast('013E'); this.parseCatalystTempBank1Sensor2(r1);
+            const r2 = await this.sendCommandFast('013F'); this.parseCatalystTempBank2Sensor2(r2);
+            const r3 = await this.sendCommandFast('0170'); this.parseBoostPressureControl(r3);
+            const r4 = await this.sendCommandFast('017B'); this.parseDpfBypassPressure(r4);
+            break;
+          }
+          case 20: {
+            const r1 = await this.sendCommandFast('017D'); this.parseNoxNTEControlStatus(r1);
+            const r2 = await this.sendCommandFast('017E'); this.parsePmNTEControlStatus(r2);
+            const r3 = await this.sendCommandFast('0165'); this.parseEngineAuxiliarySupported(r3);
+            break;
+          }
+          case 21: {
+            const r1 = await this.sendCommandFast('0116'); this.parseO2Sensor3Voltage(r1);
+            const r2 = await this.sendCommandFast('0117'); this.parseO2Sensor4Voltage(r2);
+            const r3 = await this.sendCommandFast('0118'); this.parseO2Sensor5Voltage(r3);
+            const r4 = await this.sendCommandFast('0119'); this.parseO2Sensor6Voltage(r4);
+            const r5 = await this.sendCommandFast('011A'); this.parseO2Sensor7Voltage(r5);
+            const r6 = await this.sendCommandFast('011B'); this.parseO2Sensor8Voltage(r6);
             break;
           }
         }
@@ -2400,6 +2494,211 @@ class OBD2Service {
   private parseThrottlePositionG(response: string) {
     const val = this.parseHexValue(response, '418D', 4, 2);
     if (val !== null) this.currentData.throttlePositionG = Math.round((val / 255) * 100);
+  }
+
+  private parseSecondaryAirStatus(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4112') && clean.length >= 6) {
+      const val = parseInt(clean.substring(4, 6), 16);
+      if (val === 1) this.currentData.secondaryAirStatus = 'Upstream';
+      else if (val === 2) this.currentData.secondaryAirStatus = 'Downstream';
+      else if (val === 4) this.currentData.secondaryAirStatus = 'Atmosphere';
+      else if (val === 8) this.currentData.secondaryAirStatus = 'Off';
+      else this.currentData.secondaryAirStatus = 'Unknown';
+    }
+  }
+
+  private parseObdStandard(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('411C') && clean.length >= 6) {
+      const val = parseInt(clean.substring(4, 6), 16);
+      const map: Record<number, string> = {
+        1: 'OBD-II (CARB)', 2: 'OBD (EPA)', 3: 'OBD and OBD-II',
+        4: 'OBD-I', 5: 'Not OBD Compliant', 6: 'EOBD', 7: 'EOBD and OBD-II',
+        8: 'EOBD and OBD', 9: 'EOBD, OBD and OBD II', 10: 'JOBD',
+        11: 'JOBD and OBD II', 12: 'JOBD and EOBD', 13: 'JOBD, EOBD, and OBD II'
+      };
+      this.currentData.obdStandard = map[val] || `Bilinmiyor (${val})`;
+    }
+  }
+
+  private parseEvapVaporPressureAbsolute(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4154') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.evapVaporPressureAbsolute = ((A * 256) + B) / 200;
+    }
+  }
+
+  private parseEgtBank2(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4179') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.egtBank2 = ((A * 256) + B) / 10 - 40;
+    }
+  }
+
+  private parseTurboCompressorInletPressure(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('416F') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.turboCompressorInletPressure = A;
+    }
+  }
+
+  private parseVgtControl(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4171') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.vgtControl = Math.round(((A * 256) + B) / 2.55) / 100;
+    }
+  }
+
+  private parseWastegateControl(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4172') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.wastegateControl = Math.round(((A * 256) + B) / 2.55) / 100;
+    }
+  }
+
+  private parseTurboTemp(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4175') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.turboTemp = ((A * 256) + B) / 10 - 40;
+    }
+  }
+
+  private parseFuelPressureControl(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('416D') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.fuelPressureControl = Math.round(((A * 256) + B) / 2.55) / 100;
+    }
+  }
+
+  private parseInjectionPressureControl(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('416E') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.injectionPressureControl = Math.round(((A * 256) + B) / 2.55) / 100;
+    }
+  }
+
+  private parseCatalystTempBank1Sensor2(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('413E') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.catalystTempBank1Sensor2 = ((A * 256) + B) / 10 - 40;
+    }
+  }
+
+  private parseCatalystTempBank2Sensor2(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('413F') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.catalystTempBank2Sensor2 = ((A * 256) + B) / 10 - 40;
+    }
+  }
+
+  private parseBoostPressureControl(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4170') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.boostPressureControl = ((A * 256) + B) / 10;
+    }
+  }
+
+  private parseDpfBypassPressure(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('417B') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) this.currentData.dpfBypassPressure = ((A * 256) + B) / 10;
+    }
+  }
+
+  private parseNoxNTEControlStatus(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('417D') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.noxNTEControlStatus = A;
+    }
+  }
+
+  private parsePmNTEControlStatus(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('417E') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.pmNTEControlStatus = A;
+    }
+  }
+
+  private parseEngineAuxiliarySupported(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4165') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.engineAuxiliarySupported = (A & 1) ? 'PTO Active' : 'None';
+    }
+  }
+
+  private parseO2Sensor3Voltage(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4116') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.o2Sensor3Voltage = A / 200;
+    }
+  }
+
+  private parseO2Sensor4Voltage(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4117') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.o2Sensor4Voltage = A / 200;
+    }
+  }
+
+  private parseO2Sensor5Voltage(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4118') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.o2Sensor5Voltage = A / 200;
+    }
+  }
+
+  private parseO2Sensor6Voltage(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4119') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.o2Sensor6Voltage = A / 200;
+    }
+  }
+
+  private parseO2Sensor7Voltage(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('411A') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.o2Sensor7Voltage = A / 200;
+    }
+  }
+
+  private parseO2Sensor8Voltage(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('411B') && clean.length >= 6) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      if (!isNaN(A)) this.currentData.o2Sensor8Voltage = A / 200;
+    }
   }
 
   private async disconnectTransport() {

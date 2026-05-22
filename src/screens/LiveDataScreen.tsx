@@ -76,6 +76,29 @@ const PARAM_META: {
   {key: 'commandedEvapPurgeFlow', label: 'Evap Purge Akışı', unit: '%', color: '#6d597a', category: 'yakıt'},
   {key: 'o2B1S1EquivRatio', label: 'O2 Lambda B1S1', unit: 'λ', color: '#0077b6', category: 'egzoz'},
   {key: 'o2B1S2EquivRatio', label: 'O2 Lambda B1S2', unit: 'λ', color: '#0096c7', category: 'egzoz'},
+  {key: 'secondaryAirStatus', label: 'İkincil Hava Sistemi', unit: '', color: '#48dbfb', category: 'hava'},
+  {key: 'obdStandard', label: 'Araç OBD Standardı', unit: '', color: '#1dd1a1', category: 'diğer'},
+  {key: 'evapVaporPressureAbsolute', label: 'Mutlak EVAP Basıncı', unit: 'kPa', color: '#ff9ff3', category: 'yakıt'},
+  {key: 'egtBank2', label: 'Egzoz Sıcaklığı B2', unit: '°C', color: '#ff6b6b', category: 'egzoz'},
+  {key: 'turboCompressorInletPressure', label: 'Turbo Giriş Basıncı', unit: 'kPa', color: '#5f27cd', category: 'hava'},
+  {key: 'vgtControl', label: 'VGT Turbo Kontrolü', unit: '%', color: '#c8d6e5', category: 'hava'},
+  {key: 'wastegateControl', label: 'Wastegate Kontrolü', unit: '%', color: '#54a0ff', category: 'hava'},
+  {key: 'turboTemp', label: 'Turbo Sıcaklığı', unit: '°C', color: '#ff4757', category: 'motor'},
+  {key: 'fuelPressureControl', label: 'Yakıt Basınç Kontrol', unit: '%', color: '#e1b12c', category: 'yakıt'},
+  {key: 'injectionPressureControl', label: 'Enj. Basınç Kontrol', unit: '%', color: '#fbc531', category: 'yakıt'},
+  {key: 'catalystTempBank1Sensor2', label: 'Kat. Konv. B1S2 Sıcaklık', unit: '°C', color: '#f39c12', category: 'egzoz'},
+  {key: 'catalystTempBank2Sensor2', label: 'Kat. Konv. B2S2 Sıcaklık', unit: '°C', color: '#d35400', category: 'egzoz'},
+  {key: 'boostPressureControl', label: 'Boost Basınç Kontrol', unit: 'kPa', color: '#2980b9', category: 'hava'},
+  {key: 'dpfBypassPressure', label: 'DPF Bypass Basıncı', unit: 'kPa', color: '#8e44ad', category: 'egzoz'},
+  {key: 'noxNTEControlStatus', label: 'NOx Kontrol Durumu', unit: '', color: '#16a085', category: 'çevre'},
+  {key: 'pmNTEControlStatus', label: 'PM Kontrol Durumu', unit: '', color: '#27ae60', category: 'çevre'},
+  {key: 'engineAuxiliarySupported', label: 'Motor Ek Donanım', unit: '', color: '#7f8c8d', category: 'motor'},
+  {key: 'o2Sensor3Voltage', label: 'O2 Sensör 3 Voltajı', unit: 'V', color: '#c0392b', category: 'egzoz'},
+  {key: 'o2Sensor4Voltage', label: 'O2 Sensör 4 Voltajı', unit: 'V', color: '#e74c3c', category: 'egzoz'},
+  {key: 'o2Sensor5Voltage', label: 'O2 Sensör 5 Voltajı', unit: 'V', color: '#e67e22', category: 'egzoz'},
+  {key: 'o2Sensor6Voltage', label: 'O2 Sensör 6 Voltajı', unit: 'V', color: '#f1c40f', category: 'egzoz'},
+  {key: 'o2Sensor7Voltage', label: 'O2 Sensör 7 Voltajı', unit: 'V', color: '#f39c12', category: 'egzoz'},
+  {key: 'o2Sensor8Voltage', label: 'O2 Sensör 8 Voltajı', unit: 'V', color: '#d35400', category: 'egzoz'},
 ];
 
 const CATEGORIES = [
@@ -114,6 +137,13 @@ export default function LiveDataScreen({onBack}: Props) {
     odometer: 0, hybridBatteryLife: 0, dpfDifferentialPressure: 0, dpfTemp: 0, exhaustPressure: 0, 
     turboRpm: 0, chargeAirCoolerTemp: 0, fuelRailGaugePressure: 0, engineFrictionTorque: 0, 
     distanceSinceDTCClearHighRes: 0, throttlePositionG: 0,
+    secondaryAirStatus: '', obdStandard: '', evapVaporPressureAbsolute: 0, egtBank2: 0,
+    turboCompressorInletPressure: 0, vgtControl: 0, wastegateControl: 0, turboTemp: 0,
+    fuelPressureControl: 0, injectionPressureControl: 0,
+    catalystTempBank1Sensor2: 0, catalystTempBank2Sensor2: 0, boostPressureControl: 0,
+    dpfBypassPressure: 0, noxNTEControlStatus: 0, pmNTEControlStatus: 0,
+    engineAuxiliarySupported: '', o2Sensor3Voltage: 0, o2Sensor4Voltage: 0,
+    o2Sensor5Voltage: 0, o2Sensor6Voltage: 0, o2Sensor7Voltage: 0, o2Sensor8Voltage: 0,
   });
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
@@ -158,11 +188,12 @@ export default function LiveDataScreen({onBack}: Props) {
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     return PARAM_META.filter(p => {
+      if (data._validKeys && !data._validKeys.includes(p.key as string)) return false;
       if (category && p.category !== category) return false;
       if (q && !p.label.toLowerCase().includes(q) && !p.key.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [search, category]);
+  }, [search, category, data._validKeys]);
 
   const pinnedMeta = useMemo(() => pinned.map(k => PARAM_META.find(p => p.key === k)).filter(Boolean) as typeof PARAM_META, [pinned]);
 
@@ -187,15 +218,20 @@ export default function LiveDataScreen({onBack}: Props) {
             <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>
           </TouchableOpacity>
           <Text style={[styles.title, {color: colors.text}]}>CANLI VERİ</Text>
-          <View style={styles.headerRight}>
-            <TouchableOpacity onPress={() => setIsHudMode(v => !v)} style={styles.viewToggle}>
-              <Text style={styles.viewToggleText}>{isHudMode ? '🪞' : 'HUD'}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity onPress={() => setIsHudMode(!isHudMode)} style={[styles.backButton, {marginRight: 10}]}>
+              <Text style={{color: isHudMode ? '#00bfff' : colors.textDim}}>HUD</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setListView(v => !v)} style={styles.viewToggle}>
-              <Text style={styles.viewToggleText}>{listView ? '📰' : '📱'}</Text>
+            <TouchableOpacity onPress={() => setListView(!listView)} style={styles.backButton}>
+              <Text style={{color: colors.accent}}>{listView ? 'KUTULAR' : 'LİSTE'}</Text>
             </TouchableOpacity>
-            <Text style={[styles.countText, {color: colors.textMuted}]}>{filtered.length}</Text>
           </View>
+        </View>
+
+        <View style={{paddingHorizontal: 16, paddingBottom: 10}}>
+          <Text style={{color: colors.textMuted, fontSize: 12, textAlign: 'center'}}>
+            💡 Sadece aracınızın desteklediği ({filtered.length}) sensör listeleniyor.
+          </Text>
         </View>
 
         {fuelPriceRef.current > 0 && fuelUsed > 0 && (
