@@ -183,7 +183,7 @@ class BluetoothTransport implements Transport {
         CONNECTOR_TYPE: 'rfcomm',
         DELIMITER: '\r',
         SECURE_SOCKET: false,
-      });
+      } as any);
       return !!this.device;
     } catch (e1) {
       console.log('BT connect try 1 failed:', e1);
@@ -191,7 +191,7 @@ class BluetoothTransport implements Transport {
         this.device = await RNBluetoothClassic.connectToDevice(this.address, {
           SECURE_SOCKET: true,
           DELIMITER: '\r',
-        });
+        } as any);
         return !!this.device;
       } catch (e2) {
         console.log('BT connect try 2 failed:', e2);
@@ -224,8 +224,7 @@ class BluetoothTransport implements Transport {
     if (!this.device) return '';
     let data = '';
     try {
-      const count = await this.device.available();
-      for (let i = 0; i < count; i++) {
+      while (await this.device.available() > 0) {
         const chunk = await this.device.read();
         if (chunk) data += chunk;
       }

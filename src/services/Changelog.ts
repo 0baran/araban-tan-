@@ -6,6 +6,23 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.14',
+    date: '22 Mayıs 2026',
+    items: [
+      'Tip güvenliği iyileştirmeleri: Tüm TypeScript hataları giderildi.',
+      'Bluetooth veri okuma iyileştirmesi: readAll() while döngüsü ile daha kararlı.',
+      'Güncelleme bildirimi: notifee API düzeltildi, background event desteği eklendi.',
+      'Genel kararlılık ve hata düzeltmeleri.'
+    ],
+  },
+  {
+    version: '2.9.13',
+    date: '22 Mayıs 2026',
+    items: [
+      'Güncelleme kontrolü Hermes uyumlu hale getirildi (atob hatası giderildi).'
+    ],
+  },
+  {
     version: '2.9.12',
     date: '22 Mayıs 2026',
     items: [

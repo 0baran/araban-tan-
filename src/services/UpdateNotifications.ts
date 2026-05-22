@@ -9,8 +9,8 @@ function openUpdateUrl(url: string) {
 }
 
 notifee.onBackgroundEvent(async ({type, detail}) => {
-  if (type === EventType.PRESS && detail.notification?.android?.data?.url) {
-    openUpdateUrl(detail.notification.android.data.url as string);
+  if (type === EventType.PRESS && detail.notification?.data?.url) {
+    openUpdateUrl(detail.notification.data.url as string);
   }
 });
 
@@ -26,10 +26,10 @@ export async function showUpdateNotification(version: string, notes: string, url
   await notifee.displayNotification({
     title: `v${version} güncellemesi hazır`,
     body: notes.split('\n')[0],
+    data: {url},
     android: {
       channelId: CHANNEL_ID,
       pressAction: {id: 'download'},
-      data: {url},
       smallIcon: 'ic_launcher',
       largeIcon: 'ic_launcher',
     },
@@ -38,8 +38,8 @@ export async function showUpdateNotification(version: string, notes: string, url
 
 export function handleNotificationPress() {
   return notifee.onForegroundEvent(({type, detail}) => {
-    if (type === EventType.PRESS && detail.notification?.android?.data?.url) {
-      openUpdateUrl(detail.notification.android.data.url as string);
+    if (type === EventType.PRESS && detail.notification?.data?.url) {
+      openUpdateUrl(detail.notification.data.url as string);
     }
   });
 }
