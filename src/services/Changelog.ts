@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.18',
+    date: '22 Mayıs 2026',
+    items: [
+      'Protokol taraması ve bağlantı hızlandırıldı (~%50 daha hızlı).',
+      "PID range sorgulama zincirleme: sadece desteklenen range'ler taranır.",
+      'readPidRanges() ile kod tekrarı azaltıldı, bakım kolaylaştı.',
+    ],
+  },
+  {
     version: '2.9.17',
     date: '22 Mayıs 2026',
     items: [

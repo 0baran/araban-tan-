@@ -827,6 +827,28 @@ class OBD2Service {
     return new Promise(res => setTimeout(res, ms));
   }
 
+  private async readMorePidRanges(sendFn: (cmd: string) => Promise<string>): Promise<void> {
+    if (!this.supportedPids.has('0120')) return;
+    const r20 = await sendFn('0120');
+    if (!r20 || r20.includes('NO DATA')) return;
+    this.parseSupportedPids(r20, '20');
+    if (!this.supportedPids.has('0140')) return;
+    const r40 = await sendFn('0140');
+    if (!r40 || r40.includes('NO DATA')) return;
+    this.parseSupportedPids(r40, '40');
+    if (!this.supportedPids.has('0160')) return;
+    const r60 = await sendFn('0160');
+    if (!r60 || r60.includes('NO DATA')) return;
+    this.parseSupportedPids(r60, '60');
+    if (!this.supportedPids.has('0180')) return;
+    const r80 = await sendFn('0180');
+    if (!r80 || r80.includes('NO DATA')) return;
+    this.parseSupportedPids(r80, '80');
+    if (!this.supportedPids.has('01A0')) return;
+    const rA0 = await sendFn('01A0');
+    if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
+  }
+
   private async initializeELM327(): Promise<boolean> {
     await this.sendCommand('ATZ');
     await this.delay(500);
@@ -839,41 +861,14 @@ class OBD2Service {
     await this.sendCommand('ATAT0');
     await this.delay(100);
 
-    await this.sendCommand('ATSP0');
-    await this.delay(400);
-
     this.supportedPids.clear();
-    let testResp = await this.sendCommand('0100');
-    if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
-      console.log('initializeELM327: ECU yanıt verdi (otomatik protokol)');
+    await this.sendCommand('ATSP0');
+    await this.delay(600);
+    const testResp = await this.sendCommand('0100');
+    if (testResp && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
+      console.log('initializeELM327: ECU yanıt verdi');
       this.parseSupportedPids(testResp, '00');
-      const r20 = await this.sendCommand('0120');
-      if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
-      const r40 = await this.sendCommand('0140');
-      if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
-      const r60 = await this.sendCommand('0160');
-      if (r60 && !r60.includes('NO DATA')) this.parseSupportedPids(r60, '60');
-      const r80 = await this.sendCommand('0180');
-      if (r80 && !r80.includes('NO DATA')) this.parseSupportedPids(r80, '80');
-      const rA0 = await this.sendCommand('01A0');
-      if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
-      return true;
-    }
-
-    testResp = await this.sendCommand('0100');
-    if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
-      console.log('initializeELM327: ECU yanıt verdi (2. deneme)');
-      this.parseSupportedPids(testResp, '00');
-      const r20 = await this.sendCommand('0120');
-      if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
-      const r40 = await this.sendCommand('0140');
-      if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
-      const r60 = await this.sendCommand('0160');
-      if (r60 && !r60.includes('NO DATA')) this.parseSupportedPids(r60, '60');
-      const r80 = await this.sendCommand('0180');
-      if (r80 && !r80.includes('NO DATA')) this.parseSupportedPids(r80, '80');
-      const rA0 = await this.sendCommand('01A0');
-      if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
+      await this.readMorePidRanges(this.sendCommand.bind(this));
       return true;
     }
 
@@ -884,23 +879,12 @@ class OBD2Service {
     for (const proto of tryProtocols) {
       await this.sendCommandFast(`ATSP${proto}`);
       await this.delay(300);
-      await this.sendCommandFast('ATE0');
-      await this.delay(100);
       const resp = await this.sendCommandFast('0100');
-      if (resp && resp.length > 0 && !resp.includes('UNABLE') && !resp.includes('NO DATA') && !resp.includes('?')) {
+      if (resp && !resp.includes('UNABLE') && !resp.includes('NO DATA') && !resp.includes('?')) {
         this.currentProtocolLabel = PROTOCOL_LABELS[proto] || `SP ${proto}`;
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
         this.parseSupportedPids(resp, '00');
-        const r20 = await this.sendCommandFast('0120');
-        if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
-        const r40 = await this.sendCommandFast('0140');
-        if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
-        const r60 = await this.sendCommandFast('0160');
-        if (r60 && !r60.includes('NO DATA')) this.parseSupportedPids(r60, '60');
-        const r80 = await this.sendCommandFast('0180');
-        if (r80 && !r80.includes('NO DATA')) this.parseSupportedPids(r80, '80');
-        const rA0 = await this.sendCommandFast('01A0');
-        if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
+        await this.readMorePidRanges(this.sendCommandFast.bind(this));
         await this.sendCommand('ATST64');
         await this.delay(100);
         return true;
