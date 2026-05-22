@@ -560,14 +560,13 @@ class OBD2Service {
         return false;
       }
       this.isSimulating = false;
-      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
-        this._isConnected = false;
         this.setConnectionState('error', 'ELM327 başlatılamadı');
         return false;
       }
+      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -596,14 +595,13 @@ class OBD2Service {
       this.transport = new UsbTransport();
       await this.transport.connect();
       this.isSimulating = false;
-      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
-        this._isConnected = false;
         this.setConnectionState('error', 'USB ELM327 başlatılamadı');
         return false;
       }
+      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -628,14 +626,13 @@ class OBD2Service {
       this.transport = new WiFiTransport(ip, port);
       await this.transport.connect();
       this.isSimulating = false;
-      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
-        this._isConnected = false;
         this.setConnectionState('error', 'ELM327 WiFi başlatılamadı');
         return false;
       }
+      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -858,12 +855,10 @@ class OBD2Service {
     await this.delay(100);
     await this.sendCommand('ATST64');
     await this.delay(100);
-    await this.sendCommand('ATAT0');
-    await this.delay(100);
 
     this.supportedPids.clear();
     await this.sendCommand('ATSP0');
-    await this.delay(600);
+    await this.delay(800);
     const testResp = await this.sendCommand('0100');
     if (testResp && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
       console.log('initializeELM327: ECU yanıt verdi');
@@ -872,19 +867,17 @@ class OBD2Service {
       return true;
     }
 
-    await this.sendCommand('ATST30');
-    await this.delay(100);
     console.log('initializeELM327: Otomatik protokol başarısız, protokoller taranıyor...');
     const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
     for (const proto of tryProtocols) {
-      await this.sendCommandFast(`ATSP${proto}`);
-      await this.delay(300);
-      const resp = await this.sendCommandFast('0100');
+      await this.sendCommand(`ATSP${proto}`);
+      await this.delay(400);
+      const resp = await this.sendCommand('0100');
       if (resp && !resp.includes('UNABLE') && !resp.includes('NO DATA') && !resp.includes('?')) {
         this.currentProtocolLabel = PROTOCOL_LABELS[proto] || `SP ${proto}`;
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
         this.parseSupportedPids(resp, '00');
-        await this.readMorePidRanges(this.sendCommandFast.bind(this));
+        await this.readMorePidRanges(this.sendCommand.bind(this));
         await this.sendCommand('ATST64');
         await this.delay(100);
         return true;

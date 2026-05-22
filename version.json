@@ -1,5 +1,5 @@
 {
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.18.apk",
-  "version": "2.9.18",
-  "notes": "v2.9.18: Protokol taraması hızlandırıldı.\n• PID range sorgulama: sadece desteklenen range'ler taranır (0100→0120→0140→... zincirleme)\n• readPidRanges() ile kod tekrarı azaltıldı, protokol başına bekleme 300ms→150ms\n• Tarama süresi ~%50 kısaltıldı\n• v2.9.17: Veri okuma sorunu kök neden çözüldü - ELM327 echo (ATE0) uyumluluğu.\n\nv2.9.16: PID tespit aralığı genişletildi, araç kaydetme hatası düzeltildi, polling hızlandırıldı.\n\nv2.9.15: Trip Özeti eklendi.\n\nv2.9.14: Tip güvenliği iyileştirmeleri ve hata düzeltmeleri.\n\nv2.9.13: Güncelleme kontrolü düzeltmesi - Hermes uyumluluğu.\n\nv2.9.12: Veri okuma sorunları giderildi, güncelleme bildirimi eklendi.\n\nv2.9.11: Veri okuma sorunları giderildi - CAN çok parçalı yanıt desteği, ELM327 zaman aşımı iyileştirmesi, rölantide sensör donması düzeltildi."
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.19.apk",
+  "version": "2.9.19",
+  "notes": "v2.9.19: ELM327 bağlantı sorunu kök neden çözüldü.\n• Protokol taramasında sendCommandFast (215ms) → sendCommand (2150ms): klon adaptörler artık yanıt verebiliyor\n• ATAT0 kaldırıldı: adaptive timing açık → klon ELM327'ler daha kararlı\n• _isConnected artık sadece initializeELM327 başarılı olunca true oluyor\n• USB/WiFi bağlantılarında da aynı düzeltme\n\nv2.9.18: Protokol taraması hızlandırıldı.\n\nv2.9.17: Veri okuma sorunu kök neden çözüldü - ELM327 echo (ATE0) uyumluluğu.\n\nv2.9.16: PID tespit aralığı genişletildi, araç kaydetme hatası düzeltildi, polling hızlandırıldı.\n\nv2.9.15: Trip Özeti eklendi."
 }
