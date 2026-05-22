@@ -25,6 +25,7 @@ import ChangelogScreen from './src/screens/ChangelogScreen';
 import VehiclesScreen from './src/screens/VehiclesScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
+import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 
 const APP_VERSION = '2.9.11';
 
@@ -106,6 +107,9 @@ function MainScreen() {
       }
       if (state === 'error') setStatusText('Bağlantı Hatası!');
     });
+
+    setupUpdateChannel().catch(() => {});
+    handleNotificationPress();
 
     if (!autoConnectDone.current) {
       autoConnectDone.current = true;

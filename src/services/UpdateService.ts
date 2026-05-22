@@ -1,5 +1,6 @@
-import {Alert, Linking} from 'react-native';
+import {Alert, AppState, Linking} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {showUpdateNotification} from './UpdateNotifications';
 
 const UPDATE_URL = 'https://raw.githubusercontent.com/0baran/araban-tan-/refs/heads/main/version.json';
 const SKIPPED_KEY = '@update_skipped_version';
@@ -29,7 +30,15 @@ export async function checkForUpdate(currentVersion: string, signal?: AbortSigna
   }
 }
 
+let _lastNotificationVersion = '';
+
 export function promptUpdate(info: UpdateInfo) {
+  showUpdateNotification(info.version, info.notes, info.url);
+
+  if (AppState.currentState !== 'active') return;
+  if (_lastNotificationVersion === info.version) return;
+  _lastNotificationVersion = info.version;
+
   Alert.alert(
     'Güncelleme Mevcut',
     `v${info.version}\n\n${info.notes}`,
