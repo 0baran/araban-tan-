@@ -201,9 +201,14 @@ class BluetoothTransport implements Transport {
     ];
     for (let i = 0; i < attempts.length; i++) {
       const label = `${i + 1}/${attempts.length} - ${attempts[i].label}`;
-      onProgress?.(`${label} (en fazla 8sn)...`);
+      onProgress?.(`${label} (en fazla ${CONNECT_TIMEOUT / 1000}sn)...`);
       try {
-        this.device = await RNBluetoothClassic.connectToDevice(this.address, attempts[i].opts);
+        this.device = await Promise.race([
+          RNBluetoothClassic.connectToDevice(this.address, attempts[i].opts),
+          new Promise<any>((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout')), CONNECT_TIMEOUT),
+          ),
+        ]);
         onProgress?.('Bağlantı başarılı');
         return !!this.device;
       } catch (e: any) {
@@ -211,7 +216,7 @@ class BluetoothTransport implements Transport {
         console.log(`BT connect try ${i + 1} failed:`, e);
         onProgress?.(`${label} başarısız (${reason})`);
         try { await RNBluetoothClassic.disconnectFromDevice(this.address); } catch (_) {}
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 500));
       }
     }
     onProgress?.('Bağlantı denemeleri başarısız');
@@ -386,13 +391,30 @@ class WiFiTransport implements Transport {
 
 import {DTC_DESCRIPTIONS} from './DTCDatabase';
 
+// Zamanlama sabitleri
+const ATZ_RESET_DELAY = 2000;
+const AT_CMD_DELAY = 300;
+const ATSP_DELAY = 800;
+const WRITE_DELAY = 150;
+const READ_POLL_INTERVAL = 80;
+const READ_MAX_POLLS = 25;
+const READ_EMPTY_LIMIT = 5;
+const FAST_WRITE_DELAY = 20;
+const FAST_POLL_INTERVAL = 30;
+const FAST_MAX_POLLS = 10;
+const CONNECT_TIMEOUT = 10000;
+
 class OBD2Service {
   private transport: Transport | null = null;
   private _isConnected = false;
   private dataCallback: OBD2Callback | null = null;
   private connectionCallback: ConnectionCallback | null = null;
   private _vin: string = '';
-  
+  private _connecting = false;
+
+  private _writeBusy = false;
+  private _writeQueue: Array<() => Promise<void>> = [];
+
   private validKeysArray: string[] = ['rpm', 'speed', 'batteryVoltage', 'coolantTemp'];
   private validKeys = new Set<string>(this.validKeysArray);
 
@@ -537,10 +559,16 @@ class OBD2Service {
 
   async startDiscovery(): Promise<BluetoothDevice[]> {
     try {
+      const enabled = await this.isBluetoothEnabled();
+      if (!enabled) return [];
       const found = await RNBluetoothClassic.startDiscovery();
       return found;
-    } catch (err) {
-      console.error('Discovery error:', err);
+    } catch (err: any) {
+      if (String(err).includes('Security') || String(err).includes('Permission')) {
+        console.warn('Discovery permission denied');
+      } else {
+        console.error('Discovery error:', err);
+      }
       return [];
     }
   }
@@ -583,6 +611,11 @@ class OBD2Service {
     deviceAddress: string,
     deviceName?: string,
   ): Promise<boolean> {
+    if (this._connecting) {
+      console.log('Zaten bağlantı denemesi sürüyor');
+      return false;
+    }
+    this._connecting = true;
     try {
       this._connectionType = 'bluetooth';
       this.setConnectionState('connecting', 'Bluetooth bağlanıyor...');
@@ -593,6 +626,7 @@ class OBD2Service {
       if (!connected) {
         await this.disconnectTransport();
         this.setConnectionState('error', 'Bluetooth cihazına bağlanılamadı');
+        this._connecting = false;
         return false;
       }
       this.isSimulating = false;
@@ -616,11 +650,13 @@ class OBD2Service {
         address: deviceAddress,
         name: deviceName,
       });
+      this._connecting = false;
       return true;
     } catch (err) {
       console.error('Bluetooth connection failed:', err);
       await this.disconnectTransport();
       this.setConnectionState('error', 'Bluetooth bağlantı hatası');
+      this._connecting = false;
       return false;
     }
   }
@@ -730,91 +766,82 @@ class OBD2Service {
 
     const simPoll = () => {
       if (!this.pollRunning) return;
-      this.currentData = {
-        rpm: 800 + Math.floor(Math.random() * 2000),
-        speed: this.currentData.speed < 120 ? this.currentData.speed + 1 : 0,
-        coolantTemp: 85 + Math.floor(Math.random() * 15),
-        engineLoad: 20 + Math.floor(Math.random() * 60),
-        intakeTemp: 25 + Math.floor(Math.random() * 20),
-        maf: 2 + Math.random() * 8,
-        throttlePos: 10 + Math.floor(Math.random() * 70),
-        fuelLevel: 30 + Math.floor(Math.random() * 50),
-        fuelPressure: 40 + Math.floor(Math.random() * 20),
-        timingAdvance: 5 + Math.floor(Math.random() * 20),
-        map: 30 + Math.floor(Math.random() * 70),
-        batteryVoltage: 12 + Math.random() * 3,
-        ambientTemp: 15 + Math.floor(Math.random() * 25),
-        shortTermFuelTrim: -5 + Math.floor(Math.random() * 10),
-        longTermFuelTrim: -3 + Math.floor(Math.random() * 6),
-        commandedAFR: 14 + Math.random(),
-        barometricPressure: 95 + Math.floor(Math.random() * 10),
-        absoluteLoad: 20 + Math.floor(Math.random() * 60),
-        relativeThrottlePos: 5 + Math.floor(Math.random() * 40),
-        ethanolPercent: Math.floor(Math.random() * 15),
-        fuelSystemStatus: 'Closed Loop',
-        o2Sensor1Voltage: 0.1 + Math.random() * 0.8,
-        o2Sensor2Voltage: 0.1 + Math.random() * 0.8,
-        catalystTempBank1: 400 + Math.floor(Math.random() * 200),
-        shortTermFuelTrim2: -4 + Math.floor(Math.random() * 8),
-        longTermFuelTrim2: -2 + Math.floor(Math.random() * 4),
-        distanceSinceDTCClear: Math.floor(Math.random() * 500),
-        fuelRailPressureRelative: 300 + Math.floor(Math.random() * 100),
-        runTime: Math.floor(Date.now() / 1000) % 3600,
-        engineOilTemp: 80 + Math.floor(Math.random() * 30),
-        fuelRate: Math.round((2 + Math.random() * 10) * 10) / 10,
-        distanceWithMIL: Math.floor(Math.random() * 200),
-        timeSinceDTCClear: Math.floor(Math.random() * 1440),
-        absoluteThrottleB: 8 + Math.floor(Math.random() * 60),
-        absoluteThrottleC: 5 + Math.floor(Math.random() * 40),
-        commandedThrottleActuator: 10 + Math.floor(Math.random() * 70),
-        acceleratorPosD: 10 + Math.floor(Math.random() * 80),
-        warmUpsSinceDTCClear: Math.floor(Math.random() * 20),
-        fuelType: 'Benzin',
-        timeWithMIL: Math.floor(Math.random() * 120),
-        injectionTiming: Math.round((2 + Math.random() * 15) * 10) / 10,
-        catalystTempBank2: 350 + Math.floor(Math.random() * 250),
-        wideRangeO2B1S1: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
-        acceleratorPosE: 5 + Math.floor(Math.random() * 30),
-        acceleratorPosF: 3 + Math.floor(Math.random() * 20),
-        fuelRailPressureAbsolute: 300 + Math.floor(Math.random() * 200),
-        egtBank1: 500 + Math.floor(Math.random() * 300),
-        evapVaporPressure: Math.floor(Math.random() * 1000) - 500,
-        relativePedalPos: 10 + Math.floor(Math.random() * 80),
-        commandedEgr: Math.floor(Math.random() * 60),
-        egrError: Math.floor(Math.random() * 10) - 5,
-        commandedEvapPurge: Math.floor(Math.random() * 50),
-        o2B1S1EquivRatio: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
-        o2B1S2EquivRatio: Math.round((0.8 + Math.random() * 0.4) * 100) / 100,
-        actualEgr: Math.floor(Math.random() * 50),
-        egrErrorDuty: Math.floor(Math.random() * 10) - 5,
-        commandedEvapPurgeFlow: Math.floor(Math.random() * 50),
-        milOn: false,
-        dtcCount: 0,
-        actualEngineTorque: 20 + Math.floor(Math.random() * 60),
-        driverDemandTorque: 25 + Math.floor(Math.random() * 70),
-        engineReferenceTorque: 300,
-        turboBoostPressure: Math.floor(Math.random() * 150),
-        odometer: 0,
-        hybridBatteryLife: 0,
-        dpfDifferentialPressure: 0,
-        dpfTemp: 0,
-        exhaustPressure: 0,
-        turboRpm: 0,
-        chargeAirCoolerTemp: 0,
-        throttlePositionG: 0,
-        _validKeys: [],
-      }, {
-        set(target, prop, value) {
-          if (prop !== '_validKeys' && !target._validKeys.includes(prop)) return true;
-          target[prop] = value;
-          return true;
-        }
-      });
-      this.currentData._validKeys = this.validKeysArray;
-      this.updateTripData(this.currentData.speed);
-      this.addLogEntry(this.currentData);
+      const d = this.currentData;
+      d.rpm = 800 + Math.floor(Math.random() * 2000);
+      d.speed = d.speed < 120 ? d.speed + 1 : 0;
+      d.coolantTemp = 85 + Math.floor(Math.random() * 15);
+      d.engineLoad = 20 + Math.floor(Math.random() * 60);
+      d.intakeTemp = 25 + Math.floor(Math.random() * 20);
+      d.maf = 2 + Math.random() * 8;
+      d.throttlePos = 10 + Math.floor(Math.random() * 70);
+      d.fuelLevel = 30 + Math.floor(Math.random() * 50);
+      d.fuelPressure = 40 + Math.floor(Math.random() * 20);
+      d.timingAdvance = 5 + Math.floor(Math.random() * 20);
+      d.map = 30 + Math.floor(Math.random() * 70);
+      d.batteryVoltage = 12 + Math.random() * 3;
+      d.ambientTemp = 15 + Math.floor(Math.random() * 25);
+      d.shortTermFuelTrim = -5 + Math.floor(Math.random() * 10);
+      d.longTermFuelTrim = -3 + Math.floor(Math.random() * 6);
+      d.commandedAFR = 14 + Math.random();
+      d.barometricPressure = 95 + Math.floor(Math.random() * 10);
+      d.absoluteLoad = 20 + Math.floor(Math.random() * 60);
+      d.relativeThrottlePos = 5 + Math.floor(Math.random() * 40);
+      d.ethanolPercent = Math.floor(Math.random() * 15);
+      d.fuelSystemStatus = 'Closed Loop';
+      d.o2Sensor1Voltage = 0.1 + Math.random() * 0.8;
+      d.o2Sensor2Voltage = 0.1 + Math.random() * 0.8;
+      d.catalystTempBank1 = 400 + Math.floor(Math.random() * 200);
+      d.shortTermFuelTrim2 = -4 + Math.floor(Math.random() * 8);
+      d.longTermFuelTrim2 = -2 + Math.floor(Math.random() * 4);
+      d.distanceSinceDTCClear = Math.floor(Math.random() * 500);
+      d.fuelRailPressureRelative = 300 + Math.floor(Math.random() * 100);
+      d.runTime = Math.floor(Date.now() / 1000) % 3600;
+      d.engineOilTemp = 80 + Math.floor(Math.random() * 30);
+      d.fuelRate = Math.round((2 + Math.random() * 10) * 10) / 10;
+      d.distanceWithMIL = Math.floor(Math.random() * 200);
+      d.timeSinceDTCClear = Math.floor(Math.random() * 1440);
+      d.absoluteThrottleB = 8 + Math.floor(Math.random() * 60);
+      d.absoluteThrottleC = 5 + Math.floor(Math.random() * 40);
+      d.commandedThrottleActuator = 10 + Math.floor(Math.random() * 70);
+      d.acceleratorPosD = 10 + Math.floor(Math.random() * 80);
+      d.warmUpsSinceDTCClear = Math.floor(Math.random() * 20);
+      d.fuelType = 'Benzin';
+      d.timeWithMIL = Math.floor(Math.random() * 120);
+      d.injectionTiming = Math.round((2 + Math.random() * 15) * 10) / 10;
+      d.catalystTempBank2 = 350 + Math.floor(Math.random() * 250);
+      d.wideRangeO2B1S1 = Math.round((0.8 + Math.random() * 0.4) * 100) / 100;
+      d.acceleratorPosE = 5 + Math.floor(Math.random() * 30);
+      d.acceleratorPosF = 3 + Math.floor(Math.random() * 20);
+      d.fuelRailPressureAbsolute = 300 + Math.floor(Math.random() * 200);
+      d.egtBank1 = 500 + Math.floor(Math.random() * 300);
+      d.evapVaporPressure = Math.floor(Math.random() * 1000) - 500;
+      d.relativePedalPos = 10 + Math.floor(Math.random() * 80);
+      d.commandedEgr = Math.floor(Math.random() * 60);
+      d.egrError = Math.floor(Math.random() * 10) - 5;
+      d.commandedEvapPurge = Math.floor(Math.random() * 50);
+      d.o2B1S1EquivRatio = Math.round((0.8 + Math.random() * 0.4) * 100) / 100;
+      d.o2B1S2EquivRatio = Math.round((0.8 + Math.random() * 0.4) * 100) / 100;
+      d.actualEgr = Math.floor(Math.random() * 50);
+      d.egrErrorDuty = Math.floor(Math.random() * 10) - 5;
+      d.commandedEvapPurgeFlow = Math.floor(Math.random() * 50);
+      d.milOn = false;
+      d.dtcCount = 0;
+      d.actualEngineTorque = 20 + Math.floor(Math.random() * 60);
+      d.driverDemandTorque = 25 + Math.floor(Math.random() * 70);
+      d.engineReferenceTorque = 300;
+      d.turboBoostPressure = Math.floor(Math.random() * 150);
+      d.odometer = 0;
+      d.hybridBatteryLife = 0;
+      d.dpfDifferentialPressure = 0;
+      d.dpfTemp = 0;
+      d.exhaustPressure = 0;
+      d.turboRpm = 0;
+      d.chargeAirCoolerTemp = 0;
+      d.throttlePositionG = 0;
+      this.updateTripData(d.speed);
+      this.addLogEntry(d);
       if (this.dataCallback) {
-        this.dataCallback({...this.currentData});
+        this.dataCallback({...d});
       }
       this.pollTimer = setTimeout(simPoll, 300);
     };
@@ -839,31 +866,46 @@ class OBD2Service {
     return {...this.currentData};
   }
 
+  // Write queue - tüm komutlar sırayla işlenir
+  private async enqueueWrite(fn: () => Promise<void>): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this._writeQueue.push(async () => {
+        try { await fn(); resolve(); }
+        catch (e) { reject(e); }
+      });
+      if (!this._writeBusy) this._processQueue();
+    });
+  }
+
+  private async _processQueue() {
+    this._writeBusy = true;
+    while (this._writeQueue.length > 0) {
+      const fn = this._writeQueue.shift();
+      if (fn) await fn();
+    }
+    this._writeBusy = false;
+  }
+
   private async sendCommand(cmd: string): Promise<string> {
     const t = this.transport;
-    if (!t || !this._isConnected) {
-      return '';
-    }
+    if (!t || !this._isConnected) return '';
     try {
-      const stale = await t.readAll();
-      if (stale) {}
-      await t.write(cmd + '\r');
-      await this.delay(150);
+      await t.readAll();
+      await this.enqueueWrite(() => t.write(cmd + '\r'));
+      await this.delay(WRITE_DELAY);
       let response = '';
       let emptyCount = 0;
-      for (let i = 0; i < 25; i++) {
-        await this.delay(80);
+      for (let i = 0; i < READ_MAX_POLLS; i++) {
+        await this.delay(READ_POLL_INTERVAL);
         const chunk = await t.readAll();
         if (chunk) {
           response += chunk;
           emptyCount = 0;
         } else {
           emptyCount++;
-          if (emptyCount > 5 && response.length > 0) break;
+          if (emptyCount > READ_EMPTY_LIMIT && response.length > 0) break;
         }
-        if (response.includes('>')) {
-          break;
-        }
+        if (response.includes('>')) break;
       }
       let clean = response.replace(/\d+:/g, '').replace(/>/g, '').replace(/\s/g, '').trim();
       if (cmd.startsWith('01') && cmd.length === 4) {
@@ -879,7 +921,6 @@ class OBD2Service {
         this._isConnected = false;
         this.setConnectionState('disconnected', 'Bağlantı koptu');
       }
-      console.error('Command failed:', cmd, e);
       return '';
     }
   }
@@ -912,21 +953,21 @@ class OBD2Service {
 
   private async initializeELM327(): Promise<boolean> {
     await this.sendCommand('ATZ');
-    await this.delay(500);
+    await this.delay(ATZ_RESET_DELAY);
     await this.sendCommand('ATE0');
-    await this.delay(200);
+    await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATL0');
-    await this.delay(100);
+    await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATS0');
-    await this.delay(100);
+    await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATAT1');
-    await this.delay(100);
+    await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATST32');
-    await this.delay(100);
+    await this.delay(AT_CMD_DELAY);
 
     this.supportedPids.clear();
     await this.sendCommand('ATSP0');
-    await this.delay(800);
+    await this.delay(ATSP_DELAY);
     const testResp = await this.sendCommand('0100');
     if (testResp && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
       console.log('initializeELM327: ECU yanıt verdi');
@@ -939,7 +980,7 @@ class OBD2Service {
     const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
     for (const proto of tryProtocols) {
       await this.sendCommand(`ATSP${proto}`);
-      await this.delay(400);
+      await this.delay(AT_CMD_DELAY);
       const resp = await this.sendCommand('0100');
       if (resp && !resp.includes('UNABLE') && !resp.includes('NO DATA') && !resp.includes('?')) {
         this.currentProtocolLabel = PROTOCOL_LABELS[proto] || `SP ${proto}`;
@@ -1063,10 +1104,6 @@ class OBD2Service {
   private pollCycle = 0;
   private pollErrorCount = 0;
 
-  private FAST_WRITE_DELAY = 5;
-  private FAST_POLL_INTERVAL = 10;
-  private FAST_MAX_POLLS = 20;
-
   private canPoll(pid: string): boolean {
     return this.supportedPids.size === 0 || this.supportedPids.has(pid);
   }
@@ -1078,14 +1115,12 @@ class OBD2Service {
     const t = this.transport;
     if (!t || !this._isConnected) return '';
     try {
-      const stale = await t.readAll();
-      if (stale) {}
-
-      await t.write(cmd + '\r');
-      await this.delay(this.FAST_WRITE_DELAY);
+      await t.readAll();
+      await this.enqueueWrite(() => t.write(cmd + '\r'));
+      await this.delay(FAST_WRITE_DELAY);
       let response = '';
-      for (let i = 0; i < this.FAST_MAX_POLLS; i++) {
-        await this.delay(this.FAST_POLL_INTERVAL);
+      for (let i = 0; i < FAST_MAX_POLLS; i++) {
+        await this.delay(FAST_POLL_INTERVAL);
         const chunk = await t.readAll();
         if (chunk) response += chunk;
         if (response.includes('>')) break;
@@ -2322,17 +2357,6 @@ class OBD2Service {
       const B = parseInt(clean.substring(6, 8), 16);
       if (!isNaN(A) && !isNaN(B)) {
         this.currentData.fuelRailGaugePressure = (A * 256 + B) * 10;
-      }
-    }
-  }
-
-  private parseInjectionTiming(response: string) {
-    const clean = response.replace(/\s/g, '');
-    if (clean.startsWith('415D') && clean.length >= 8) {
-      const A = parseInt(clean.substring(4, 6), 16);
-      const B = parseInt(clean.substring(6, 8), 16);
-      if (!isNaN(A) && !isNaN(B)) {
-        this.currentData.injectionTiming = ((A * 256 + B) / 128) - 210;
       }
     }
   }

@@ -289,14 +289,8 @@ function MainScreen() {
     else {
       setStatusText('Bağlantı Hatası!');
       Alert.alert('Bağlantı Hatası', 'Cihaza bağlanılamadı. Cihazın açık ve araç kontağının açık olduğundan emin olun.', [
-        {text: 'İptal', style: 'cancel'},
-        {text: 'Tekrar Dene', onPress: () => connectToDevice(device)},
-        {text: 'Kaldır ve Yeniden Eşle', onPress: async () => {
-          try {
-            await obd2Service.unpairDevice(device.address);
-            Alert.alert('Kaldırıldı', 'Cihaz eşleşmesi kaldırıldı. Telefon Bluetooth ayarlarından tekrar eşleştirin.');
-          } catch { Alert.alert('Hata', 'Cihaz kaldırılamadı'); }
-        }},
+        {text: 'Kapat', style: 'cancel'},
+        {text: 'Bluetooth Ayarları', onPress: () => obd2Service.openBluetoothSettings()},
       ]);
     }
   };

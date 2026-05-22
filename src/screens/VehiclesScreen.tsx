@@ -94,27 +94,29 @@ export default function VehiclesScreen({onBack}: Props) {
       <Modal visible={showForm} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, {backgroundColor: colors.bg}]}>
-            <Text style={[styles.modalTitle, {color: colors.text}]}>{editId ? 'ARACI DÜZENLE' : 'YENİ ARAÇ'}</Text>
-            <Text style={[styles.label, {color: colors.textDim}]}>Araç Adı *</Text>
-            <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={name} onChangeText={setName} placeholder="Örn: Arabam" placeholderTextColor={colors.textMuted} />
-            <Text style={[styles.label, {color: colors.textDim}]}>Plaka</Text>
-            <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={plate} onChangeText={setPlate} placeholder="34 AB 123" placeholderTextColor={colors.textMuted} autoCapitalize="characters" />
-            <Text style={[styles.label, {color: colors.textDim}]}>Marka</Text>
-            <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={brand} onChangeText={setBrand} placeholder="Ford" placeholderTextColor={colors.textMuted} />
-            <Text style={[styles.label, {color: colors.textDim}]}>Model</Text>
-            <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={model} onChangeText={setModel} placeholder="Focus" placeholderTextColor={colors.textMuted} />
-            <Text style={[styles.label, {color: colors.textDim}]}>Yıl</Text>
-            <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={year} onChangeText={setYear} placeholder="2020" placeholderTextColor={colors.textMuted} keyboardType="number-pad" />
-            <Text style={[styles.label, {color: colors.textDim}]}>VIN</Text>
-            <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={vin} onChangeText={setVin} placeholder="17 haneli VIN" placeholderTextColor={colors.textMuted} autoCapitalize="characters" maxLength={17} />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={[styles.btn, {backgroundColor: colors.card, borderColor: colors.cardBorder}]} onPress={() => setShowForm(false)}>
-                <Text style={[styles.btnText, {color: colors.textMuted}]}>İPTAL</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.btn, styles.btnPrimary, {backgroundColor: colors.accent + '22', borderColor: colors.accent}]} onPress={save}>
-                <Text style={[styles.btnText, {color: colors.accent}]}>KAYDET</Text>
-              </TouchableOpacity>
-            </View>
+            <ScrollView contentContainerStyle={{paddingBottom: 20}}>
+              <Text style={[styles.modalTitle, {color: colors.text}]}>{editId ? 'ARACI DÜZENLE' : 'YENİ ARAÇ'}</Text>
+              <Text style={[styles.label, {color: colors.textDim}]}>Araç Adı *</Text>
+              <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={name} onChangeText={setName} placeholder="Örn: Arabam" placeholderTextColor={colors.textMuted} />
+              <Text style={[styles.label, {color: colors.textDim}]}>Plaka</Text>
+              <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={plate} onChangeText={setPlate} placeholder="34 AB 123" placeholderTextColor={colors.textMuted} autoCapitalize="characters" />
+              <Text style={[styles.label, {color: colors.textDim}]}>Marka</Text>
+              <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={brand} onChangeText={setBrand} placeholder="Ford" placeholderTextColor={colors.textMuted} />
+              <Text style={[styles.label, {color: colors.textDim}]}>Model</Text>
+              <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={model} onChangeText={setModel} placeholder="Focus" placeholderTextColor={colors.textMuted} />
+              <Text style={[styles.label, {color: colors.textDim}]}>Yıl</Text>
+              <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={year} onChangeText={setYear} placeholder="2020" placeholderTextColor={colors.textMuted} keyboardType="number-pad" />
+              <Text style={[styles.label, {color: colors.textDim}]}>VIN</Text>
+              <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={vin} onChangeText={setVin} placeholder="17 haneli VIN" placeholderTextColor={colors.textMuted} autoCapitalize="characters" maxLength={17} />
+              <View style={styles.modalButtons}>
+                <TouchableOpacity style={[styles.btn, {backgroundColor: colors.card, borderColor: colors.cardBorder}]} onPress={() => setShowForm(false)}>
+                  <Text style={[styles.btnText, {color: colors.textMuted}]}>İPTAL</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.btn, styles.btnPrimary, {backgroundColor: colors.accent + '22', borderColor: colors.accent}]} onPress={save}>
+                  <Text style={[styles.btnText, {color: colors.accent}]}>KAYDET</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
