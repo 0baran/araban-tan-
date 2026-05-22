@@ -6,6 +6,17 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.12',
+    date: '22 Mayıs 2026',
+    items: [
+      'Güncelleme bildirimi eklendi: yeni sürüm geldiğinde sistem notification gönderir.',
+      'Veri okuma sorunları giderildi: CAN çok parçalı yanıt desteği eklendi (modern araçlar artık veri gönderiyor).',
+      'ELM327 zaman aşımı iyileştirildi (ATST32→ATST64) ve adaptif zamanlama kapatıldı (ATAT1→ATAT0).',
+      'Rölantide sensör donması düzeltildi: extended sensörler periyodik okunmaya devam ediyor.',
+      'Güncelleme kontrolü GitHub API üzerinden yapılıyor (cache sorunu giderildi).'
+    ],
+  },
+  {
     version: '2.9.11',
     date: '22 Mayıs 2026',
     items: [

@@ -27,7 +27,7 @@ import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 
-const APP_VERSION = '2.9.11';
+const APP_VERSION = '2.9.12';
 
 export default function App() {
   return (
