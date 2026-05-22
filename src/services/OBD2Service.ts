@@ -94,6 +94,7 @@ export type OBD2Data = {
   engineFrictionTorque: number;
   distanceSinceDTCClearHighRes: number;
   throttlePositionG: number;
+  _validKeys?: string[];
 };
 
 export type MonitorStatus = {
@@ -391,7 +392,11 @@ class OBD2Service {
   private dataCallback: OBD2Callback | null = null;
   private connectionCallback: ConnectionCallback | null = null;
   private _vin: string = '';
-  private currentData: OBD2Data = {
+  
+  private validKeysArray: string[] = ['rpm', 'speed', 'batteryVoltage', 'coolantTemp'];
+  private validKeys = new Set<string>(this.validKeysArray);
+
+  private currentData: OBD2Data = new Proxy({
     rpm: 0, speed: 0, coolantTemp: 0, engineLoad: 0, intakeTemp: 0,
     maf: 0, throttlePos: 0, fuelLevel: 0, fuelPressure: 0, timingAdvance: 0,
     map: 0, batteryVoltage: 0, shortTermFuelTrim: 0, longTermFuelTrim: 0, commandedAFR: 0, barometricPressure: 0, absoluteLoad: 0,
@@ -409,7 +414,16 @@ class OBD2Service {
     engineReferenceTorque: 0, turboBoostPressure: 0, odometer: 0, hybridBatteryLife: 0,
     dpfDifferentialPressure: 0, dpfTemp: 0, exhaustPressure: 0, turboRpm: 0, chargeAirCoolerTemp: 0,
     fuelRailGaugePressure: 0, injectionTiming: 0, engineFrictionTorque: 0, distanceSinceDTCClearHighRes: 0, throttlePositionG: 0,
-  };
+  } as OBD2Data, {
+    set: (target, prop, value) => {
+      if (typeof prop === 'string' && prop !== '_validKeys' && !this.validKeys.has(prop)) {
+        this.validKeys.add(prop);
+        this.validKeysArray = Array.from(this.validKeys);
+      }
+      target[prop as keyof OBD2Data] = value as never;
+      return true;
+    }
+  });
   private logBuffer: string[] = [];
   private logMax = 6000;
   private tripStartTime = 0;
@@ -787,7 +801,16 @@ class OBD2Service {
         exhaustPressure: 0,
         turboRpm: 0,
         chargeAirCoolerTemp: 0,
-      };
+        throttlePositionG: 0,
+        _validKeys: [],
+      }, {
+        set(target, prop, value) {
+          if (prop !== '_validKeys' && !target._validKeys.includes(prop)) return true;
+          target[prop] = value;
+          return true;
+        }
+      });
+      this.currentData._validKeys = this.validKeysArray;
       this.updateTripData(this.currentData.speed);
       this.addLogEntry(this.currentData);
       if (this.dataCallback) {
@@ -1273,6 +1296,11 @@ class OBD2Service {
         }
 
         this.pollTimer = setTimeout(poll, isIdle ? 1000 : 25);
+        if (this.dataCallback && (Date.now() - this.lastCallbackTime > 250)) {
+          this.currentData._validKeys = this.validKeysArray;
+          this.dataCallback({...this.currentData});
+          this.lastCallbackTime = Date.now();
+        }
         this.pollErrorCount = 0;
 
       } catch (e) {
@@ -2363,7 +2391,11 @@ class OBD2Service {
     };
     this.logBuffer = [];
     this.resetTripData();
+    this.validKeys.clear();
+    ['rpm', 'speed', 'batteryVoltage', 'coolantTemp'].forEach(k => this.validKeys.add(k));
+    this.validKeysArray = Array.from(this.validKeys);
     if (this.dataCallback) {
+      this.currentData._validKeys = this.validKeysArray;
       this.dataCallback({...this.currentData});
     }
     this.setConnectionState('disconnected');
