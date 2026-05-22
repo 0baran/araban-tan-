@@ -28,7 +28,7 @@ import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 
-const APP_VERSION = '2.9.19';
+const APP_VERSION = '2.9.20';
 
 export default function App() {
   return (
@@ -287,8 +287,17 @@ function MainScreen() {
     const success = await obd2Service.connectBluetooth(device.address, device.name);
     if (success) { setIsConnected(true); setStatusText('Bağlandı: ' + device.name); }
     else {
-      Alert.alert('Hata', 'Cihaza bağlanılamadı. Cihazın açık olduğundan emin olun.');
       setStatusText('Bağlantı Hatası!');
+      Alert.alert('Bağlantı Hatası', 'Cihaza bağlanılamadı. Cihazın açık ve araç kontağının açık olduğundan emin olun.', [
+        {text: 'İptal', style: 'cancel'},
+        {text: 'Tekrar Dene', onPress: () => connectToDevice(device)},
+        {text: 'Kaldır ve Yeniden Eşle', onPress: async () => {
+          try {
+            await obd2Service.unpairDevice(device.address);
+            Alert.alert('Kaldırıldı', 'Cihaz eşleşmesi kaldırıldı. Telefon Bluetooth ayarlarından tekrar eşleştirin.');
+          } catch { Alert.alert('Hata', 'Cihaz kaldırılamadı'); }
+        }},
+      ]);
     }
   };
 

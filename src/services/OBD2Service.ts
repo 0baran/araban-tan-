@@ -162,7 +162,7 @@ type OBD2Callback = (data: OBD2Data) => void;
 type ConnectionCallback = (state: ConnectionState, message?: string) => void;
 
 type Transport = {
-  connect(): Promise<boolean>;
+  connect(onProgress?: (msg: string) => void): Promise<boolean>;
   disconnect(): Promise<void>;
   write(data: string): Promise<void>;
   readAll(): Promise<string>;
@@ -177,33 +177,37 @@ class BluetoothTransport implements Transport {
     this.address = address;
   }
 
-  async connect(): Promise<boolean> {
-    try {
-      this.device = await RNBluetoothClassic.connectToDevice(this.address, {
-        CONNECTOR_TYPE: 'rfcomm',
-        DELIMITER: '\r',
-        SECURE_SOCKET: false,
-      } as any);
-      return !!this.device;
-    } catch (e1) {
-      console.log('BT connect try 1 failed:', e1);
+  async connect(onProgress?: (msg: string) => void): Promise<boolean> {
+    onProgress?.('Önceki bağlantılar temizleniyor...');
+    try { await RNBluetoothClassic.disconnectFromDevice(this.address); } catch (_) {}
+    await new Promise(r => setTimeout(r, 200));
+
+    const attempts: {opts: any; label: string}[] = [
+      {opts: {CONNECTOR_TYPE: 'rfcomm', DELIMITER: '\r', SECURE_SOCKET: false} as any, label: 'Normal bağlantı'},
+      {opts: {SECURE_SOCKET: true, DELIMITER: '\r'} as any, label: 'Güvenli bağlantı'},
+    ];
+    for (let i = 0; i < attempts.length; i++) {
+      const label = `${i + 1}/${attempts.length} - ${attempts[i].label}`;
+      onProgress?.(`${label} (en fazla 8sn)...`);
       try {
-        this.device = await RNBluetoothClassic.connectToDevice(this.address, {
-          SECURE_SOCKET: true,
-          DELIMITER: '\r',
-        } as any);
+        this.device = await Promise.race([
+          RNBluetoothClassic.connectToDevice(this.address, attempts[i].opts),
+          new Promise<BluetoothDevice>((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout')), 8000),
+          ),
+        ]);
+        onProgress?.('Bağlantı başarılı');
         return !!this.device;
-      } catch (e2) {
-        console.log('BT connect try 2 failed:', e2);
-        try {
-          this.device = await RNBluetoothClassic.connectToDevice(this.address);
-          return !!this.device;
-        } catch (e3) {
-          console.log('BT connect try 3 failed:', e3);
-          return false;
-        }
+      } catch (e: any) {
+        const reason = e?.message?.includes('Timeout') ? 'süre aşımı' : 'hata';
+        console.log(`BT connect try ${i + 1} failed:`, e);
+        onProgress?.(`${label} başarısız (${reason})`);
+        try { await RNBluetoothClassic.disconnectFromDevice(this.address); } catch (_) {}
+        await new Promise(r => setTimeout(r, 300));
       }
     }
+    onProgress?.('Bağlantı denemeleri başarısız');
+    return false;
   }
 
   async disconnect(): Promise<void> {
@@ -245,7 +249,7 @@ class UsbTransport implements Transport {
   private buffer = '';
   private _subscription: any = null;
 
-  async connect(): Promise<boolean> {
+  async connect(_onProgress?: (msg: string) => void): Promise<boolean> {
     const mod = require('react-native-usb-serialport');
     this.RNSerialport = mod.RNSerialport;
     if (!this.RNSerialport) throw new Error('react-native-usb-serialport modülü bulunamadı');
@@ -301,7 +305,7 @@ class WiFiTransport implements Transport {
     this.port = port;
   }
 
-  async connect(): Promise<boolean> {
+  async connect(_onProgress?: (msg: string) => void): Promise<boolean> {
     try {
       this.TcpSocket = require('react-native-tcp-socket');
     } catch {
@@ -539,6 +543,16 @@ class OBD2Service {
     } catch { return false; }
   }
 
+  async unpairDevice(address: string): Promise<boolean> {
+    try {
+      return await RNBluetoothClassic.unpairDevice(address);
+    } catch {
+      // unpair başarısız olursa disconnect dene
+      try { await RNBluetoothClassic.disconnectFromDevice(address); } catch {}
+      return false;
+    }
+  }
+
   openBluetoothSettings() {
     try {
       RNBluetoothClassic.openBluetoothSettings();
@@ -553,20 +567,23 @@ class OBD2Service {
       this._connectionType = 'bluetooth';
       this.setConnectionState('connecting', 'Bluetooth bağlanıyor...');
       this.transport = new BluetoothTransport(deviceAddress);
-      const connected = await this.transport.connect();
+      const connected = await this.transport.connect((msg) => {
+        this.setConnectionState('connecting', msg);
+      });
       if (!connected) {
         await this.disconnectTransport();
         this.setConnectionState('error', 'Bluetooth cihazına bağlanılamadı');
         return false;
       }
       this.isSimulating = false;
+      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
+        this._isConnected = false;
         this.setConnectionState('error', 'ELM327 başlatılamadı');
         return false;
       }
-      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -658,6 +675,17 @@ class OBD2Service {
       return false;
     }
     this._lastConfig = config;
+    // Önce native state temizle
+    if (config.type === 'bluetooth' && config.address) {
+      try { await RNBluetoothClassic.disconnectFromDevice(config.address); } catch (_) {}
+      try {
+        const existing = await RNBluetoothClassic.getConnectedDevices();
+        for (const d of existing) {
+          if (d.address === config.address) try { await d.disconnect(); } catch {}
+        }
+      } catch {}
+      await new Promise(r => setTimeout(r, 300));
+    }
     if (config.type === 'bluetooth' && config.address) {
       return this.connectBluetooth(config.address, config.name);
     }

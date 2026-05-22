@@ -6,6 +6,13 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.20',
+    date: '22 Mayıs 2026',
+    items: [
+      'Kritik Hata Çözümü: Önceki sürümde oluşan Bluetooth ile bağlanamama ve ELM327 başlatılamama sorunu (bağlantı bayrağı sırası) düzeltildi.'
+    ],
+  },
+  {
     version: '2.9.18',
     date: '22 Mayıs 2026',
     items: [
