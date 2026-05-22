@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import {useTheme} from '../services/ThemeContext';
 import {obd2Service, DTC} from '../services/OBD2Service';
-import {getDTCCategory, getDTCCategoryColor, getDTCSubCategory} from '../services/DTCDatabase';
+import {getDTCCategory, getDTCCategoryColor, getDTCSubCategory, DTC_AI_ADVICE} from '../services/DTCDatabase';
 
 interface Props {
   onBack: () => void;
@@ -167,6 +167,23 @@ export default function ErrorCodesScreen({onBack}: Props) {
                   {selected.code}
                 </Text>
                 <Text style={[styles.modalDesc, {color: colors.textDim}]}>{selected.description}</Text>
+                
+                {DTC_AI_ADVICE[selected.code] && (
+                  <View style={styles.aiCard}>
+                    <View style={styles.aiHeader}>
+                      <Text style={styles.aiTitle}>🤖 Yapay Zeka Arıza Asistanı</Text>
+                    </View>
+                    <Text style={styles.aiCause}>
+                      <Text style={styles.aiLabel}>Olası Sebep: </Text>
+                      {DTC_AI_ADVICE[selected.code].cause}
+                    </Text>
+                    <Text style={styles.aiAdviceText}>
+                      <Text style={styles.aiLabel}>Usta Tavsiyesi: </Text>
+                      {DTC_AI_ADVICE[selected.code].advice}
+                    </Text>
+                  </View>
+                )}
+
                 <View style={styles.modalActions}>
                   <TouchableOpacity
                     style={[styles.modalBtn, {backgroundColor: 'rgba(0,191,255,0.15)', borderColor: '#00bfff'}]}
@@ -255,4 +272,41 @@ const styles = StyleSheet.create({
   categorySummary: {flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12},
   categoryBadge: {flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1},
   badgeCount: {fontSize: 11, fontWeight: '900', marginLeft: 4},
+  aiCard: {
+    backgroundColor: 'rgba(0, 191, 255, 0.08)',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 191, 255, 0.3)',
+  },
+  aiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 191, 255, 0.2)',
+    paddingBottom: 8,
+    marginBottom: 10,
+  },
+  aiTitle: {
+    color: '#00bfff',
+    fontSize: 14,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  aiCause: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 13,
+    lineHeight: 20,
+    marginBottom: 10,
+  },
+  aiAdviceText: {
+    color: '#7bed9f',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  aiLabel: {
+    fontWeight: 'bold',
+    color: '#fff',
+  },
 });

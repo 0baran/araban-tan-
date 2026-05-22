@@ -6,6 +6,7 @@ import {
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';
+import {voiceAlertService} from '../services/VoiceAlertService';
 
 interface Props {
   onBack: () => void;
@@ -118,6 +119,7 @@ export default function LiveDataScreen({onBack}: Props) {
   const [category, setCategory] = useState('');
   const [pinned, setPinned] = useState<string[]>([]);
   const [listView, setListView] = useState(false);
+  const [isHudMode, setIsHudMode] = useState(false);
   const [fuelCost, setFuelCost] = useState(0);
   const [fuelUsed, setFuelUsed] = useState(0);
   const fuelPriceRef = useRef(0);
@@ -132,6 +134,7 @@ export default function LiveDataScreen({onBack}: Props) {
     });
     obd2Service.onDataUpdate(d => {
       setData({...d});
+      voiceAlertService.checkAlerts(d);
       const now = Date.now();
       if (lastUpdateRef.current > 0 && d.fuelRate > 0) {
         const dt = (now - lastUpdateRef.current) / 1000;
@@ -177,21 +180,25 @@ export default function LiveDataScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
-          <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>
-        </TouchableOpacity>
-        <Text style={[styles.title, {color: colors.text}]}>CANLI VERİ</Text>
-        <View style={styles.headerRight}>
-          <TouchableOpacity onPress={() => setListView(v => !v)} style={styles.viewToggle}>
-            <Text style={styles.viewToggleText}>{listView ? '📰' : '📱'}</Text>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: isHudMode ? '#000000' : colors.bg}]}>
+      <View style={{flex: 1, transform: isHudMode ? [{scaleX: -1}] : undefined}}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onBack} style={styles.backButton}>
+            <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>
           </TouchableOpacity>
-          <Text style={[styles.countText, {color: colors.textMuted}]}>{filtered.length}</Text>
+          <Text style={[styles.title, {color: colors.text}]}>CANLI VERİ</Text>
+          <View style={styles.headerRight}>
+            <TouchableOpacity onPress={() => setIsHudMode(v => !v)} style={styles.viewToggle}>
+              <Text style={styles.viewToggleText}>{isHudMode ? '🪞' : 'HUD'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setListView(v => !v)} style={styles.viewToggle}>
+              <Text style={styles.viewToggleText}>{listView ? '📰' : '📱'}</Text>
+            </TouchableOpacity>
+            <Text style={[styles.countText, {color: colors.textMuted}]}>{filtered.length}</Text>
+          </View>
         </View>
-      </View>
 
-      {fuelPriceRef.current > 0 && fuelUsed > 0 && (
+        {fuelPriceRef.current > 0 && fuelUsed > 0 && (
         <View style={[styles.fuelCostRow, {backgroundColor: colors.card, borderColor: 'rgba(255,165,2,0.2)'}]}>
           <Text style={[styles.fuelCostLabel, {color: colors.textDim}]}>⛽ Toplam Yakıt</Text>
           <Text style={styles.fuelCostValue}>
@@ -266,6 +273,7 @@ export default function LiveDataScreen({onBack}: Props) {
           <Text style={[styles.noResult, {color: colors.textMuted}]}>Eşleşen sensör bulunamadı.</Text>
         )}
       </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

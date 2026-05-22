@@ -6,9 +6,19 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.27',
+    date: '22 Mayıs 2026',
+    items: [
+      'HUD (Ayna) Modu: Gece sürüşlerinde verileri ön cama yansıtmak için Canlı Veri ekranına HUD modu eklendi.',
+      'Akıllı Sesli Uyarı: Motor sıcaklığı (105°C), Akü voltajı (11.5V) ve Hız limiti (120km/h) aşıldığında telefon artık Türkçe konuşarak uyarıyor.',
+      'Yapay Zeka Arıza Asistanı: Sık karşılaşılan hata kodlarına tıklandığında olası sebepleri ve tamirci tavsiyelerini gösteren akıllı asistan eklendi.'
+    ],
+  },
+  {
     version: '2.9.26',
     date: '22 Mayıs 2026',
     items: [
+      'Akıllı Filtreleme: Canlı veri ekranında artık sadece aracınızın beyninin desteklediği (okunabilen) veriler gösteriliyor. Boş sensörler gizleniyor.',
       'Ekstra PID Eklentisi: Google taraması sonucu daha nadir 5 sensör daha sisteme eklendi.',
       'Yeni Eklenenler: Yakıt Hattı Gösterge Basıncı, Enjeksiyon Zamanlaması, Motor Sürtünme Torku, Yüksek Çözünürlüklü Mesafe ve Gaz Kelebeği Pozisyonu G.'
     ],

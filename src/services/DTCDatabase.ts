@@ -750,3 +750,31 @@ export function getDTCSubCategory(code: string): string {
   if (num >= 2000 && num < 3000) return 'İleri Diagnostik';
   return 'Diğer';
 }
+
+export interface AimechanicAdvice {
+  cause: string;
+  advice: string;
+}
+
+export const DTC_AI_ADVICE: Record<string, AimechanicAdvice> = {
+  P0171: {
+    cause: "Sistem Çok Fakir. Motor yeterince yakıt alamıyor veya fazla hava alıyor.",
+    advice: "1. MAF sensörünü temizleyin. 2. Emme manifoldunda veya vakum hortumlarında kaçak olup olmadığını kontrol edin. 3. Yakıt filtresi veya pompası yetersiz basınç veriyor olabilir."
+  },
+  P0300: {
+    cause: "Rastgele veya Birden Fazla Silindirde Tekleme.",
+    advice: "1. Buji ve buji kablolarını (veya bobinleri) kontrol edin. 2. Yakıt enjektörlerinde tıkanıklık olabilir. 3. EGR valfi sızıntı yapıyor olabilir."
+  },
+  P0420: {
+    cause: "Katalitik Konvertör Verimliliği Düşük.",
+    advice: "1. Egzoz sızıntısı olup olmadığını kontrol edin. 2. Arka Oksijen (O2) sensörü arızalı olabilir. 3. En kötü senaryoda katalitik konvertör ömrünü tamamlamış veya tıkanmış olabilir."
+  },
+  P0102: {
+    cause: "MAF (Kütle Hava Akışı) Sensörü Düşük Voltaj.",
+    advice: "1. Hava filtresinin tıkalı olup olmadığını kontrol edin. 2. MAF sensörünün fişini ve kablolarını kontrol edin. 3. Sensörü özel MAF temizleyici ile temizlemeyi deneyin."
+  },
+  P0455: {
+    cause: "Evap Sisteminde Büyük Kaçak.",
+    advice: "1. Benzin kapağının gevşek veya contasının yırtık olup olmadığına bakın (En yaygın sebep!). 2. Karbon kanister hortumlarını kontrol edin."
+  }
+};
