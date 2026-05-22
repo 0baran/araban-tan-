@@ -416,6 +416,12 @@ function MainScreen() {
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>HATA KODLARI</Text>
                 <Text style={[styles.featureHint, {color: colors.textMuted}]}>DTC Tara</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('imreadiness')}>
+                <Text style={styles.featureIcon}>🌍</Text>
+                <Text style={[styles.featureValue, {fontSize: 18, color: '#1dd1a1'}]}>EMİSYON</Text>
+                <Text style={[styles.featureLabel, {color: colors.textDim}]}>TESTE HAZIRLIK</Text>
+                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Smog Check (I/M)</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('performance')}>
                 <Text style={styles.featureIcon}>🏁</Text>
                 <Text style={[styles.featureValue, {fontSize: 22, color: colors.text}]}>{hp} BG</Text>
@@ -427,12 +433,6 @@ function MainScreen() {
                 <Text style={[styles.featureValue, {fontSize: 20, color: colors.text}]}>BİLGİ</Text>
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
                 <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Mode 09</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('imreadiness')}>
-                <Text style={styles.featureIcon}>🌍</Text>
-                <Text style={[styles.featureValue, {fontSize: 18, color: '#1dd1a1'}]}>EMİSYON</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>TESTE HAZIRLIK</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Smog Check (I/M)</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
                 <Text style={styles.featureIcon}>❄️</Text>
