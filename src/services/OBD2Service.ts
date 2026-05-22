@@ -1826,6 +1826,10 @@ class OBD2Service {
     };
   }
 
+  isTripRecording(): boolean {
+    return this.tripStartTime > 0;
+  }
+
   resetTripData() {
     this.tripStartTime = Date.now();
     this.tripDistanceKm = 0;

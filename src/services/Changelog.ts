@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.15',
+    date: '22 Mayıs 2026',
+    items: [
+      'Trip Özeti eklendi: mesafe, yakıt, ortalama tüketim, hız, maks. hız, yakıt maliyeti (TL).',
+      'Trip verileri bağlantı anından itibaren otomatik kaydedilir.',
+      'Ana sayfaya Trip Özeti butonu eklendi.'
+    ],
+  },
+  {
     version: '2.9.14',
     date: '22 Mayıs 2026',
     items: [

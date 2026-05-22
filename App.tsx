@@ -23,11 +23,12 @@ import DataLogScreen from './src/screens/DataLogScreen';
 import LogScreen from './src/screens/LogScreen';
 import ChangelogScreen from './src/screens/ChangelogScreen';
 import VehiclesScreen from './src/screens/VehiclesScreen';
+import TripSummaryScreen from './src/screens/TripSummaryScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 
-const APP_VERSION = '2.9.14';
+const APP_VERSION = '2.9.15';
 
 export default function App() {
   return (
@@ -331,6 +332,7 @@ function MainScreen() {
       {currentScreen === 'log' && <LogScreen {...screenProps} />}
       {currentScreen === 'changelog' && <ChangelogScreen {...screenProps} />}
       {currentScreen === 'vehicles' && <VehiclesScreen {...screenProps} />}
+      {currentScreen === 'tripsummary' && <TripSummaryScreen {...screenProps} />}
 
       {!currentScreen && (
         <SafeAreaView edges={['top', 'bottom']} style={[styles.container, {backgroundColor: colors.bg}]}>
@@ -436,6 +438,10 @@ function MainScreen() {
 
             {/* DEBUG */}
             <View style={[styles.quickActions, {marginTop: 6}]}>
+              <TouchableOpacity style={[styles.quickAction, {backgroundColor: colors.card, borderColor: colors.cardBorder}]} onPress={() => navigate('tripsummary')}>
+                <Text style={styles.quickActionIcon}>📋</Text>
+                <Text style={[styles.quickActionText, {color: colors.text}]}>TRIP ÖZETI</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={[styles.quickAction, {backgroundColor: colors.card, borderColor: colors.cardBorder}]} onPress={() => navigate('log')}>
                 <Text style={styles.quickActionIcon}>📋</Text>
                 <Text style={[styles.quickActionText, {color: colors.text}]}>HATA LOG</Text>
