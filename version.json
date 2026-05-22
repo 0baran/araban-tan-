@@ -1,5 +1,5 @@
-﻿{
+{
     "url":  "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.28.apk",
     "version":  "2.9.28",
-    "notes":  "v2.9.28: Android ana ekran widget\u0131 eklendi. Ba\u011flant\u0131 optimizasyonlar\u0131. T\u00fcm cihazlarla uyumluluk iyile\u015ftirmeleri."
+    "notes":  "v2.9.28: OTA Guncelleme Hatasi Giderildi, HUD (Ayna) Modu Eklendi, Akilli Sesli Uyari Sistemi Aktif Edildi, Yapay Zeka Ariza Asistani Gelistirildi."
 }

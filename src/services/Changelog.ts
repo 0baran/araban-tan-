@@ -6,7 +6,7 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
-    version: '2.9.27',
+    version: '2.9.28',
     date: '22 Mayıs 2026',
     items: [
       'HUD (Ayna) Modu: Gece sürüşlerinde verileri ön cama yansıtmak için Canlı Veri ekranına HUD modu eklendi.',
