@@ -6,6 +6,13 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.22',
+    date: '22 Mayıs 2026',
+    items: [
+      'Performans Optimizasyonu: Veri okuma hızı (Polling) inanılmaz derecede artırıldı! Rölanti ve bekleme süreleri kısıtlamaları kaldırılarak 300ms olan döngü gecikmesi 25ms seviyesine düşürüldü.'
+    ],
+  },
+  {
     version: '2.9.21',
     date: '22 Mayıs 2026',
     items: [

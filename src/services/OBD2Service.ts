@@ -1018,9 +1018,9 @@ class OBD2Service {
   private pollCycle = 0;
   private pollErrorCount = 0;
 
-  private FAST_WRITE_DELAY = 15;
-  private FAST_POLL_INTERVAL = 25;
-  private FAST_MAX_POLLS = 8;
+  private FAST_WRITE_DELAY = 5;
+  private FAST_POLL_INTERVAL = 10;
+  private FAST_MAX_POLLS = 20;
 
   private canPoll(pid: string): boolean {
     return this.supportedPids.size === 0 || this.supportedPids.has(pid);
@@ -1091,14 +1091,14 @@ class OBD2Service {
         this.pollCycle++;
         const cycle = this.pollCycle;
 
-        const isIdle = this.currentData.speed === 0 && this.currentData.rpm < 1200;
+        const isIdle = this.currentData.speed === 0 && this.currentData.rpm === 0;
 
         const ok = await this.sendCritical();
         if (!ok || !this.pollRunning) return;
 
         if (isIdle) {
           if (this.pollCycle % 3 !== 0) {
-            this.pollTimer = setTimeout(poll, 2500);
+            this.pollTimer = setTimeout(poll, 1000);
             return;
           }
         }
@@ -1223,7 +1223,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 2500 : 300);
+        this.pollTimer = setTimeout(poll, isIdle ? 1000 : 25);
         this.pollErrorCount = 0;
 
       } catch (e) {

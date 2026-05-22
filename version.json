@@ -1,5 +1,5 @@
 {
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.21.apk",
-  "version": "2.9.21",
-  "notes": "v2.9.21: Araç bağlandıktan sonra verilerin ekranda görünmeme hatası ve Bluetooth timeout nedeniyle kilitlenme sorunu çözüldü!\n\nv2.9.20: Bluetooth bağlantı kopma sorunu ve başlatma hatası kesin olarak çözüldü!\n\nv2.9.10: Uygulama performansı 10 kat artırıldı."
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.22.apk",
+  "version": "2.9.22",
+  "notes": "v2.9.22: Veri okuma hızı (Polling) maksimum seviyeye çıkarıldı! Tepki süreleri 300ms'den 25ms'ye düşürüldü, inanılmaz akıcı bir deneyim!\n\nv2.9.21: Araç bağlandıktan sonra verilerin ekranda görünmeme hatası çözüldü!\n\nv2.9.20: Bluetooth bağlantı kopma sorunu kesin olarak çözüldü!"
 }
