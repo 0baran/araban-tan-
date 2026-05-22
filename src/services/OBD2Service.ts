@@ -190,12 +190,7 @@ class BluetoothTransport implements Transport {
       const label = `${i + 1}/${attempts.length} - ${attempts[i].label}`;
       onProgress?.(`${label} (en fazla 8sn)...`);
       try {
-        this.device = await Promise.race([
-          RNBluetoothClassic.connectToDevice(this.address, attempts[i].opts),
-          new Promise<BluetoothDevice>((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), 8000),
-          ),
-        ]);
+        this.device = await RNBluetoothClassic.connectToDevice(this.address, attempts[i].opts);
         onProgress?.('Bağlantı başarılı');
         return !!this.device;
       } catch (e: any) {
@@ -829,7 +824,7 @@ class OBD2Service {
           break;
         }
       }
-      let clean = response.replace(/\d+:/g, '').replace(/>/g, '').trim();
+      let clean = response.replace(/\d+:/g, '').replace(/>/g, '').replace(/\s/g, '').trim();
       if (cmd.startsWith('01') && cmd.length === 4) {
         const respPrefix = '41' + cmd.substring(2);
         const idx = clean.indexOf(respPrefix);
@@ -1050,7 +1045,7 @@ class OBD2Service {
         if (chunk) response += chunk;
         if (response.includes('>')) break;
       }
-      let clean = response.replace(/\d+:/g, '').replace(/>/g, '').trim();
+      let clean = response.replace(/\d+:/g, '').replace(/>/g, '').replace(/\s/g, '').trim();
       if (cmd.startsWith('01') && cmd.length === 4) {
         const respPrefix = '41' + cmd.substring(2);
         const idx = clean.indexOf(respPrefix);

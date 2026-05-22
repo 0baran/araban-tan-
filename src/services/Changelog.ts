@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.21',
+    date: '22 Mayıs 2026',
+    items: [
+      'Bağlantı Optimizasyonu: Bluetooth timeout hataları nedeniyle uygulamanın askıda kalması çözüldü.',
+      'Veri Çözümleme Hatası: Araca bağlandıktan sonra verilerin ekrana yansımama sorunu (ELM327 boşluk karakterleri sorunu) tamamen giderildi.'
+    ],
+  },
+  {
     version: '2.9.20',
     date: '22 Mayıs 2026',
     items: [
