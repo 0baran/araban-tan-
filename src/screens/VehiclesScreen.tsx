@@ -70,7 +70,7 @@ export default function VehiclesScreen({onBack}: Props) {
   return (
     <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack}><Text style={[styles.backBtn, {color: colors.accent}]}>← GERİ</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => { setShowForm(false); onBack(); }}><Text style={[styles.backBtn, {color: colors.accent}]}>← GERİ</Text></TouchableOpacity>
         <Text style={[styles.title, {color: colors.text}]}>ARAÇLARIM</Text>
         <TouchableOpacity onPress={openNew}><Text style={[styles.addBtn, {color: colors.accent}]}>+ EKLE</Text></TouchableOpacity>
       </View>
@@ -94,7 +94,7 @@ export default function VehiclesScreen({onBack}: Props) {
       <Modal visible={showForm} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, {backgroundColor: colors.bg}]}>
-            <ScrollView contentContainerStyle={{paddingBottom: 20}}>
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom: 20}}>
               <Text style={[styles.modalTitle, {color: colors.text}]}>{editId ? 'ARACI DÜZENLE' : 'YENİ ARAÇ'}</Text>
               <Text style={[styles.label, {color: colors.textDim}]}>Araç Adı *</Text>
               <TextInput style={[styles.input, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]} value={name} onChangeText={setName} placeholder="Örn: Arabam" placeholderTextColor={colors.textMuted} />
