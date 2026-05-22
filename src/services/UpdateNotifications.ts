@@ -4,6 +4,16 @@ import {Linking} from 'react-native';
 const CHANNEL_ID = 'app_updates';
 const CHANNEL_NAME = 'Uygulama Güncellemeleri';
 
+function openUpdateUrl(url: string) {
+  Linking.openURL(url).catch(() => {});
+}
+
+notifee.onBackgroundEvent(async ({type, detail}) => {
+  if (type === EventType.PRESS && detail.notification?.android?.data?.url) {
+    openUpdateUrl(detail.notification.android.data.url as string);
+  }
+});
+
 export async function setupUpdateChannel() {
   await notifee.createChannel({
     id: CHANNEL_ID,
@@ -29,7 +39,7 @@ export async function showUpdateNotification(version: string, notes: string, url
 export function handleNotificationPress() {
   return notifee.onForegroundEvent(({type, detail}) => {
     if (type === EventType.PRESS && detail.notification?.android?.data?.url) {
-      Linking.openURL(detail.notification.android.data.url as string).catch(() => {});
+      openUpdateUrl(detail.notification.android.data.url as string);
     }
   });
 }
