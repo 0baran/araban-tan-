@@ -805,7 +805,7 @@ class OBD2Service {
           break;
         }
       }
-      return response.replace(/>/g, '').trim();
+      return response.replace(/\d+:/g, '').replace(/>/g, '').trim();
     } catch (e) {
       const msg = String(e);
       if (msg.includes('Not connected') || msg.includes('disconnected') || msg.includes('closed')) {
@@ -828,9 +828,9 @@ class OBD2Service {
     await this.delay(200);
     await this.sendCommand('ATL0');
     await this.delay(100);
-    await this.sendCommand('ATST32');
+    await this.sendCommand('ATST64');
     await this.delay(100);
-    await this.sendCommand('ATAT1');
+    await this.sendCommand('ATAT0');
     await this.delay(100);
 
     await this.sendCommand('ATSP0');
@@ -878,12 +878,12 @@ class OBD2Service {
         if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
         const r40 = await this.sendCommandFast('0140');
         if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
-        await this.sendCommand('ATST32');
+        await this.sendCommand('ATST64');
         await this.delay(100);
         return true;
       }
     }
-    await this.sendCommand('ATST32');
+    await this.sendCommand('ATST64');
 
     console.error('initializeELM327: Hiçbir protokol ECU ile iletişim kuramadı');
     return false;
@@ -1022,7 +1022,7 @@ class OBD2Service {
         if (chunk) response += chunk;
         if (response.includes('>')) break;
       }
-      return response.replace(/>/g, '').trim();
+      return response.replace(/\d+:/g, '').replace(/>/g, '').trim();
     } catch (e) {
       const msg = String(e);
       if (msg.includes('Not connected') || msg.includes('disconnected') || msg.includes('closed')) {
@@ -1067,8 +1067,10 @@ class OBD2Service {
         if (!ok || !this.pollRunning) return;
 
         if (isIdle) {
-          this.pollTimer = setTimeout(poll, 2500);
-          return;
+          if (this.pollCycle % 3 !== 0) {
+            this.pollTimer = setTimeout(poll, 2500);
+            return;
+          }
         }
 
         // Genişletilmiş sensörler - döngü başına 3-4 adet dağıtıldı
@@ -1191,7 +1193,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, 400);
+        this.pollTimer = setTimeout(poll, isIdle ? 2500 : 400);
         this.pollErrorCount = 0;
 
       } catch (e) {
