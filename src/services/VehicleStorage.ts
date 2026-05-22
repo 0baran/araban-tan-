@@ -28,7 +28,12 @@ export async function loadVehicles(): Promise<Vehicle[]> {
 }
 
 export async function saveVehicles(): Promise<void> {
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+  try {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+  } catch (e) {
+    console.error('VehicleStorage: save failed, retrying...', e);
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+  }
 }
 
 export function getVehicles(): Vehicle[] {

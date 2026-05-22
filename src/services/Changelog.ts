@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.16',
+    date: '22 Mayıs 2026',
+    items: [
+      'PID tespit aralığı genişletildi: 60, 80, A0 desteği eklendi — daha fazla sensör okunur.',
+      'Araç kaydetme hatası düzeltildi: hata yönetimi eklendi, yeniden dene mekanizması.',
+      'Veri okuma hızlandırıldı: polling aralığı 400ms → 300ms, FAST_INTERVAL 40ms → 25ms.',
+      'Genel kararlılık iyileştirmeleri.'
+    ],
+  },
+  {
     version: '2.9.15',
     date: '22 Mayıs 2026',
     items: [

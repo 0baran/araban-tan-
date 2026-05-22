@@ -844,10 +844,15 @@ class OBD2Service {
       if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
       const r40 = await this.sendCommand('0140');
       if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
+      const r60 = await this.sendCommand('0160');
+      if (r60 && !r60.includes('NO DATA')) this.parseSupportedPids(r60, '60');
+      const r80 = await this.sendCommand('0180');
+      if (r80 && !r80.includes('NO DATA')) this.parseSupportedPids(r80, '80');
+      const rA0 = await this.sendCommand('01A0');
+      if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
       return true;
     }
 
-    // 2. deneme - biraz daha bekle
     testResp = await this.sendCommand('0100');
     if (testResp && testResp.length > 0 && !testResp.includes('UNABLE') && !testResp.includes('NO DATA')) {
       console.log('initializeELM327: ECU yanıt verdi (2. deneme)');
@@ -856,6 +861,12 @@ class OBD2Service {
       if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
       const r40 = await this.sendCommand('0140');
       if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
+      const r60 = await this.sendCommand('0160');
+      if (r60 && !r60.includes('NO DATA')) this.parseSupportedPids(r60, '60');
+      const r80 = await this.sendCommand('0180');
+      if (r80 && !r80.includes('NO DATA')) this.parseSupportedPids(r80, '80');
+      const rA0 = await this.sendCommand('01A0');
+      if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
       return true;
     }
 
@@ -877,6 +888,12 @@ class OBD2Service {
         if (r20 && !r20.includes('NO DATA')) this.parseSupportedPids(r20, '20');
         const r40 = await this.sendCommandFast('0140');
         if (r40 && !r40.includes('NO DATA')) this.parseSupportedPids(r40, '40');
+        const r60 = await this.sendCommandFast('0160');
+        if (r60 && !r60.includes('NO DATA')) this.parseSupportedPids(r60, '60');
+        const r80 = await this.sendCommandFast('0180');
+        if (r80 && !r80.includes('NO DATA')) this.parseSupportedPids(r80, '80');
+        const rA0 = await this.sendCommandFast('01A0');
+        if (rA0 && !rA0.includes('NO DATA')) this.parseSupportedPids(rA0, 'A0');
         await this.sendCommand('ATST64');
         await this.delay(100);
         return true;
@@ -994,9 +1011,9 @@ class OBD2Service {
   private pollCycle = 0;
   private pollErrorCount = 0;
 
-  private FAST_WRITE_DELAY = 20;
-  private FAST_POLL_INTERVAL = 40;
-  private FAST_MAX_POLLS = 10;
+  private FAST_WRITE_DELAY = 15;
+  private FAST_POLL_INTERVAL = 25;
+  private FAST_MAX_POLLS = 8;
 
   private canPoll(pid: string): boolean {
     return this.supportedPids.size === 0 || this.supportedPids.has(pid);
@@ -1192,7 +1209,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 2500 : 400);
+        this.pollTimer = setTimeout(poll, isIdle ? 2500 : 300);
         this.pollErrorCount = 0;
 
       } catch (e) {

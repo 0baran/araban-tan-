@@ -47,13 +47,17 @@ export default function VehiclesScreen({onBack}: Props) {
 
   const save = async () => {
     if (!name.trim()) { Alert.alert('Uyarı', 'Araç adı gerekli'); return; }
-    if (editId) {
-      await updateVehicle(editId, {name: name.trim(), plate: plate.trim(), vin: vin.trim(), brand: brand.trim(), model: model.trim(), year: year.trim()});
-    } else {
-      await addVehicle({id: generateId(), name: name.trim(), plate: plate.trim(), vin: vin.trim(), brand: brand.trim(), model: model.trim(), year: year.trim()});
+    try {
+      if (editId) {
+        await updateVehicle(editId, {name: name.trim(), plate: plate.trim(), vin: vin.trim(), brand: brand.trim(), model: model.trim(), year: year.trim()});
+      } else {
+        await addVehicle({id: generateId(), name: name.trim(), plate: plate.trim(), vin: vin.trim(), brand: brand.trim(), model: model.trim(), year: year.trim()});
+      }
+      setShowForm(false);
+      refresh();
+    } catch (e) {
+      Alert.alert('Hata', 'Araç kaydedilemedi: ' + String(e));
     }
-    setShowForm(false);
-    refresh();
   };
 
   const remove = (id: string) => {
