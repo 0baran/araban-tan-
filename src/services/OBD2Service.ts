@@ -876,7 +876,11 @@ class OBD2Service {
     await this.delay(200);
     await this.sendCommand('ATL0');
     await this.delay(100);
-    await this.sendCommand('ATST64');
+    await this.sendCommand('ATS0');
+    await this.delay(100);
+    await this.sendCommand('ATAT1');
+    await this.delay(100);
+    await this.sendCommand('ATST32');
     await this.delay(100);
 
     this.supportedPids.clear();
@@ -901,12 +905,12 @@ class OBD2Service {
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
         this.parseSupportedPids(resp, '00');
         await this.readMorePidRanges(this.sendCommand.bind(this));
-        await this.sendCommand('ATST64');
+        await this.sendCommand('ATST32');
         await this.delay(100);
         return true;
       }
     }
-    await this.sendCommand('ATST64');
+    await this.sendCommand('ATST32');
 
     console.error('initializeELM327: Hiçbir protokol ECU ile iletişim kuramadı');
     return false;
@@ -1113,7 +1117,13 @@ class OBD2Service {
             break;
           }
           case 2: {
-            const r1 = await this.sendCommandFast('0142'); this.parseBatteryVoltage(r1);
+            const rv = await this.sendCommandFast('ATRV');
+            if (rv && rv.includes('V')) {
+              const v = parseFloat(rv.replace('V', ''));
+              if (!isNaN(v)) this.currentData.batteryVoltage = v;
+            } else {
+              const r1 = await this.sendCommandFast('0142'); this.parseBatteryVoltage(r1);
+            }
             const r2 = await this.sendCommandFast('0101'); this.parseMonitorStatusForPoll(r2);
             const r3 = await this.sendCommandFast('0111'); this.parseThrottlePos(r3);
             const r4 = await this.sendCommandFast('012F'); this.parseFuelLevel(r4);

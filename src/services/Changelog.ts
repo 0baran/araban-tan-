@@ -6,6 +6,20 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.24',
+    date: '22 Mayıs 2026',
+    items: [
+      'Gelişmiş Sensör Okuması: Akü voltajı ölçümü için araç motor beyni yerine direkt olarak OBD2 adaptörünün kendi pin voltajı okuma komutu (AT RV) eklendi. Artık eski veya yeni fark etmeksizin tüm araçlarda Akü Voltajı 100% kesinlikle çalışacak.'
+    ],
+  },
+  {
+    version: '2.9.23',
+    date: '22 Mayıs 2026',
+    items: [
+      'Donanım Optimizasyonu: ELM327 adaptör çipine doğrudan AT komutları gönderilerek (ATS0, ATAT1, ATST32) çipin kendi yanıt süresi ve Bluetooth veri aktarım hızı donanımsal olarak maksimuma çıkarıldı.'
+    ],
+  },
+  {
     version: '2.9.22',
     date: '22 Mayıs 2026',
     items: [
