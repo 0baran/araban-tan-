@@ -2,7 +2,7 @@ import {Alert, AppState, Linking} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showUpdateNotification} from './UpdateNotifications';
 
-const UPDATE_URL = 'https://raw.githubusercontent.com/0baran/araban-tan-/refs/heads/main/version.json';
+const UPDATE_URL = 'https://api.github.com/repos/0baran/araban-tan-/contents/version.json';
 const SKIPPED_KEY = '@update_skipped_version';
 
 type UpdateInfo = {
@@ -17,10 +17,15 @@ export type CheckResult =
 
 export async function checkForUpdate(currentVersion: string, signal?: AbortSignal): Promise<CheckResult> {
   try {
-    const ts = Date.now();
-    const resp = await fetch(`${UPDATE_URL}?t=${ts}`, {method: 'GET', cache: 'no-cache', signal});
+    const resp = await fetch(UPDATE_URL, {
+      method: 'GET',
+      signal,
+      headers: {Accept: 'application/vnd.github.v3+json'},
+    });
     if (!resp.ok) return {found: false, reason: 'network'};
-    const info: UpdateInfo = await resp.json();
+    const body = await resp.json();
+    const decoded = atob(body.content);
+    const info: UpdateInfo = JSON.parse(decoded);
     if (compareVersions(info.version, currentVersion) <= 0) return {found: false, reason: 'uptodate'};
     const skipped = await AsyncStorage.getItem(SKIPPED_KEY);
     if (skipped === info.version) return {found: false, reason: 'skipped'};
