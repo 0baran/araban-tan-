@@ -82,6 +82,18 @@ export type OBD2Data = {
   driverDemandTorque: number;
   engineReferenceTorque: number;
   turboBoostPressure: number;
+  odometer: number;
+  hybridBatteryLife: number;
+  dpfDifferentialPressure: number;
+  dpfTemp: number;
+  exhaustPressure: number;
+  turboRpm: number;
+  chargeAirCoolerTemp: number;
+  fuelRailGaugePressure: number;
+  injectionTiming: number;
+  engineFrictionTorque: number;
+  distanceSinceDTCClearHighRes: number;
+  throttlePositionG: number;
 };
 
 export type MonitorStatus = {
@@ -382,22 +394,21 @@ class OBD2Service {
   private currentData: OBD2Data = {
     rpm: 0, speed: 0, coolantTemp: 0, engineLoad: 0, intakeTemp: 0,
     maf: 0, throttlePos: 0, fuelLevel: 0, fuelPressure: 0, timingAdvance: 0,
-    map: 0, batteryVoltage: 0, ambientTemp: 0, shortTermFuelTrim: 0,
-    longTermFuelTrim: 0, commandedAFR: 0, barometricPressure: 0, absoluteLoad: 0,
+    map: 0, batteryVoltage: 0, shortTermFuelTrim: 0, longTermFuelTrim: 0, commandedAFR: 0, barometricPressure: 0, absoluteLoad: 0,
     relativeThrottlePos: 0, ethanolPercent: 0, fuelSystemStatus: '', o2Sensor1Voltage: 0,
     o2Sensor2Voltage: 0, catalystTempBank1: 0, shortTermFuelTrim2: 0, longTermFuelTrim2: 0,
-    distanceSinceDTCClear: 0, fuelRailPressureRelative: 0,
-    runTime: 0, engineOilTemp: 0, fuelRate: 0, distanceWithMIL: 0,
-    timeSinceDTCClear: 0, absoluteThrottleB: 0, absoluteThrottleC: 0,
-    commandedThrottleActuator: 0, acceleratorPosD: 0,     warmUpsSinceDTCClear: 0,
-    fuelType: '',
-    timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
-    wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
+    distanceSinceDTCClear: 0, fuelRailPressureRelative: 0, runTime: 0, engineOilTemp: 0,
+    fuelRate: 0, distanceWithMIL: 0, timeSinceDTCClear: 0, absoluteThrottleB: 0,
+    absoluteThrottleC: 0, commandedThrottleActuator: 0, acceleratorPosD: 0,
+    warmUpsSinceDTCClear: 0, fuelType: '', timeWithMIL: 0, injectionTiming: 0,
+    catalystTempBank2: 0, wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
     fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
-    commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
-    o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
-    milOn: false, dtcCount: 0,
-    actualEngineTorque: 0, driverDemandTorque: 0, engineReferenceTorque: 0, turboBoostPressure: 0,
+    commandedEgr: 0, egrError: 0, commandedEvapPurge: 0, o2B1S1EquivRatio: 0,
+    o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
+    milOn: false, dtcCount: 0, actualEngineTorque: 0, driverDemandTorque: 0,
+    engineReferenceTorque: 0, turboBoostPressure: 0, odometer: 0, hybridBatteryLife: 0,
+    dpfDifferentialPressure: 0, dpfTemp: 0, exhaustPressure: 0, turboRpm: 0, chargeAirCoolerTemp: 0,
+    fuelRailGaugePressure: 0, injectionTiming: 0, engineFrictionTorque: 0, distanceSinceDTCClearHighRes: 0, throttlePositionG: 0,
   };
   private logBuffer: string[] = [];
   private logMax = 6000;
@@ -769,6 +780,13 @@ class OBD2Service {
         driverDemandTorque: 25 + Math.floor(Math.random() * 70),
         engineReferenceTorque: 300,
         turboBoostPressure: Math.floor(Math.random() * 150),
+        odometer: 0,
+        hybridBatteryLife: 0,
+        dpfDifferentialPressure: 0,
+        dpfTemp: 0,
+        exhaustPressure: 0,
+        turboRpm: 0,
+        chargeAirCoolerTemp: 0,
       };
       this.updateTripData(this.currentData.speed);
       this.addLogEntry(this.currentData);
@@ -1161,7 +1179,7 @@ class OBD2Service {
         if (!this.pollRunning) return;
 
         // Süper genişletilmiş sensörler - döngü başına 2-5 adet dağıtıldı
-        switch ((cycle - 1) % 12 + 1) {
+        switch ((cycle - 1) % 15 + 1) {
           case 1: {
             const r1 = await this.sendCommandFast('0114'); this.parseO2Sensor1Voltage(r1);
             const r2 = await this.sendCommandFast('013C'); this.parseCatalystTempBank1(r2);
@@ -1229,6 +1247,27 @@ class OBD2Service {
             const r4 = await this.sendCommandFast('0161'); this.parseEgrErrorDuty(r4);
             const r5 = await this.sendCommandFast('0162'); this.parseActualEngineTorque(r5);
             const r6 = await this.sendCommandFast('0163'); this.parseEngineReferenceTorque(r6);
+            break;
+          }
+          case 13: {
+            const r1 = await this.sendCommandFast('01A6'); this.parseOdometer(r1);
+            const r2 = await this.sendCommandFast('015B'); this.parseHybridBatteryLife(r2);
+            const r3 = await this.sendCommandFast('017A'); this.parseDpfDifferentialPressure(r3);
+            const r4 = await this.sendCommandFast('017C'); this.parseDpfTemp(r4);
+            break;
+          }
+          case 14: {
+            const r1 = await this.sendCommandFast('0173'); this.parseExhaustPressure(r1);
+            const r2 = await this.sendCommandFast('0174'); this.parseTurboRpm(r2);
+            const r3 = await this.sendCommandFast('0177'); this.parseChargeAirCoolerTemp(r3);
+            const r4 = await this.sendCommandFast('0123'); this.parseFuelRailGaugePressure(r4);
+            break;
+          }
+          case 15: {
+            const r1 = await this.sendCommandFast('015D'); this.parseInjectionTiming(r1);
+            const r2 = await this.sendCommandFast('018E'); this.parseEngineFrictionTorque(r2);
+            const r3 = await this.sendCommandFast('018B'); this.parseDistanceSinceDTCClearHighRes(r3);
+            const r4 = await this.sendCommandFast('018D'); this.parseThrottlePositionG(r4);
             break;
           }
         }
@@ -2184,6 +2223,108 @@ class OBD2Service {
     return `${prefix}${firstDigit.toString(16).toUpperCase()}${secondDigit
       .toString(16)
       .toUpperCase()}${thirdDigit.toString(16).toUpperCase()}`;
+  }
+
+  private parseOdometer(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('41A6') && clean.length >= 12) {
+      const val = parseInt(clean.substring(4, 12), 16);
+      if (!isNaN(val)) this.currentData.odometer = val / 10;
+    }
+  }
+
+  private parseHybridBatteryLife(response: string) {
+    const val = this.parseHexValue(response, '415B', 4, 2);
+    if (val !== null) this.currentData.hybridBatteryLife = Math.round((val * 100) / 255);
+  }
+
+  private parseDpfDifferentialPressure(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('417A') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.dpfDifferentialPressure = (A * 256 + B) / 100;
+      }
+    }
+  }
+
+  private parseDpfTemp(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('417C') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.dpfTemp = ((A * 256 + B) / 10) - 40;
+      }
+    }
+  }
+
+  private parseExhaustPressure(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4173') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.exhaustPressure = (A * 256 + B) / 100;
+      }
+    }
+  }
+
+  private parseTurboRpm(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4174') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.turboRpm = (A * 256 + B);
+      }
+    }
+  }
+
+  private parseChargeAirCoolerTemp(response: string) {
+    const val = this.parseHexValue(response, '4177', 4, 2);
+    if (val !== null) this.currentData.chargeAirCoolerTemp = val - 40;
+  }
+
+  private parseFuelRailGaugePressure(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('4123') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.fuelRailGaugePressure = (A * 256 + B) * 10;
+      }
+    }
+  }
+
+  private parseInjectionTiming(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('415D') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.injectionTiming = ((A * 256 + B) / 128) - 210;
+      }
+    }
+  }
+
+  private parseEngineFrictionTorque(response: string) {
+    const val = this.parseHexValue(response, '418E', 4, 2);
+    if (val !== null) this.currentData.engineFrictionTorque = val - 125;
+  }
+
+  private parseDistanceSinceDTCClearHighRes(response: string) {
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('418B') && clean.length >= 12) {
+      const val = parseInt(clean.substring(4, 12), 16);
+      if (!isNaN(val)) this.currentData.distanceSinceDTCClearHighRes = val / 10;
+    }
+  }
+
+  private parseThrottlePositionG(response: string) {
+    const val = this.parseHexValue(response, '418D', 4, 2);
+    if (val !== null) this.currentData.throttlePositionG = Math.round((val / 255) * 100);
   }
 
   private async disconnectTransport() {

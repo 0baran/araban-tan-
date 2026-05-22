@@ -6,6 +6,22 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.26',
+    date: '22 Mayıs 2026',
+    items: [
+      'Ekstra PID Eklentisi: Google taraması sonucu daha nadir 5 sensör daha sisteme eklendi.',
+      'Yeni Eklenenler: Yakıt Hattı Gösterge Basıncı, Enjeksiyon Zamanlaması, Motor Sürtünme Torku, Yüksek Çözünürlüklü Mesafe ve Gaz Kelebeği Pozisyonu G.'
+    ],
+  },
+  {
+    version: '2.9.25',
+    date: '22 Mayıs 2026',
+    items: [
+      'Gelişmiş Sensör Eklentisi: Toplam 7 yeni gelişmiş PID eklendi.',
+      'Yeni Okunan Değerler: Araç Kilometresi (Odometer), Hibrit Batarya Ömrü, DPF Fark Basıncı, DPF Sıcaklığı, Egzoz Basıncı, Turbo Devri (RPM) ve Intercooler Sıcaklığı.'
+    ],
+  },
+  {
     version: '2.9.24',
     date: '22 Mayıs 2026',
     items: [

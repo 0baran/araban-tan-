@@ -1,5 +1,5 @@
 {
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.24.apk",
-  "version": "2.9.24",
-  "notes": "v2.9.24: Akü voltajı okunamayan araçlar için kesin çözüm eklendi! Voltaj direkt olarak adaptörün OBD pinlerinden donanımsal olarak okunacak.\n\nv2.9.23: ELM327 donanımsal hız aşırtma (Adaptive Timing ve Spaces Off) uygulandı!\n\nv2.9.22: Veri okuma hızı maksimuma çıkarıldı!"
+  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.26.apk",
+  "version": "2.9.26",
+  "notes": "v2.9.26: İstek üzerine internette bulunabilecek en nadir 5 sensör daha eklendi (Enjeksiyon zamanlaması, Motor sürtünme torku vs)!\n\nv2.9.25: 7 Yeni Gelişmiş Sensör (PID) eklendi! Artık Odometer (Kilometre), Hibrit Batarya Ömrü, DPF Basıncı/Sıcaklığı ve Turbo Devri gibi değerler de okunuyor."
 }

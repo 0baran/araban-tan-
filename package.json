@@ -1,6 +1,6 @@
 {
   "name": "ProCarScanner",
-  "version": "2.9.24",
+  "version": "2.9.26",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
