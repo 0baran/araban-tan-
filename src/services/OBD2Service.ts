@@ -1,4 +1,4 @@
-import {PermissionsAndroid, Platform} from 'react-native';
+import {PermissionsAndroid, Platform, NativeModules, Permission} from 'react-native';
 import RNBluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
@@ -90,7 +90,6 @@ export type OBD2Data = {
   turboRpm: number;
   chargeAirCoolerTemp: number;
   fuelRailGaugePressure: number;
-  injectionTiming: number;
   engineFrictionTorque: number;
   distanceSinceDTCClearHighRes: number;
   throttlePositionG: number;
@@ -411,6 +410,7 @@ class OBD2Service {
   private connectionCallback: ConnectionCallback | null = null;
   private _vin: string = '';
   private _connecting = false;
+  private lastCallbackTime = 0;
 
   private _writeBusy = false;
   private _writeQueue: Array<() => Promise<void>> = [];
@@ -435,7 +435,7 @@ class OBD2Service {
     milOn: false, dtcCount: 0, actualEngineTorque: 0, driverDemandTorque: 0,
     engineReferenceTorque: 0, turboBoostPressure: 0, odometer: 0, hybridBatteryLife: 0,
     dpfDifferentialPressure: 0, dpfTemp: 0, exhaustPressure: 0, turboRpm: 0, chargeAirCoolerTemp: 0,
-    fuelRailGaugePressure: 0, injectionTiming: 0, engineFrictionTorque: 0, distanceSinceDTCClearHighRes: 0, throttlePositionG: 0,
+    fuelRailGaugePressure: 0, engineFrictionTorque: 0, distanceSinceDTCClearHighRes: 0, throttlePositionG: 0,
   } as OBD2Data, {
     set: (target, prop, value) => {
       if (typeof prop === 'string' && prop !== '_validKeys' && !this.validKeys.has(prop)) {
@@ -531,12 +531,19 @@ class OBD2Service {
   async requestPermissions(): Promise<boolean> {
     if (Platform.OS === 'android') {
       try {
-        const results = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.INTERNET as any,
-        ]);
+        const perms: Permission[] = [];
+        const apiLevel = Platform.Version;
+        if (typeof apiLevel === 'number' && apiLevel >= 31) {
+          perms.push(
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+          );
+        }
+        if (typeof apiLevel !== 'number' || apiLevel < 31) {
+          perms.push(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        }
+        if (perms.length === 0) return true;
+        const results = await PermissionsAndroid.requestMultiple(perms);
         return Object.values(results).every(
           r => r === 'granted' || r === 'never_ask_again',
         );
@@ -635,6 +642,7 @@ class OBD2Service {
       if (!ok) {
         await this.disconnectTransport();
         this._isConnected = false;
+        this._connecting = false;
         this.setConnectionState('error', 'ELM327 başlatılamadı');
         return false;
       }
@@ -668,13 +676,13 @@ class OBD2Service {
       this.transport = new UsbTransport();
       await this.transport.connect();
       this.isSimulating = false;
+      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
         this.setConnectionState('error', 'USB ELM327 başlatılamadı');
         return false;
       }
-      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -699,13 +707,13 @@ class OBD2Service {
       this.transport = new WiFiTransport(ip, port);
       await this.transport.connect();
       this.isSimulating = false;
+      this._isConnected = true;
       const ok = await this.initializeELM327();
       if (!ok) {
         await this.disconnectTransport();
         this.setConnectionState('error', 'ELM327 WiFi başlatılamadı');
         return false;
       }
-      this._isConnected = true;
       await this.detectProtocol();
       this._vin = await this.readVIN();
       this.startPolling();
@@ -726,6 +734,7 @@ class OBD2Service {
   }
 
   async autoConnect(): Promise<boolean> {
+    if (this._connecting) return false;
     const config = await this.loadLastDevice();
     if (!config) {
       return false;
@@ -962,7 +971,7 @@ class OBD2Service {
     await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATAT1');
     await this.delay(AT_CMD_DELAY);
-    await this.sendCommand('ATST32');
+    await this.sendCommand('ATST64');
     await this.delay(AT_CMD_DELAY);
 
     this.supportedPids.clear();
@@ -987,12 +996,12 @@ class OBD2Service {
         console.log(`initializeELM327: Protokol ${proto} (${this.currentProtocolLabel}) çalışıyor`);
         this.parseSupportedPids(resp, '00');
         await this.readMorePidRanges(this.sendCommand.bind(this));
-        await this.sendCommand('ATST32');
+        await this.sendCommand('ATST64');
         await this.delay(100);
         return true;
       }
     }
-    await this.sendCommand('ATST32');
+    await this.sendCommand('ATST64');
 
     console.error('initializeELM327: Hiçbir protokol ECU ile iletişim kuramadı');
     return false;
@@ -1156,7 +1165,21 @@ class OBD2Service {
     if (this.dataCallback) {
       this.dataCallback({...this.currentData});
     }
+    this.updateWidget();
     return true;
+  }
+
+  private updateWidget() {
+    try {
+      if (NativeModules.WidgetDataModule) {
+        NativeModules.WidgetDataModule.updateWidget({
+          rpm: String(Math.floor(this.currentData.rpm || 0)),
+          speed: String(Math.floor(this.currentData.speed || 0)),
+          coolant: this.currentData.coolantTemp != null ? String(Math.floor(this.currentData.coolantTemp)) : '--',
+          connected: this._isConnected,
+        });
+      }
+    } catch (_e) {}
   }
 
   private startPolling() {
@@ -2390,30 +2413,19 @@ class OBD2Service {
     }
   }
 
-    async disconnect() {
+  async disconnect() {
     this.isSimulating = false;
     await this.disconnectTransport();
-    this.currentData = {
-      rpm: 0, speed: 0, coolantTemp: 0, engineLoad: 0, intakeTemp: 0,
-      maf: 0, throttlePos: 0, fuelLevel: 0, fuelPressure: 0, timingAdvance: 0,
-      map: 0, batteryVoltage: 0, ambientTemp: 0, shortTermFuelTrim: 0,
-      longTermFuelTrim: 0, commandedAFR: 0, barometricPressure: 0, absoluteLoad: 0,
-      relativeThrottlePos: 0, ethanolPercent: 0, fuelSystemStatus: '', o2Sensor1Voltage: 0,
-      o2Sensor2Voltage: 0, catalystTempBank1: 0, shortTermFuelTrim2: 0, longTermFuelTrim2: 0,
-      distanceSinceDTCClear: 0, fuelRailPressureRelative: 0,
-      runTime: 0, engineOilTemp: 0, fuelRate: 0, distanceWithMIL: 0,
-      timeSinceDTCClear: 0, absoluteThrottleB: 0, absoluteThrottleC: 0,
-      commandedThrottleActuator: 0, acceleratorPosD: 0, warmUpsSinceDTCClear: 0,
-      fuelType: '',
-      timeWithMIL: 0, injectionTiming: 0, catalystTempBank2: 0,
-      wideRangeO2B1S1: 0, acceleratorPosE: 0, acceleratorPosF: 0,
-      fuelRailPressureAbsolute: 0, egtBank1: 0, evapVaporPressure: 0, relativePedalPos: 0,
-      commandedEgr: 0, egrError: 0, commandedEvapPurge: 0,
-      o2B1S1EquivRatio: 0, o2B1S2EquivRatio: 0, actualEgr: 0, egrErrorDuty: 0, commandedEvapPurgeFlow: 0,
-      milOn: false, dtcCount: 0,
-      actualEngineTorque: 0, driverDemandTorque: 0, engineReferenceTorque: 0, turboBoostPressure: 0,
-    };
+    Object.keys(this.currentData).forEach(k => {
+      if (k !== '_validKeys' && k !== 'fuelSystemStatus' && k !== 'fuelType' && k !== 'milOn') {
+        (this.currentData as any)[k] = 0;
+      }
+    });
+    this.currentData.fuelSystemStatus = '';
+    this.currentData.fuelType = '';
+    this.currentData.milOn = false;
     this.logBuffer = [];
+    this.lastCallbackTime = 0;
     this.resetTripData();
     this.validKeys.clear();
     ['rpm', 'speed', 'batteryVoltage', 'coolantTemp'].forEach(k => this.validKeys.add(k));

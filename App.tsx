@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
   Modal, ActivityIndicator, FlatList, Platform, Alert, PermissionsAndroid,
-  TextInput, BackHandler, AppState, StatusBar,
+  TextInput, BackHandler, AppState, StatusBar, Permission,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -28,13 +28,31 @@ import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 
-const APP_VERSION = '2.9.27';
+const APP_VERSION = '2.9.28';
+
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  state = {hasError: false};
+  static getDerivedStateFromError() { return {hasError: true}; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={{flex:1, backgroundColor:'#0a0b10', alignItems:'center', justifyContent:'center', padding:20}}>
+          <Text style={{color:'#FFD700', fontSize:18, fontWeight:'bold', textAlign:'center'}}>Beklenmeyen Hata</Text>
+          <Text style={{color:'#aaa', fontSize:14, marginTop:10, textAlign:'center'}}>Uygulama yeniden başlatılacak.</Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <MainScreen />
+        <ErrorBoundary>
+          <MainScreen />
+        </ErrorBoundary>
       </ThemeProvider>
     </SafeAreaProvider>
   );
@@ -182,22 +200,25 @@ function MainScreen() {
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
-      const perms = [
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-      ];
+      const perms: Permission[] = [];
       const apiLevel = Platform.Version;
+      if (typeof apiLevel === 'number' && apiLevel >= 31) {
+        perms.push(
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        );
+      }
       if (typeof apiLevel !== 'number' || apiLevel < 31) {
         perms.push(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
       }
+      try {
+        if (perms.length > 0) await PermissionsAndroid.requestMultiple(perms);
+      } catch (err) { console.warn(err); }
       if (typeof apiLevel === 'number' && apiLevel >= 33) {
         try {
           await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
         } catch (_) {}
       }
-      try {
-        await PermissionsAndroid.requestMultiple(perms);
-      } catch (err) { console.warn(err); }
     }
   };
 

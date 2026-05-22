@@ -1,5 +1,5 @@
-{
-  "url": "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.27.apk",
-  "version": "2.9.27",
-  "notes": "v2.9.26: Kararlılık devrimi! Write queue (komut çakışması yok), ATZ bekleme 2000ms, hızlı polling 20/30ms, JS timeout ile native kilitlenme koruması, çift bağlantı engeli (_connecting mutex), sonsuz retry döngüsü düzeltildi, VehiclesScreen ScrollView eklendi, duplicate parseInjectionTiming temizlendi, SecurityException hatası giderildi."
+﻿{
+    "url":  "https://raw.githubusercontent.com/0baran/araban-tan-/main/ProCarScanner-release-2.9.28.apk",
+    "version":  "2.9.28",
+    "notes":  "v2.9.28: Android ana ekran widget\u0131 eklendi. Ba\u011flant\u0131 optimizasyonlar\u0131. T\u00fcm cihazlarla uyumluluk iyile\u015ftirmeleri."
 }
