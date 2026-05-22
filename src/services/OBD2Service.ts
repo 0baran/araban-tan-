@@ -804,7 +804,14 @@ class OBD2Service {
           break;
         }
       }
-      return response.replace(/\d+:/g, '').replace(/>/g, '').trim();
+      let clean = response.replace(/\d+:/g, '').replace(/>/g, '').trim();
+      if (cmd.startsWith('01') && cmd.length === 4) {
+        const respPrefix = '41' + cmd.substring(2);
+        const idx = clean.indexOf(respPrefix);
+        if (idx > 0) clean = clean.substring(idx);
+        else if (idx < 0) clean = '';
+      }
+      return clean;
     } catch (e) {
       const msg = String(e);
       if (msg.includes('Not connected') || msg.includes('disconnected') || msg.includes('closed')) {
@@ -1038,7 +1045,14 @@ class OBD2Service {
         if (chunk) response += chunk;
         if (response.includes('>')) break;
       }
-      return response.replace(/\d+:/g, '').replace(/>/g, '').trim();
+      let clean = response.replace(/\d+:/g, '').replace(/>/g, '').trim();
+      if (cmd.startsWith('01') && cmd.length === 4) {
+        const respPrefix = '41' + cmd.substring(2);
+        const idx = clean.indexOf(respPrefix);
+        if (idx > 0) clean = clean.substring(idx);
+        else if (idx < 0) clean = '';
+      }
+      return clean;
     } catch (e) {
       const msg = String(e);
       if (msg.includes('Not connected') || msg.includes('disconnected') || msg.includes('closed')) {

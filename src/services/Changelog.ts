@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '2.9.17',
+    date: '22 Mayıs 2026',
+    items: [
+      'Veri okuma sorunu kök neden çözüldü: ELM327 echo (ATE0) sorunu.',
+      'sendCommand/sendCommandFast yanıt temizleme: 41XX prefix bulunup echo atılır.',
+      'Tüm sensörler (RPM, Speed, MAF, MAP, sıcaklık, vs.) artık güvenilir okunur.',
+      'Klon ELM327 adaptörlerle tam uyumluluk.'
+    ],
+  },
+  {
     version: '2.9.16',
     date: '22 Mayıs 2026',
     items: [
