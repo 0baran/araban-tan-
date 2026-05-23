@@ -1,5 +1,12 @@
 # Sürüm Notları (Changelog)
 
+## v3.1.30 (Güncel Sürüm)
+* **Özel Gösterge Eklentisi**: Artık sabitlediğiniz (favoriye aldığınız) tüm sensörler, büyük gösterge (PANEL/HUD) modunun altında kocaman rakamlarla listeleniyor. Böylece size özel bir HUD ekranı yaratabilirsiniz.
+
+## v3.1.29 (Güncel Sürüm)
+* **HUD ve PANEL Seçeneği**: Sağ üste eklenen "PANEL" tuşu ile Cyberpunk gösterge tablosunu ekranı ters çevirmeden (düz haliyle) açabilirsiniz. "HUD" tuşu ise cama yansıtmak için ekranı ters çevirmeye devam eder.
+* **Sensör Engeli Kaldırıldı**: Uygulamanın ucuz klon cihazlarda kendini kilit altına alıp sadece 6 temel sensörü okuması (diğer sensörleri yoksayması) sorunu giderildi. Araç ne destekliyorsa anında ekranda!
+
 ## v3.1.28 (Güncel Sürüm)
 * **HUD Düzeltmesi**: Ekranın yarısını kaplayan büyük gösterge paneli artık standart görünümde kapalı. Sadece sağ üstteki "HUD" tuşuna basınca (Cama yansıtma modu) açılıyor.
 * **Klon Cihaz Uyumluluğu 2.0**: Ucuz klon cihazların ilk tarama (0100 sorgusu) aşamasında çökmesi veya sessiz kalması durumunda tüm verilerin ekrandan kaybolması (beyaz sayfa) sorunu tamamen çözüldü. Sistem akıllıca varsayılan sensörlere geri dönüyor.

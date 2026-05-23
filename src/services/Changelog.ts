@@ -6,6 +6,21 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.30',
+    date: '24 Mayis 2026',
+    items: [
+      'Ozel Gosterge Eklentisi: Artik kendi sectiginiz (sabitlediginiz) favori sensorleriniz, buyuk HUD / PANEL gostergesinin hemen altinda da devasa sayilarla gosterilecek.'
+    ],
+  },
+  {
+    version: '3.1.29',
+    date: '24 Mayis 2026',
+    items: [
+      'HUD & Panel Duzeltmesi: Cama yansitma modu olan HUD tusunun yanina bir de PANEL tusu eklendi. Panel tusu ile ekrani ters cevirmeden de buyuk gosterge tablosunu gorebilirsiniz.',
+      'Sensör Kisitlama Hatasi Cözüldü: Bazi arac ve adaptörlerde guvenlik moduna gecilerek sadece 6 temel sensorun okunmasi ve diger yuzlerce sensorun gizlenmesi problemi kalici olarak cozuldu.'
+    ],
+  },
+  {
     version: '3.1.28',
     date: '24 Mayis 2026',
     items: [

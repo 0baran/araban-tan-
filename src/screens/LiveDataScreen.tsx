@@ -717,6 +717,7 @@ const SensorCard = React.memo(
 
 export default function LiveDataScreen({onBack}: Props) {
   const {colors, darkMode} = useTheme();
+  const [showDashboard, setShowDashboard] = useState(false);
   const [data, setData] = useState<OBD2Data>({
     rpm: 0,
     speed: 0,
@@ -952,6 +953,13 @@ export default function LiveDataScreen({onBack}: Props) {
           <Text style={[styles.title, {color: colors.text}]}>CANLI VERİ</Text>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TouchableOpacity
+              onPress={() => setShowDashboard(!showDashboard)}
+              style={[styles.backButton, {marginRight: 10}]}>
+              <Text style={{color: showDashboard ? '#00bfff' : colors.textDim}}>
+                PANEL
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => setIsHudMode(!isHudMode)}
               style={[styles.backButton, {marginRight: 10}]}>
               <Text style={{color: isHudMode ? '#00bfff' : colors.textDim}}>
@@ -1005,13 +1013,25 @@ export default function LiveDataScreen({onBack}: Props) {
         )}
 
         {/* CYBERPUNK DASHBOARD FOR KEY METRICS */}
-        {isHudMode && (
+        {(isHudMode || showDashboard) && (
           <View style={{backgroundColor: 'rgba(255,255,255,0.02)', marginHorizontal: 16, borderRadius: 16, padding: 10, marginBottom: 15, borderWidth: 1, borderColor: 'rgba(0,191,255,0.2)'}}>
             <CyberBar label="MOTOR DEVRİ" value={data.rpm} max={8000} unit="RPM" color="#00bfff" />
             <CyberBar label="HIZ" value={data.speed} max={240} unit="KM/H" color={data.speed > 120 ? '#ff4757' : '#00ff7f'} />
             <CyberBar label="SOĞUTMA" value={data.coolantTemp} max={130} unit="°C" color={data.coolantTemp > 105 ? '#ff4757' : '#ff9ff3'} />
             <CyberBar label="MOTOR YÜKÜ" value={data.engineLoad} max={100} unit="%" color="#feca57" />
             <CyberBar label="AKÜ VOLTAJI" value={data.batteryVoltage} max={16} unit="V" color="#8ecae6" valueFormatter={v => v.toFixed(1)} />
+
+            {pinnedMeta.length > 0 && (
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 15, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.05)', paddingTop: 15}}>
+                {pinnedMeta.map(p => (
+                  <View key={p.key} style={{width: '50%', marginBottom: 15, alignItems: 'center'}}>
+                    <Text style={{color: p.color, fontSize: 32, fontWeight: '900', textShadowColor: p.color, textShadowOffset: {width: 0, height: 0}, textShadowRadius: 10}}>{fmt(p)}</Text>
+                    <Text style={{color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '700', marginTop: 4}}>{p.label}</Text>
+                    <Text style={{color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: '700'}}>{p.unit}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         )}
 

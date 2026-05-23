@@ -1585,7 +1585,7 @@ class OBD2Service {
   private pollErrorCount = 0;
 
   private canPoll(pid: string): boolean {
-    return this.supportedPids.size === 0 || this.supportedPids.has(pid);
+    return this.supportedPids.size <= 1 || this.supportedPids.has(pid);
   }
 
   private async sendCommandFast(cmd: string, key?: string): Promise<string> {
