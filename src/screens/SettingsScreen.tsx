@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function SettingsScreen({onBack}: Props) {
-  const {colors, darkMode, neonTheme, toggleTheme, toggleNeon} = useTheme();
+  const {colors, darkMode, toggleTheme} = useTheme();
   const [protocolLabel, setProtocolLabel] = useState(obd2Service.protocolLabel);
   const [speedWarnOn, setSpeedWarnOn] = useState(false);
   const [speedWarnVal, setSpeedWarnVal] = useState('130');
@@ -216,22 +216,7 @@ export default function SettingsScreen({onBack}: Props) {
                 thumbColor={darkMode ? '#fff' : '#f4f3f4'}
               />
             </View>
-
-            {darkMode && (
-              <View style={[styles.settingRow, {backgroundColor: colors.card, borderColor: colors.cardBorder, marginTop: 10}]}>
-                <View style={styles.settingInfo}>
-                  <Text style={[styles.settingLabel, {color: colors.text}]}>Neon (Cyberpunk) Tema</Text>
-                  <Text style={[styles.settingDesc, {color: colors.textMuted}]}>Yarı saydam arayüz ve neon ışıklandırmalar.</Text>
-                </View>
-                <Switch
-                  value={neonTheme}
-                  onValueChange={toggleNeon}
-                  trackColor={{false: '#767577', true: colors.accent}}
-                  thumbColor={neonTheme ? '#fff' : '#f4f3f4'}
-                />
-              </View>
-            )}
-          </View>
+        </View>
         </View>
 
         <View style={styles.section}>

@@ -8,25 +8,21 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$baseVersion = "3.1.1"
+$baseVersion = "3.1.2"
 $version = "$baseVersion.$versionSuffix"
 $apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
+$jsonUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/version.json"
 
-Write-Host "==> Version: $version" -ForegroundColor Cyan
+Write-Host "==> Starting build for version $version..." -ForegroundColor Cyan
 
-# --- Read latest changelog notes from Changelog.ts ---
-$changelogPath = Join-Path $root "src\services\Changelog.ts"
-$cl = Get-Content -LiteralPath $changelogPath -Raw
-$fullNotes = ""
-# Find the first version entry's items array
-$match = [regex]::Match($cl, "version:\s*'[^']*'[\s\S]*?items:\s*\[([\s\S]*?)\],\s*\}")
-if ($match.Success) {
-  $block = $match.Groups[1].Value
-  $itemMatches = [regex]::Matches($block, "'([^']*)'")
-  $items = $itemMatches | ForEach-Object { $_.Groups[1].Value }
-  $fullNotes = "v3.1.1 Guncellemeleri:; - Neon Tema Secenegi: Ayarlar menusunden 'Neon (Cyberpunk) Tema' istediginiz zaman acilip kapatilabilir hale getirildi.; - Emisyon Testi (I/M Readiness) Butonu: Arac bilgisi ekraninda baglanti beklenmeden her zaman gorunur hale getirildi.; - Sistem kararli hale getirildi."
-}
+# package.json versiyon guncelleme
+$pkg = Get-Content package.json | ConvertFrom-Json
+$pkg.version = $version
+$pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
+
+# Sürüm notlarını ayıkla
+$fullNotes = "Guncellemeler:; - Neon modu kaldirildi ve arayuz klasik koyu temaya cevrildi."
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---

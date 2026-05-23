@@ -17,7 +17,6 @@ export type AppSettings = {
   pinnedSensors: string[];
   fuelPricePerLiter: number;
   darkMode: boolean;
-  neonTheme: boolean;
   autoRecord: boolean;
 };
 
@@ -29,7 +28,6 @@ const DEFAULTS: AppSettings = {
   pinnedSensors: [],
   fuelPricePerLiter: 0,
   darkMode: true,
-  neonTheme: true,
   autoRecord: false,
 };
 
