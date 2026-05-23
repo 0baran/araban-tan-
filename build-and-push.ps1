@@ -7,9 +7,10 @@ param(
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
-$versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$baseVersion = "3.1.6"
-$version = "$baseVersion.$versionSuffix"
+$currentVer = (Get-Content (Join-Path $root "version.json") | ConvertFrom-Json).version
+$parts = $currentVer.Split('.')
+$patch = [int]$parts[2] + 1
+$version = "$($parts[0]).$($parts[1]).$patch"
 $apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
 $jsonUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/version.json"
@@ -22,7 +23,7 @@ $pkg.version = $version
 $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 
 # Sürüm notlarını ayıkla
-$fullNotes = "v3.1.6 Guncellemeleri:; - Uygulama Ici Indirme: APK artik uygulama icinden progress bar ile indirilir, indirme bitince otomatik kurulum acilir.; - Arka Planda Calisma (Foreground Service) destegi eklendi. Uygulama kucultulse de veri okumaya devam eder (Widget altyapisi).; - Baglanti koptugunda veya 3 saniyeden uzun sure yanit alinamadiginda hiz ve devir ibreleri 0'a duserek kendini sifirlayacak.; - Veri isleme hizi optimize edildi, ibreler artik daha akici ve tepkisel."
+$fullNotes = "v$version Guncellemeleri:; - Uygulama ici APK indirme (progress bar + otomatik kurulum); - Performans: hizli polling, UI throttle 100ms; - Arka plan: baglanti kopmasi/veri donmasi/bildirim takilmasi cozuldu."
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---
