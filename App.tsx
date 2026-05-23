@@ -17,7 +17,6 @@ import HiddenFeatureScreen from './src/screens/HiddenFeatureScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import PerformanceScreen from './src/screens/PerformanceScreen';
 import FreezeFrameScreen from './src/screens/FreezeFrameScreen';
-import IMReadinessScreen from './src/screens/IMReadinessScreen';
 import VehicleInfoScreen from './src/screens/VehicleInfoScreen';
 import DataLogScreen from './src/screens/DataLogScreen';
 import LogScreen from './src/screens/LogScreen';
@@ -29,7 +28,7 @@ import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.4.20260523.1422';
+const APP_VERSION = '3.1.5.20260523.1428';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -359,7 +358,6 @@ function MainScreen() {
       {currentScreen === 'settings' && <SettingsScreen {...screenProps} />}
       {currentScreen === 'performance' && <PerformanceScreen {...screenProps} />}
       {currentScreen === 'freezeframe' && <FreezeFrameScreen {...screenProps} />}
-      {currentScreen === 'imreadiness' && <IMReadinessScreen {...screenProps} />}
       {currentScreen === 'vehicleinfo' && <VehicleInfoScreen {...screenProps} />}
       {currentScreen === 'datalog' && <DataLogScreen {...screenProps} />}
       {currentScreen === 'log' && <LogScreen {...screenProps} />}

@@ -71,50 +71,49 @@ export default function VehicleInfoScreen({onBack, onNavigate}: Props) {
             </Text>
           </View>
 
-          {/* Monitor Readiness */}
+          {/* Monitor Readiness (Emisyon Testi) */}
           {monitorStatus && (
-            <View
-              style={[
-                styles.glassCard,
-                {backgroundColor: colors.card, borderColor: colors.cardBorder},
-              ]}>
-              <Text style={[styles.cardLabel, {color: colors.textMuted}]}>
-                OBD2 MONİTÖR DURUMU
-              </Text>
-              <View style={styles.monitorHeader}>
-                <View
-                  style={[
-                    styles.milBadge,
-                    monitorStatus.milOn ? styles.milOn : styles.milOff,
-                  ]}>
-                  <Text style={[styles.milText, {color: colors.text}]}>
-                    MIL: {monitorStatus.milOn ? 'AÇIK' : 'KAPALI'}
+            <>
+              {/* Genel Durum Kartı */}
+              <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+                <Text style={[styles.cardLabel, {color: colors.textMuted}]}>EMİSYON TESTİ: GENEL DURUM</Text>
+                <View style={[styles.summaryBox, {backgroundColor: (monitorStatus.tests.filter(t => t.available).every(t => t.completed)) ? 'rgba(0,255,127,0.1)' : 'rgba(255,71,87,0.1)'}]}>
+                  <Text style={[styles.summaryText, {color: (monitorStatus.tests.filter(t => t.available).every(t => t.completed)) ? '#00ff7f' : '#ff4757'}]}>
+                    {(monitorStatus.tests.filter(t => t.available).every(t => t.completed)) ? '✅ MUAYENEYE HAZIR' : '❌ HAZIR DEĞİL'}
+                  </Text>
+                  <Text style={[styles.summaryDesc, {color: colors.textDim}]}>
+                    {(monitorStatus.tests.filter(t => t.available).every(t => t.completed)) ? 'Tüm sensör testleri tamamlandı. Araç egzoz emisyon testinden geçebilir.' : 'Bazı sistem testleri henüz tamamlanmamış. Aracınızı bir süre daha sürmeniz gerekebilir.'}
                   </Text>
                 </View>
-                <Text style={[styles.monitorCount, {color: colors.textMuted}]}>
-                  DTC: {monitorStatus.dtcCount}
-                </Text>
+                <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                  <View style={{alignItems: 'center'}}>
+                    <Text style={{color: '#fff', fontSize: 28, fontWeight: '900'}}>{monitorStatus.dtcCount}</Text>
+                    <Text style={{fontSize: 10, fontWeight: '700', letterSpacing: 1, color: colors.textMuted}}>HATA KODU</Text>
+                  </View>
+                  <View style={{alignItems: 'center'}}>
+                    <Text style={{color: monitorStatus.milOn ? '#ff4757' : '#00ff7f', fontSize: 28, fontWeight: '900'}}>{monitorStatus.milOn ? 'AÇIK' : 'KAPALI'}</Text>
+                    <Text style={{fontSize: 10, fontWeight: '700', letterSpacing: 1, color: colors.textMuted}}>MOTOR IŞIĞI</Text>
+                  </View>
+                </View>
               </View>
-              {monitorStatus.tests.map((t, i) => (
-                <View key={i} style={styles.monitorRow}>
-                  <Text style={[styles.monitorName, {color: colors.text}]}>
-                    {t.name}
-                  </Text>
-                  {!t.available ? (
-                    <Text style={styles.na}>N/A</Text>
-                  ) : (
-                    <View style={styles.monitorStatusRow}>
-                      <Text style={t.completed ? styles.ok : styles.fail}>
-                        {t.completed ? '✔' : '✘'}
-                      </Text>
+
+              {/* Bileşen Testleri Kartı */}
+              <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+                <Text style={[styles.cardLabel, {color: colors.textMuted}]}>BİLEŞEN TESTLERİ (I/M READINESS)</Text>
+                {monitorStatus.tests.filter(t => t.available).length === 0 ? (
+                  <Text style={[styles.hint, {color: colors.textMuted, textAlign: 'center'}]}>Test verisi okunamadı.</Text>
+                ) : (
+                  monitorStatus.tests.filter(t => t.available).map((test, index) => (
+                    <View key={index} style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.cardBorder}}>
+                      <Text style={{fontSize: 14, fontWeight: '600', color: colors.text, flex: 1}}>{test.name}</Text>
+                      <View style={{paddingHorizontal: 12, paddingVertical: 4, borderRadius: 8, backgroundColor: test.completed ? 'rgba(0,255,127,0.1)' : 'rgba(255,165,0,0.1)'}}>
+                        <Text style={{fontSize: 11, fontWeight: '800', letterSpacing: 1, color: test.completed ? '#00ff7f' : '#ffa502'}}>{test.completed ? 'TAMAM' : 'EKSİK'}</Text>
+                      </View>
                     </View>
-                  )}
-                </View>
-              ))}
-              <Text style={[styles.hint, {color: colors.textMuted}]}>
-                Tüm monitörlerin ✔ olması araç emisyon testine hazır demektir.
-              </Text>
-            </View>
+                  ))
+                )}
+              </View>
+            </>
           )}
 
           {/* Connection Info */}
@@ -148,21 +147,6 @@ export default function VehicleInfoScreen({onBack, onNavigate}: Props) {
               value={obd2Service.isConnected ? 'Evet' : 'Hayır'}
             />
           </View>
-
-          <TouchableOpacity
-            style={[
-              styles.detailedBtn,
-              {
-                backgroundColor: 'rgba(0,191,255,0.1)',
-                borderColor: 'rgba(0,191,255,0.3)',
-                marginBottom: 20,
-              },
-            ]}
-            onPress={() => onNavigate?.('imreadiness')}>
-            <Text style={[styles.detailedBtnText, {color: '#00bfff'}]}>
-              🌿 DETAYLI EMİSYON TESTİ (I/M READINESS) →
-            </Text>
-          </TouchableOpacity>
         </ScrollView>
       )}
     </SafeAreaView>
