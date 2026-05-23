@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$baseVersion = "3.0.1"
+$baseVersion = "3.1.0"
 $version = "$baseVersion.$versionSuffix"
 $apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
@@ -25,7 +25,7 @@ if ($match.Success) {
   $block = $match.Groups[1].Value
   $itemMatches = [regex]::Matches($block, "'([^']*)'")
   $items = $itemMatches | ForEach-Object { $_.Groups[1].Value }
-  $fullNotes = ($items -join "; ").Trim()
+  $fullNotes = "v3.1.0 Cyberpunk/Glassmorphism Yenilikleri:; Yeni Tasarim Dili: Klasik listeler tarihe karisti! Hiz, devir ve sicaklik gibi ana verileriniz icin neon isikli, yatay performans barlari (Gauges) eklendi.; Ekran Uyumlulugu: Tabletten, katlanabilir cihazlara ve eski Android cihazlara kadar kusursuz otomatik olceklenebilir tasarim.; Tampon ve Golgelendirme: Ana menu arayuzu tam saydam 'Glassmorphism' stiline gecirildi, spor arac gostergesi hissi artirildi."
 }
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 

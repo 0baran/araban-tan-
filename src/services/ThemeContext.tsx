@@ -20,15 +20,15 @@ export type ThemeColors = {
 };
 
 const dark: ThemeColors = {
-  bg: '#0a0b10',
-  card: 'rgba(30,33,40,0.7)',
-  cardBorder: 'rgba(255,255,255,0.05)',
-  text: '#fff',
-  textDim: 'rgba(255,255,255,0.5)',
+  bg: '#05050A', // Deep pure black-blue for OLED
+  card: 'rgba(255, 255, 255, 0.03)', // High transparency for glassmorphism
+  cardBorder: 'rgba(0, 191, 255, 0.15)', // Neon blue subtle border
+  text: '#ffffff',
+  textDim: 'rgba(255,255,255,0.6)',
   textMuted: 'rgba(255,255,255,0.3)',
-  inputBg: 'rgba(30,33,40,0.7)',
-  accent: '#00bfff',
-  gaugeBg: 'rgba(0,191,255,0.08)',
+  inputBg: 'rgba(0, 191, 255, 0.05)',
+  accent: '#00e5ff', // Brighter neon cyan
+  gaugeBg: 'rgba(0, 229, 255, 0.08)',
 };
 
 const light: ThemeColors = {

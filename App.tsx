@@ -27,19 +27,23 @@ import TripSummaryScreen from './src/screens/TripSummaryScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
-import {useKeepAwake} from 'react-native-keep-awake';
+import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.0.1.20260523.1334';
+const APP_VERSION = '3.1.0.20260523.1348';
 
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
-  state = {hasError: false};
-  static getDerivedStateFromError() { return {hasError: true}; }
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
+  state = {hasError: false, errorMsg: ''};
+  static getDerivedStateFromError(error: Error) { return {hasError: true, errorMsg: error.message || String(error)}; }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("ErrorBoundary caught:", error, errorInfo);
+  }
   render() {
     if (this.state.hasError) {
       return (
         <View style={{flex:1, backgroundColor:'#0a0b10', alignItems:'center', justifyContent:'center', padding:20}}>
           <Text style={{color:'#FFD700', fontSize:18, fontWeight:'bold', textAlign:'center'}}>Beklenmeyen Hata</Text>
-          <Text style={{color:'#aaa', fontSize:14, marginTop:10, textAlign:'center'}}>Uygulama yeniden başlatılacak.</Text>
+          <Text style={{color:'#aaa', fontSize:14, marginTop:10, textAlign:'center'}}>Hata Detayı:</Text>
+          <Text style={{color:'#ff4757', fontSize:12, marginTop:5, textAlign:'center', fontFamily:'monospace'}}>{this.state.errorMsg}</Text>
         </View>
       );
     }
@@ -60,7 +64,10 @@ export default function App() {
 }
 
 function MainScreen() {
-  useKeepAwake();
+  useEffect(() => {
+    KeepAwake.activate();
+    return () => KeepAwake.deactivate();
+  }, []);
   const [rpm, setRpm] = useState(0);
   const [speed, setSpeed] = useState(0);
   const [coolant, setCoolant] = useState(0);
@@ -596,10 +603,13 @@ const styles = StyleSheet.create({
   connectButtonText: {color: '#ffffff', fontWeight: '800', fontSize: 13, letterSpacing: 1},
   statusDot: {width: 8, height: 8, borderRadius: 4, backgroundColor: '#ff4757'},
   statusDotActive: {backgroundColor: '#00ff7f'},
-  glassCard: {backgroundColor: 'rgba(30, 33, 40, 0.7)', borderRadius: 24, padding: 20, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.05)', marginBottom: 20},
+  glassCard: {
+    borderRadius: 24, padding: 20, borderWidth: 1, marginBottom: 20,
+    shadowColor: '#00e5ff', shadowOffset: {width: 0, height: 4}, shadowOpacity: 0.15, shadowRadius: 20, elevation: 5,
+  },
   cardLabel: {color: 'rgba(255, 255, 255, 0.5)', fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 10},
   vehicleText: {color: '#ffffff', fontSize: 20, fontWeight: 'bold', marginBottom: 5},
-  textNeonGreen: {color: '#00ff7f', textShadowColor: 'rgba(0, 255, 127, 0.5)', textShadowOffset: {width: 0, height: 0}, textShadowRadius: 10},
+  textNeonGreen: {color: '#00ff7f', textShadowColor: 'rgba(0, 255, 127, 0.8)', textShadowOffset: {width: 0, height: 0}, textShadowRadius: 15},
   protocolText: {color: 'rgba(255, 255, 255, 0.4)', fontSize: 14},
   vehicleInfoRow: {flexDirection: 'row', gap: 16, marginTop: 10},
   vehicleInfoItem: {color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600'},
