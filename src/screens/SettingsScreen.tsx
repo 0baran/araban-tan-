@@ -122,6 +122,8 @@ export default function SettingsScreen({onBack}: Props) {
     );
   };
 
+  const styles = getStyles(colors);
+
   return (
     <SafeAreaView
       edges={['top', 'bottom', 'left', 'right']}
@@ -203,11 +205,11 @@ export default function SettingsScreen({onBack}: Props) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>GÖRÜNÜM</Text>
-          <View style={[styles.row, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+          <View style={styles.row}>
             <Text style={styles.rowIcon}>🌙</Text>
             <View style={styles.rowContent}>
-              <Text style={[styles.rowLabel, {color: colors.text}]}>Karanlık Mod (Gece)</Text>
-              <Text style={[styles.rowDesc, {color: colors.textMuted}]}>Pil tasarrufu ve göz yorgunluğunu azaltır.</Text>
+              <Text style={styles.rowLabel}>Karanlık Mod (Gece)</Text>
+              <Text style={styles.rowDesc}>Pil tasarrufu ve göz yorgunluğunu azaltır.</Text>
             </View>
             <Switch
               value={darkMode}
@@ -375,8 +377,8 @@ export default function SettingsScreen({onBack}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#0a0b10'},
+const getStyles = (colors: any) => StyleSheet.create({
+  container: {flex: 1, backgroundColor: colors.bg},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -385,11 +387,11 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   backButton: {padding: 8},
-  backText: {color: '#00bfff', fontSize: 16, fontWeight: '700'},
-  title: {color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 1},
+  backText: {color: colors.accent, fontSize: 16, fontWeight: '700'},
+  title: {color: colors.text, fontSize: 18, fontWeight: '900', letterSpacing: 1},
   section: {marginBottom: 25},
   sectionTitle: {
-    color: 'rgba(255,255,255,0.3)',
+    color: colors.textMuted,
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1.5,
@@ -397,7 +399,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   sectionDesc: {
-    color: 'rgba(255,255,255,0.3)',
+    color: colors.textMuted,
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 12,
@@ -406,74 +408,74 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(30,33,40,0.7)',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 16,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: colors.cardBorder,
   },
   rowIcon: {fontSize: 22, marginRight: 14},
   rowContent: {flex: 1},
-  rowLabel: {color: '#fff', fontSize: 15, fontWeight: '600'},
-  rowDesc: {color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 2},
+  rowLabel: {color: colors.text, fontSize: 15, fontWeight: '600'},
+  rowDesc: {color: colors.textDim, fontSize: 12, marginTop: 2},
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(20,23,30,0.6)',
+    backgroundColor: colors.inputBg,
     borderRadius: 12,
     padding: 12,
     marginTop: -4,
     marginBottom: 8,
     marginLeft: 50,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.04)',
+    borderColor: colors.cardBorder,
   },
   settingLabel: {
-    color: 'rgba(255,255,255,0.5)',
+    color: colors.textDim,
     fontSize: 13,
     fontWeight: '600',
     marginRight: 10,
   },
   settingInput: {
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'transparent',
     borderRadius: 10,
     padding: 8,
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '800',
     width: 70,
     textAlign: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: colors.cardBorder,
   },
   settingUnit: {
-    color: 'rgba(255,255,255,0.3)',
+    color: colors.textMuted,
     fontSize: 12,
     fontWeight: '700',
     marginLeft: 8,
   },
   scanBtn: {
-    backgroundColor: 'rgba(0,191,255,0.12)',
+    backgroundColor: colors.gaugeBg,
     borderRadius: 16,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(0,191,255,0.3)',
+    borderColor: colors.accent,
     marginBottom: 12,
   },
   scanBtnText: {
-    color: '#00bfff',
+    color: colors.accent,
     fontWeight: '800',
     fontSize: 14,
     letterSpacing: 1,
   },
   scanResults: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: colors.card,
     borderRadius: 14,
     padding: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: colors.cardBorder,
   },
   scanRow: {
     flexDirection: 'row',
@@ -481,17 +483,17 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 4,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.04)',
+    borderBottomColor: colors.cardBorder,
   },
   scanRowOk: {backgroundColor: 'rgba(0,255,127,0.05)', borderRadius: 8},
   scanProto: {
-    color: 'rgba(255,255,255,0.5)',
+    color: colors.textDim,
     fontSize: 11,
     fontWeight: '700',
     fontFamily: 'monospace',
     width: 45,
   },
-  scanLabel: {color: 'rgba(255,255,255,0.5)', fontSize: 11, flex: 1},
+  scanLabel: {color: colors.textDim, fontSize: 11, flex: 1},
   scanMatch: {
     color: '#00ff7f',
     fontSize: 9,
@@ -504,15 +506,15 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.04)',
+    borderBottomColor: colors.cardBorder,
   },
   protoBadge: {
-    color: '#00bfff',
+    color: colors.accent,
     fontSize: 11,
     fontWeight: '800',
     fontFamily: 'monospace',
     width: 40,
     letterSpacing: 1,
   },
-  protoLabel: {color: 'rgba(255,255,255,0.6)', fontSize: 13, flex: 1},
+  protoLabel: {color: colors.textDim, fontSize: 13, flex: 1},
 });
