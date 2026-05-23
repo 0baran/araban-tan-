@@ -1,6 +1,14 @@
 # Sürüm Notları (Changelog)
 
-## v3.1.21 (Güncel Sürüm)
+## v3.1.26 (Güncel Sürüm)
+* **Arayüz Düzeltmesi**: Canlı Veri ekranında "Liste" görünümüne geçildiğinde sayfanın aşağıya kaydırılamaması (ve en alttaki sensörlerin gizli kalması) sorunu çözüldü. Artık tüm listeyi kesintisiz kaydırabilirsiniz.
+
+## v3.1.25 (Güncel Sürüm)
+* **Geliştirilmiş Klon Düzeltmesi**: Uygulama artık önce aracın hangi sensörleri desteklediğini tarar ve sadece desteklenenleri okur. Bu sayede ucuz ELM327 klonları kilitlenmez ve çok daha fazla sensör okunur.
+* **Yakıt Tüketimi (L/100km)**: Araç doğrudan yakıt verisi vermese bile MAF/MAP sensörleri üzerinden İdeal Gaz Yasası kullanılarak anlık yakıt tüketimi hesaplanır.
+* **Performans Artışı**: Desteklenmeyen sensörlere gereksiz soru sorulmadığı için ekran yenileme hızı ve kararlılığı artırıldı.
+
+## v3.1.241 (Güncel Sürüm)
 * **Tam Ekran Sıfırlama**: Veri akışı kesildiğinde (veya kontak kapatıldığında) ekrandaki göstergelerin ve sıcaklıkların donup kalması sorunu çözüldü; artık bağlantı kopsa bile 3 saniye içinde tüm veriler anında sıfırlanıyor.
 * **Arka Plan ve Widget Düzeltmesi**: Android 14 ve üzeri (Android 15-16) yeni nesil cihazlarda, uygulama arka plana atıldığında sistemin veri akışını kesmesi sorunu (ve Widget'ın donması) giderildi. Yeni "Veri Senkronizasyonu" arka plan servisi eklendi.
 

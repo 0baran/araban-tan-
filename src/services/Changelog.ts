@@ -6,6 +6,22 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.26',
+    date: '24 Mayis 2026',
+    items: [
+      'Arayuz Duzeltmesi: Canli Veri ekraninda "Liste" gorunumune gecildiginde sayfanin asagiya kaydirilamamasi ve bazi verilerin ekrana sigmayip gizli kalmasi sorunu tamamen cozuldu.',
+    ],
+  },
+  {
+    version: '3.1.25',
+    date: '24 Mayis 2026',
+    items: [
+      'Gelistirilmis Klon Duzeltmesi (Sensör Taraması): Uygulama artik once aracin hangi sensorleri destekledigini tarar (PID Discovery) ve sadece desteklenen sensorleri okur. Bu sayede ucuz ELM327 klonlari kilitlenmez ve Car Scanner gibi maksimum sayida (10-15+) sensor okunur.',
+      'Yakit Tuketimi (L/100km): Aracin beyni dogrudan yakit verisi yollamasa bile, MAF veya MAP basincini, RPM ve Sicaklik degerlerini kullanarak termodinamik yasa (Ideal Gaz Kanunu) ile Anlik Yakit Tuketimi hesaplanir.',
+      'Performans Artisi: Desteklenmeyen sensorlere soru sorulmadigi icin veri yenileme hizi %40 oraninda hizlandirildi.'
+    ],
+  },
+  {
     version: '3.1.22',
     date: '23 Mayis 2026',
     items: [

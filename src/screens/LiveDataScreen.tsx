@@ -725,6 +725,8 @@ export default function LiveDataScreen({onBack}: Props) {
     intakeTemp: 0,
     maf: 0,
     throttlePos: 0,
+    fuelRate: 0,
+    fuelConsumption: 0,
     fuelLevel: 0,
     fuelPressure: 0,
     timingAdvance: 0,
@@ -748,7 +750,6 @@ export default function LiveDataScreen({onBack}: Props) {
     fuelRailPressureRelative: 0,
     runTime: 0,
     engineOilTemp: 0,
-    fuelRate: 0,
     distanceWithMIL: 0,
     timeSinceDTCClear: 0,
     absoluteThrottleB: 0,
@@ -1078,6 +1079,7 @@ export default function LiveDataScreen({onBack}: Props) {
         </View>
 
         <ScrollView
+          style={{flex: 1}}
           contentContainerStyle={listView ? styles.list : styles.grid}
           nestedScrollEnabled>
           {filtered.map(p => (
