@@ -91,8 +91,8 @@ export async function downloadAndInstall(url: string, version: string): Promise<
       addAndroidDownloads: {
         useDownloadManager: true,
         notification: true,
-        title: `ArabanıTanı v${version}`,
-        description: 'Güncelleme indiriliyor...',
+        title: `ArabaniTani v${version}`,
+        description: 'Guncelleme indiriliyor...',
         mime: 'application/vnd.android.package-archive',
         path: dest,
       }
@@ -106,8 +106,16 @@ export async function downloadAndInstall(url: string, version: string): Promise<
     setProgress(100);
     await new Promise(r => setTimeout(r, 500));
 
-    // Otomatik kurulum ekranını aç
-    android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
+    // Otomatik kurulum ekranını açmayı dene
+    try {
+      android.actionViewIntent(dest, 'application/vnd.android.package-archive');
+    } catch (e) {}
+
+    Alert.alert(
+      'İndirme Tamamlandı',
+      'Eğer kurulum ekranı otomatik açılmadıysa, lütfen telefonun bildirim panelini (yukarıdan aşağı) kaydırıp indirilen dosyaya tıklayın.',
+      [{ text: 'Tamam' }]
+    );
 
     downloadActive = false;
     setTimeout(() => setProgress(0), 2000);

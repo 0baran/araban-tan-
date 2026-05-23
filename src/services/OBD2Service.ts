@@ -643,8 +643,8 @@ class OBD2Service {
       });
 
       await notifee.displayNotification({
-        title: 'ArabanıTanı Çalışıyor',
-        body: 'Araçla bağlantı kuruldu, veri okunuyor...',
+        title: 'ArabaniTani Calisiyor',
+        body: 'Aracla baglanti kuruldu, veri okunuyor...',
         android: {
           channelId,
           asForegroundService: true,

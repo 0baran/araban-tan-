@@ -1,6 +1,9 @@
 # Sürüm Notları (Changelog)
 
-## v3.1.18 (Güncel Sürüm)
+## v3.1.19 (Güncel Sürüm)
+* **Karakter Kodlaması Düzeltmesi**: Bildirim çubuğunda (uyarılar ve bildirimler) görünen Türkçe karakterlerin (ı, ş, ğ vb.) bozuk gözükmesine sebep olan yazılımsal kodlama hatası (encoding) giderildi. Artık bildirimler düzgün ve okunaklı çıkacak.
+
+## v3.1.18
 * **Navigasyon Çubuğu (Navigation Bar) Uyumu**: Yeni nesil (Android 10+) cihazlar için navigasyon çubuğu artık uygulamanın Açık/Karanlık temasına göre dinamik olarak renk değiştiriyor (Edge-to-Edge hissiyatı).
 * **OTA (Uygulama İçi Güncelleme) Düzeltmesi**: İndirilen güncellemelerin "Paket ayrıştırma hatası" vermesi sorunu, Android sisteminin yerleşik DownloadManager API'sine geçilerek tamamen çözüldü.
 * **Ana Ekran Performansı**: Göstergeler alt bileşenlere (Gauges, FeaturesGrid) bölündü; saniyede 10 kez gelen OBD verisi artık tüm ekranı dondurmadan sadece ilgili sayıları güncelliyor.

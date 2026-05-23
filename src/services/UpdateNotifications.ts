@@ -2,7 +2,7 @@ import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {Linking} from 'react-native';
 
 const CHANNEL_ID = 'app_updates';
-const CHANNEL_NAME = 'Uygulama Güncellemeleri';
+const CHANNEL_NAME = 'Uygulama Guncellemeleri';
 
 function openUpdateUrl(url: string) {
   Linking.openURL(url).catch(() => {});
@@ -28,7 +28,7 @@ export async function showUpdateNotification(
   url: string,
 ) {
   await notifee.displayNotification({
-    title: `v${version} güncellemesi hazır`,
+    title: `v${version} guncellemesi hazir`,
     body: notes.split('\n')[0],
     data: {url},
     android: {
