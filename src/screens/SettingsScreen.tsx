@@ -203,20 +203,19 @@ export default function SettingsScreen({onBack}: Props) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>GÖRÜNÜM</Text>
-          <View style={styles.row}>
-            <View style={[styles.settingRow, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingLabel, {color: colors.text}]}>Karanlık Mod (Gece)</Text>
-                <Text style={[styles.settingDesc, {color: colors.textMuted}]}>Pil tasarrufu ve göz yorgunluğunu azaltır.</Text>
-              </View>
-              <Switch
-                value={darkMode}
-                onValueChange={toggleTheme}
-                trackColor={{false: '#767577', true: colors.accent}}
-                thumbColor={darkMode ? '#fff' : '#f4f3f4'}
-              />
+          <View style={[styles.row, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+            <Text style={styles.rowIcon}>🌙</Text>
+            <View style={styles.rowContent}>
+              <Text style={[styles.rowLabel, {color: colors.text}]}>Karanlık Mod (Gece)</Text>
+              <Text style={[styles.rowDesc, {color: colors.textMuted}]}>Pil tasarrufu ve göz yorgunluğunu azaltır.</Text>
             </View>
-        </View>
+            <Switch
+              value={darkMode}
+              onValueChange={toggleTheme}
+              trackColor={{false: '#767577', true: colors.accent}}
+              thumbColor={darkMode ? '#fff' : '#f4f3f4'}
+            />
+          </View>
         </View>
 
         <View style={styles.section}>
