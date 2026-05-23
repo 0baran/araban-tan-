@@ -506,6 +506,7 @@ class OBD2Service {
     'coolantTemp',
   ];
   private validKeys = new Set<string>(this.validKeysArray);
+  private _validKeysDirty = false;
 
   private currentData: OBD2Data = new Proxy(
     {
@@ -624,7 +625,7 @@ class OBD2Service {
           !this.validKeys.has(prop)
         ) {
           this.validKeys.add(prop);
-          this.validKeysArray = Array.from(this.validKeys);
+          this._validKeysDirty = true;
         }
         target[prop as keyof OBD2Data] = value as never;
         return true;
@@ -2054,6 +2055,10 @@ class OBD2Service {
 
         this.pollTimer = setTimeout(poll, isIdle ? 500 : 15);
         if (this.dataCallback && Date.now() - this.lastCallbackTime > 80) {
+          if (this._validKeysDirty) {
+            this.validKeysArray = Array.from(this.validKeys);
+            this._validKeysDirty = false;
+          }
           this.currentData._validKeys = this.validKeysArray;
           this.dataCallback({...this.currentData});
           this.lastCallbackTime = Date.now();

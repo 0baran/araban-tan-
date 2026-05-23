@@ -1,4 +1,4 @@
-import {Alert, AppState, Linking} from 'react-native';
+import {Alert, AppState} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import {showUpdateNotification} from './UpdateNotifications';
@@ -89,12 +89,14 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   downloadActive = true;
   setProgress(0);
 
-  const android = ReactNativeBlobUtil.android;
+  const { dirs } = ReactNativeBlobUtil.fs;
+  const destPath = `${dirs.DownloadDir}/ProCarScanner-${version}.apk`;
 
   try {
+    await ReactNativeBlobUtil.fs.unlink(destPath).catch(() => {});
+
     const res = await ReactNativeBlobUtil.config({
-      fileCache: true,
-      appendExt: 'apk',
+      path: destPath,
     })
       .fetch('GET', url)
       .progress((received: number, total: number) => {
@@ -105,29 +107,21 @@ export async function downloadAndInstall(url: string, version: string): Promise<
     setProgress(100);
 
     const filePath = res.path();
-    android.actionViewIntent(filePath, 'application/vnd.android.package-archive');
+    ReactNativeBlobUtil.android.actionViewIntent(filePath, 'application/vnd.android.package-archive');
 
-    await ReactNativeBlobUtil.fs.unlink(filePath);
     downloadActive = false;
-    setProgress(0);
+    setTimeout(() => setProgress(0), 2000);
     return true;
   } catch (err: any) {
     downloadActive = false;
     setProgress(0);
+    await ReactNativeBlobUtil.fs.unlink(destPath).catch(() => {});
     const msg = String(err.message || err).toLowerCase();
     if (msg.includes('cancel') || msg.includes('timeout')) {
       return false;
     }
-    Alert.alert('İndirme Hatası', 'APK indirilemedi. Lütfen internet bağlantınızı kontrol edin.');
+    Alert.alert('İndirme Hatası', 'APK indirilemedi.');
     return false;
-  }
-}
-
-async function downloadAndInstallLegacy(url: string) {
-  try {
-    await Linking.openURL(url);
-  } catch {
-    Alert.alert('Hata', 'İndirme bağlantısı açılamadı.');
   }
 }
 
