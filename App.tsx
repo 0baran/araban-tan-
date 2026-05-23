@@ -28,7 +28,7 @@ import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.5.20260523.1428';
+const APP_VERSION = '3.1.6.20260523.1434';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -170,30 +170,11 @@ function MainScreen() {
       }
     }, 30000);
 
-    // Arka planda pil tasarrufu - Bluetooth bağlantısını tamamen kes
-    let bgLock = false;
-    const sub = AppState.addEventListener('change', nextState => {
-      if ((nextState === 'background' || nextState === 'inactive') && !bgLock) {
-        bgLock = true;
-        if (dtcInterval) clearInterval(dtcInterval);
-        dtcInterval = null;
-        obd2Service.goBackground();
-      } else if (nextState === 'active' && bgLock) {
-        bgLock = false;
-        obd2Service.goForeground();
-        dtcInterval = setInterval(async () => {
-          if (obd2Service.isConnected) {
-            const status = await obd2Service.readMonitorStatus();
-            setDtcCount(status.dtcCount);
-          }
-        }, 30000);
-      }
-    });
+    // Arka planda pil tasarrufu kaldirildi (Foreground Service ile arka planda calismaya devam edecek)
 
     return () => {
       obd2Service.disconnect();
       if (dtcInterval) clearInterval(dtcInterval);
-      sub.remove();
     };
   }, []);
 

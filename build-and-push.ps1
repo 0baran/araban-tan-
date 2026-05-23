@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$baseVersion = "3.1.5"
+$baseVersion = "3.1.6"
 $version = "$baseVersion.$versionSuffix"
 $apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
@@ -22,7 +22,7 @@ $pkg.version = $version
 $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 
 # Sürüm notlarını ayıkla
-$fullNotes = "v3.1.5 Guncellemeleri:; - Emisyon Testi tamamen 'Arac Bilgisi' ekraninin icine gomuuldu, boylece ekstra sayfaya gerek kalmadi."
+$fullNotes = "v3.1.6 Guncellemeleri:; - Arka Planda Calisma (Foreground Service) destegi eklendi. Uygulama kucultulse de veri okumaya devam eder (Widget altyapisi).; - Baglanti koptugunda veya 3 saniyeden uzun sure yanit alinamadiginda hiz ve devir ibreleri 0'a duserek kendini sifirlayacak.; - Veri isleme hizi optimize edildi, ibreler artik daha akici ve tepkisel."
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---

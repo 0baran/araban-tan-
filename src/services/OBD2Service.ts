@@ -8,6 +8,7 @@ import RNBluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
 
 const STORAGE_LAST_DEVICE = '@arabanitani/last_device';
@@ -475,9 +476,9 @@ const WRITE_DELAY = 150;
 const READ_POLL_INTERVAL = 80;
 const READ_MAX_POLLS = 25;
 const READ_EMPTY_LIMIT = 5;
-const FAST_WRITE_DELAY = 20;
-const FAST_POLL_INTERVAL = 30;
-const FAST_MAX_POLLS = 10;
+const FAST_WRITE_DELAY = 5;
+const FAST_POLL_INTERVAL = 15;
+const FAST_MAX_POLLS = 8;
 const CONNECT_TIMEOUT = 10000;
 
 class OBD2Service {
@@ -488,6 +489,8 @@ class OBD2Service {
   private _vin: string = '';
   private _connecting = false;
   private lastCallbackTime = 0;
+  private lastDataTime = Date.now();
+  private foregroundServiceActive = false;
 
   private priorityPids: Set<string> = new Set();
   private lastPollTimes: Record<string, number> = {};
@@ -627,6 +630,39 @@ class OBD2Service {
       },
     },
   );
+
+  private async startForegroundService() {
+    if (this.foregroundServiceActive || Platform.OS !== 'android') return;
+    try {
+      const channelId = await notifee.createChannel({
+        id: 'obd_connection',
+        name: 'ArabanıTanı Bağlantı Durumu',
+        importance: AndroidImportance.LOW,
+      });
+
+      await notifee.displayNotification({
+        title: 'ArabanıTanı Çalışıyor',
+        body: 'Araçla bağlantı kuruldu, veri okunuyor...',
+        android: {
+          channelId,
+          asForegroundService: true,
+          color: '#00bfff',
+          ongoing: true,
+        },
+      });
+      this.foregroundServiceActive = true;
+    } catch (e) {
+      console.error('Foreground service error:', e);
+    }
+  }
+
+  private async stopForegroundService() {
+    if (!this.foregroundServiceActive || Platform.OS !== 'android') return;
+    try {
+      await notifee.stopForegroundService();
+      this.foregroundServiceActive = false;
+    } catch (e) {}
+  }
   private logBuffer: string[] = [];
   private logMax = 6000;
   private tripStartTime = 0;
@@ -854,6 +890,7 @@ class OBD2Service {
         'connected',
         `${deviceName || deviceAddress} bağlandı`,
       );
+      this.startForegroundService();
       await this.saveLastDevice({
         type: 'bluetooth',
         address: deviceAddress,
@@ -888,6 +925,7 @@ class OBD2Service {
       this._vin = await this.readVIN();
       this.startPolling();
       this.setConnectionState('connected', 'USB OBD2 bağlandı');
+      this.startForegroundService();
       await this.saveLastDevice({type: 'usb', name: 'USB ELM327'});
       return true;
     } catch (err) {
@@ -919,6 +957,7 @@ class OBD2Service {
       this._vin = await this.readVIN();
       this.startPolling();
       this.setConnectionState('connected', `WiFi: ${ip}`);
+      this.startForegroundService();
       await this.saveLastDevice({
         type: 'wifi',
         ip,
@@ -1197,6 +1236,7 @@ class OBD2Service {
         msg.includes('closed')
       ) {
         this._isConnected = false;
+        this.stopForegroundService();
         this.setConnectionState('disconnected', 'Bağlantı koptu');
       }
       return '';
@@ -1546,6 +1586,7 @@ class OBD2Service {
         msg.includes('closed')
       ) {
         this._isConnected = false;
+        this.stopForegroundService();
         this.setConnectionState('disconnected', 'Bağlantı koptu');
       }
       return '';
@@ -1612,7 +1653,23 @@ class OBD2Service {
           this.currentData.speed === 0 && this.currentData.rpm === 0;
 
         const ok = await this.sendCritical();
-        if (!ok || !this.pollRunning) {
+        
+        // Timeout Watchdog
+        if (ok) {
+          this.lastDataTime = Date.now();
+        } else if (Date.now() - this.lastDataTime > 3000) {
+          // Reset data if no response for > 3 seconds
+          this.currentData.rpm = 0;
+          this.currentData.speed = 0;
+          this.currentData.engineLoad = 0;
+          this.currentData.batteryVoltage = 0;
+          if (this.dataCallback) {
+            this.dataCallback({...this.currentData});
+          }
+          this.updateWidget();
+        }
+
+        if (!this.pollRunning) {
           return;
         }
 
