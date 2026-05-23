@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.5.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Genel Kararlilik ve Uyumluluk Paketi: Açık kaynaklı dev projelerin (AndrOBD, python-OBD) standartlari baz alinarak ELM327 iletisim omurgasi bastan asagi yeniden yazildi.',
+      'Auto-Recovery (Otomatik Kurtarma): Arac hareket halindeyken baglanti kopsa bile uygulama sizi ana ekrana atmaz, arka planda 2 saniye icinde cihazi sifirlayip verileri tekrar akitmaya baslar.',
+      'Kusursuz Baslatma (Ultimate Init): Cihazi yoran gereksiz bosluk ve satir atlama protokolleri iptal edildi (ATE0, ATL0, ATS0) ve Adaptif Zamanlama (ATAT1) zorunlu kilindi.'
+    ],
+  },
+  {
     version: '3.4.1',
     date: '24 Mayis 2026',
     items: [

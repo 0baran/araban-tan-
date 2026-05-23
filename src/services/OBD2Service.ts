@@ -1351,6 +1351,7 @@ class OBD2Service {
   }
 
   private async initializeELM327(): Promise<boolean> {
+    // Ultimate Init Sequence (AndrOBD / Python-OBD Standards)
     await this.sendCommand('ATZ');
     await this.delay(ATZ_RESET_DELAY);
     await this.sendCommand('ATE0');
@@ -1359,9 +1360,11 @@ class OBD2Service {
     await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATS0');
     await this.delay(AT_CMD_DELAY);
-    await this.sendCommand('ATAT1');
+    await this.sendCommand('ATH0'); // Headers Off
     await this.delay(AT_CMD_DELAY);
-    await this.sendCommand('ATST64');
+    await this.sendCommand('ATAT1'); // Adaptive Timing Auto 1
+    await this.delay(AT_CMD_DELAY);
+    await this.sendCommand('ATST62'); // Set Timeout (faster recovery)
     await this.delay(AT_CMD_DELAY);
 
     this.supportedPids.clear();
@@ -1382,20 +1385,7 @@ class OBD2Service {
     console.log(
       'initializeELM327: Otomatik protokol başarısız, protokoller taranıyor...',
     );
-    const tryProtocols = [
-      '6',
-      '7',
-      '5',
-      '3',
-      '8',
-      '9',
-      '1',
-      '2',
-      '4',
-      'A',
-      'B',
-      'C',
-    ];
+    const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
     for (const proto of tryProtocols) {
       await this.sendCommand(`ATSP${proto}`);
       await this.delay(AT_CMD_DELAY);

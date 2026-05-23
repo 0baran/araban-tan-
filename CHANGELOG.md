@@ -1,5 +1,10 @@
 # Sürüm Notları (Changelog)
 
+## v3.5.0 (Güncel Sürüm)
+* **Genel Kararlılık ve Uyumluluk Paketi**: Açık kaynaklı dev projelerin (AndrOBD, python-OBD vb.) iletişim kodları örnek alınarak ELM327 bağlantı altyapısı "Kurşun Geçirmez" hale getirildi.
+* **Auto-Recovery (Otomatik Kurtarma)**: Seyir halindeyken elektrik dalgalanması yüzünden bağlantı kopsa bile ("UNABLE TO CONNECT"), uygulama sizi hatayla ana ekrana atmaz; arka planda 2 saniye içinde çaktırmadan cihazı sıfırlar (ATZ) ve verileri okumaya devam eder.
+* **Kusursuz Başlatma (Ultimate Init)**: Cihazı yoran boşluklar ve satırlar kapatıldı (ATS0, ATL0). Uyumsuzluk çıkartan araçlar için Adaptif Zamanlama (ATAT1) zorunlu hale getirildi. İletişim artık ışık hızında!
+
 ## v3.4.1 (Güncel Sürüm)
 * **Hata Düzeltmesi**: Araçlarım menüsünde kendi belirlediğiniz araç isminin (Örn: "Benim Arabam") yerine markanın (Örn: "Ford") gösterilme sorunu giderildi. Artık kendi koyduğunuz isim kocaman puntolarla en tepede yazacak. Altında ise Marka/Model/Yıl detayları görünecek.
 
