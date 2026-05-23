@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.3.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Gizli Özellik Mega Paketi Eklendi: Volkswagen, Audi, Seat, Skoda, Ford ve Renault/Dacia grubu araclar icin yepyeni gizli ozellikler kodlamalari sisteme eklendi.',
+      'Yeni Ozellikler: Kadran Selamlama (Needle Sweep), Amerikan Park, Hareket Halinde Video İzleme (VIM), Otomatik Kapi Kilitleme, Start-Stop Iptali, Android Auto / Apple CarPlay aktivasyonu ve cok daha fazlasi Gizli Ozellikler sayfasina entegre edildi.'
+    ],
+  },
+  {
     version: '3.2.0',
     date: '24 Mayis 2026',
     items: [

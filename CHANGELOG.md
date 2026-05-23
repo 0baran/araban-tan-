@@ -1,5 +1,9 @@
 # Sürüm Notları (Changelog)
 
+## v3.3.0 (Güncel Sürüm)
+* **Gizli Özellik Mega Paketi**: Volkswagen, Audi, Seat, Skoda, Ford, Renault ve Dacia araçları için en çok talep edilen gizli özellik kodlamaları (UDS ve CAN Payload) sisteme eklendi.
+* **Yeni Özellikler Neler?**: Kadran Selamlama (Needle Sweep), Amerikan Park, Korna ile Kilit Onayı, Video in Motion, Otomatik Kapı Kilitleme, Eko Mod Menüsü, Start-Stop İptali ve R-Link CarPlay aktivasyonu gibi profesyonel kodlamaları artık tek tuşla yapabilirsiniz.
+
 ## v3.2.0 (Güncel Sürüm)
 * **Mega Sensör Paketi**: Piyasada standart SAE J1979 protokolü ile desteklenen **30'dan fazla yeni sensör** uygulamaya gömüldü. Artık araç destekliyorsa Yakıt Basıncı, Motor Yağı Sıcaklığı, Tork Verileri (Referans ve Güncel), Anlık Yakıt Tüketimi (L/h), Katalizör Sıcaklığı gibi profesyonel verileri canlı olarak görebileceksiniz.
 * **Genel Uyumluluk Paketi**: Kullanıcı talebi üzerine, ucuz ELM327 klon cihazlarındaki kronik hatalar ve kitlenmeleri önlemek amacıyla agresif bir arka plan filtreleyici (Compatibility Module) geliştirildi. Cihaz kopmaları minimuma indirildi.
