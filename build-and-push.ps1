@@ -8,8 +8,9 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$version = "2.2.$versionSuffix"
-$apkName = "ArabaniTani-latest.apk"
+$baseVersion = "3.0.1"
+$version = "$baseVersion.$versionSuffix"
+$apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
 
 Write-Host "==> Version: $version" -ForegroundColor Cyan
@@ -86,9 +87,9 @@ if (-not $SkipPush) {
   try {
     git add -A
     git add -f $apkName
-    git commit -m "chore: v$version - otomatik build & push" 2>&1 | Out-Null
+    git commit -m "chore: v$version - otomatik build & push" | Out-Null
     Write-Host "==> Pushing to GitHub..." -ForegroundColor Yellow
-    git push origin main 2>&1
+    git push origin main
     Write-Host "==> Push completed" -ForegroundColor Green
   } finally {
     Pop-Location
