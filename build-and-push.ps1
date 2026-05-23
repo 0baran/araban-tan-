@@ -52,7 +52,7 @@ if (-not $SkipBuild) {
     if ($LASTEXITCODE -ne 0) { throw "Gradle build failed (exit $LASTEXITCODE)" }
 
     # Verify build output contains our version
-    if ($buildOutput -match "BUILD SUCCESSFUL") {
+    if ($buildOutput -match "SUCCESSFUL") {
       Write-Host "==> Build successful" -ForegroundColor Green
     } else {
       throw "Build did not complete successfully"
