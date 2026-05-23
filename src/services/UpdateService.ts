@@ -89,14 +89,10 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   downloadActive = true;
   setProgress(0);
 
-  const { dirs } = ReactNativeBlobUtil.fs;
-  const destPath = `${dirs.DownloadDir}/ProCarScanner-${version}.apk`;
-
   try {
-    await ReactNativeBlobUtil.fs.unlink(destPath).catch(() => {});
-
     const res = await ReactNativeBlobUtil.config({
-      path: destPath,
+      fileCache: true,
+      appendExt: 'apk',
     })
       .fetch('GET', url)
       .progress((received: number, total: number) => {
@@ -106,8 +102,7 @@ export async function downloadAndInstall(url: string, version: string): Promise<
 
     setProgress(100);
 
-    const filePath = res.path();
-    ReactNativeBlobUtil.android.actionViewIntent(filePath, 'application/vnd.android.package-archive');
+    ReactNativeBlobUtil.android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
 
     downloadActive = false;
     setTimeout(() => setProgress(0), 2000);
@@ -115,7 +110,6 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   } catch (err: any) {
     downloadActive = false;
     setProgress(0);
-    await ReactNativeBlobUtil.fs.unlink(destPath).catch(() => {});
     const msg = String(err.message || err).toLowerCase();
     if (msg.includes('cancel') || msg.includes('timeout')) {
       return false;
