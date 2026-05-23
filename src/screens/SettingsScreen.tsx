@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function SettingsScreen({onBack}: Props) {
-  const {darkMode, toggleTheme, colors} = useTheme();
+  const {colors, darkMode, neonTheme, toggleTheme, toggleNeon} = useTheme();
   const [protocolLabel, setProtocolLabel] = useState(obd2Service.protocolLabel);
   const [speedWarnOn, setSpeedWarnOn] = useState(false);
   const [speedWarnVal, setSpeedWarnVal] = useState('130');
@@ -204,22 +204,33 @@ export default function SettingsScreen({onBack}: Props) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>GÖRÜNÜM</Text>
           <View style={styles.row}>
-            <Text style={styles.rowIcon}>{darkMode ? '🌙' : '☀️'}</Text>
-            <View style={styles.rowContent}>
-              <Text style={styles.rowLabel}>Koyu Tema</Text>
-              <Text style={styles.rowDesc}>
-                {darkMode ? 'Açık temaya geç' : 'Koyu temaya geç'}
-              </Text>
+            <View style={[styles.settingRow, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingLabel, {color: colors.text}]}>Karanlık Mod (Gece)</Text>
+                <Text style={[styles.settingDesc, {color: colors.textMuted}]}>Pil tasarrufu ve göz yorgunluğunu azaltır.</Text>
+              </View>
+              <Switch
+                value={darkMode}
+                onValueChange={toggleTheme}
+                trackColor={{false: '#767577', true: colors.accent}}
+                thumbColor={darkMode ? '#fff' : '#f4f3f4'}
+              />
             </View>
-            <Switch
-              value={darkMode}
-              onValueChange={toggleTheme}
-              trackColor={{
-                false: 'rgba(255,255,255,0.1)',
-                true: 'rgba(0,191,255,0.4)',
-              }}
-              thumbColor={darkMode ? '#00bfff' : '#666'}
-            />
+
+            {darkMode && (
+              <View style={[styles.settingRow, {backgroundColor: colors.card, borderColor: colors.cardBorder, marginTop: 10}]}>
+                <View style={styles.settingInfo}>
+                  <Text style={[styles.settingLabel, {color: colors.text}]}>Neon (Cyberpunk) Tema</Text>
+                  <Text style={[styles.settingDesc, {color: colors.textMuted}]}>Yarı saydam arayüz ve neon ışıklandırmalar.</Text>
+                </View>
+                <Switch
+                  value={neonTheme}
+                  onValueChange={toggleNeon}
+                  trackColor={{false: '#767577', true: colors.accent}}
+                  thumbColor={neonTheme ? '#fff' : '#f4f3f4'}
+                />
+              </View>
+            )}
           </View>
         </View>
 

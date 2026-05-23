@@ -114,19 +114,6 @@ export default function VehicleInfoScreen({onBack, onNavigate}: Props) {
               <Text style={[styles.hint, {color: colors.textMuted}]}>
                 Tüm monitörlerin ✔ olması araç emisyon testine hazır demektir.
               </Text>
-              <TouchableOpacity
-                style={[
-                  styles.detailedBtn,
-                  {
-                    backgroundColor: 'rgba(0,191,255,0.1)',
-                    borderColor: 'rgba(0,191,255,0.3)',
-                  },
-                ]}
-                onPress={() => onNavigate?.('imreadiness')}>
-                <Text style={[styles.detailedBtnText, {color: '#00bfff'}]}>
-                  🌿 DETAYLI EMİSYON TESTİ (I/M READINESS) →
-                </Text>
-              </TouchableOpacity>
             </View>
           )}
 
@@ -161,6 +148,21 @@ export default function VehicleInfoScreen({onBack, onNavigate}: Props) {
               value={obd2Service.isConnected ? 'Evet' : 'Hayır'}
             />
           </View>
+
+          <TouchableOpacity
+            style={[
+              styles.detailedBtn,
+              {
+                backgroundColor: 'rgba(0,191,255,0.1)',
+                borderColor: 'rgba(0,191,255,0.3)',
+                marginBottom: 20,
+              },
+            ]}
+            onPress={() => onNavigate?.('imreadiness')}>
+            <Text style={[styles.detailedBtnText, {color: '#00bfff'}]}>
+              🌿 DETAYLI EMİSYON TESTİ (I/M READINESS) →
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       )}
     </SafeAreaView>

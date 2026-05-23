@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$baseVersion = "3.1.0"
+$baseVersion = "3.1.1"
 $version = "$baseVersion.$versionSuffix"
 $apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
@@ -25,7 +25,7 @@ if ($match.Success) {
   $block = $match.Groups[1].Value
   $itemMatches = [regex]::Matches($block, "'([^']*)'")
   $items = $itemMatches | ForEach-Object { $_.Groups[1].Value }
-  $fullNotes = "v3.1.0 Cyberpunk/Glassmorphism Yenilikleri:; Yeni Tasarim Dili: Klasik listeler tarihe karisti! Hiz, devir ve sicaklik gibi ana verileriniz icin neon isikli, yatay performans barlari (Gauges) eklendi.; Ekran Uyumlulugu: Tabletten, katlanabilir cihazlara ve eski Android cihazlara kadar kusursuz otomatik olceklenebilir tasarim.; Tampon ve Golgelendirme: Ana menu arayuzu tam saydam 'Glassmorphism' stiline gecirildi, spor arac gostergesi hissi artirildi."
+  $fullNotes = "v3.1.1 Guncellemeleri:; - Neon Tema Secenegi: Ayarlar menusunden 'Neon (Cyberpunk) Tema' istediginiz zaman acilip kapatilabilir hale getirildi.; - Emisyon Testi (I/M Readiness) Butonu: Arac bilgisi ekraninda baglanti beklenmeden her zaman gorunur hale getirildi.; - Sistem kararli hale getirildi."
 }
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
