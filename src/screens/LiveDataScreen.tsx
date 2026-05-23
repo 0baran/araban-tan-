@@ -99,6 +99,16 @@ const PARAM_META: {
   {key: 'o2Sensor6Voltage', label: 'O2 Sensör 6 Voltajı', unit: 'V', color: '#f1c40f', category: 'egzoz'},
   {key: 'o2Sensor7Voltage', label: 'O2 Sensör 7 Voltajı', unit: 'V', color: '#f39c12', category: 'egzoz'},
   {key: 'o2Sensor8Voltage', label: 'O2 Sensör 8 Voltajı', unit: 'V', color: '#d35400', category: 'egzoz'},
+  {key: 'shortTermO2TrimB1', label: 'Kısa O2 Trim B1', unit: '%', color: '#27ae60', category: 'yakıt'},
+  {key: 'longTermO2TrimB1', label: 'Uzun O2 Trim B1', unit: '%', color: '#2ecc71', category: 'yakıt'},
+  {key: 'mafSensorA', label: 'MAF Sensör A', unit: 'g/s', color: '#2980b9', category: 'hava'},
+  {key: 'mafSensorB', label: 'MAF Sensör B', unit: 'g/s', color: '#3498db', category: 'hava'},
+  {key: 'engineCoolantTemp2', label: 'Motor Suyu Sıcaklığı 2', unit: '°C', color: '#c0392b', category: 'motor'},
+  {key: 'intakeAirTemp2', label: 'Emme Havası Sıcaklığı 2', unit: '°C', color: '#f39c12', category: 'hava'},
+  {key: 'engineRunTime', label: 'Motor Çalışma Süresi', unit: 'sn', color: '#7f8c8d', category: 'motor'},
+  {key: 'widebandO2S1', label: 'Geniş Bant O2 B1S1', unit: 'V', color: '#8e44ad', category: 'egzoz'},
+  {key: 'widebandO2S2', label: 'Geniş Bant O2 B1S2', unit: 'V', color: '#9b59b6', category: 'egzoz'},
+  {key: 'widebandO2S3', label: 'Geniş Bant O2 B1S3', unit: 'V', color: '#16a085', category: 'egzoz'},
 ];
 
 const CATEGORIES = [
@@ -144,6 +154,9 @@ export default function LiveDataScreen({onBack}: Props) {
     dpfBypassPressure: 0, noxNTEControlStatus: 0, pmNTEControlStatus: 0,
     engineAuxiliarySupported: '', o2Sensor3Voltage: 0, o2Sensor4Voltage: 0,
     o2Sensor5Voltage: 0, o2Sensor6Voltage: 0, o2Sensor7Voltage: 0, o2Sensor8Voltage: 0,
+    shortTermO2TrimB1: 0, longTermO2TrimB1: 0, mafSensorA: 0, mafSensorB: 0,
+    engineCoolantTemp2: 0, intakeAirTemp2: 0, engineRunTime: 0,
+    widebandO2S1: 0, widebandO2S2: 0, widebandO2S3: 0,
   });
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
@@ -177,6 +190,8 @@ export default function LiveDataScreen({onBack}: Props) {
     });
   }, []);
 
+
+
   const togglePin = useCallback(async (key: string) => {
     setPinned(prev => {
       const next = prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key];
@@ -195,7 +210,15 @@ export default function LiveDataScreen({onBack}: Props) {
     });
   }, [search, category, data._validKeys]);
 
+  useEffect(() => {
+    const toPrioritize = new Set([...pinned, ...filtered.map(p => p.key)]);
+    obd2Service.requestPriorityPids(Array.from(toPrioritize));
+    return () => obd2Service.requestPriorityPids(pinned);
+  }, [pinned, filtered]);
+
   const pinnedMeta = useMemo(() => pinned.map(k => PARAM_META.find(p => p.key === k)).filter(Boolean) as typeof PARAM_META, [pinned]);
+
+
 
   const fmt = (p: typeof PARAM_META[0]): string => {
     const val = data[p.key];
