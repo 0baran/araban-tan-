@@ -28,7 +28,7 @@ import {checkForUpdate, promptUpdate, downloadActive, downloadProgress, onDownlo
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.6.20260523.1752';
+const APP_VERSION = '3.1.6.20260523.1850';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -100,7 +100,7 @@ function MainScreen() {
     let lastUiUpdate = 0;
     obd2Service.onDataUpdate((data: OBD2Data) => {
       const now = Date.now();
-      if (now - lastUiUpdate > 250) {
+      if (now - lastUiUpdate > 100) {
         lastUiUpdate = now;
         const s = getSettings();
         setSpeedWarnActive(s.speedWarningEnabled && data.speed >= s.speedWarningThreshold);
@@ -127,6 +127,9 @@ function MainScreen() {
           dataLogService.setFuelPrice(getSettings().fuelPricePerLiter);
           dataLogService.start();
         }
+      }
+      if (state === 'background') {
+        setStatusText('Arka planda çalışıyor...');
       }
       if (state === 'disconnected') {
         setIsConnected(false);

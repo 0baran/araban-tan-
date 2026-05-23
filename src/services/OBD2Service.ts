@@ -176,6 +176,7 @@ export type ConnectionState =
   | 'disconnected'
   | 'connecting'
   | 'connected'
+  | 'background'
   | 'error';
 
 export const OBD2_PROTOCOLS: {value: string; label: string}[] = [
@@ -1674,8 +1675,8 @@ class OBD2Service {
         }
 
         if (isIdle) {
-          if (this.pollCycle % 3 !== 0) {
-            this.pollTimer = setTimeout(poll, 1000);
+          if (this.pollCycle % 2 !== 0) {
+            this.pollTimer = setTimeout(poll, 500);
             return;
           }
         }
@@ -2051,8 +2052,8 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 1000 : 25);
-        if (this.dataCallback && Date.now() - this.lastCallbackTime > 250) {
+        this.pollTimer = setTimeout(poll, isIdle ? 500 : 15);
+        if (this.dataCallback && Date.now() - this.lastCallbackTime > 80) {
           this.currentData._validKeys = this.validKeysArray;
           this.dataCallback({...this.currentData});
           this.lastCallbackTime = Date.now();
@@ -2096,57 +2097,48 @@ class OBD2Service {
 
   async goBackground() {
     this.stopPolling();
+    this.stopForegroundService();
     if (this.isSimulating) {
       this.isSimulating = false;
       this._isConnected = false;
       this.pollRunning = false;
       return;
     }
-    this._isConnected = false;
-    if (this.transport) {
-      try {
-        await this.transport.disconnect();
-      } catch (_) {}
-      this.transport = null;
+    if (this._isConnected && this.transport) {
+      this.setConnectionState('background', 'Arka planda');
     }
   }
-
-  private _lastReconnectAttempt = 0;
 
   async goForeground() {
     if (this.isSimulating) {
       this.startSimulation();
       return;
     }
-    const now = Date.now();
-    if (now - this._lastReconnectAttempt < 15000) {
-      return;
-    }
-    this._lastReconnectAttempt = now;
-    const config = await this.loadLastDevice();
-    if (!config) {
-      return;
-    }
-    this._lastConfig = config;
-    if (config.type === 'bluetooth') {
-      try {
-        if (!(await this.isBluetoothEnabled())) {
-          this.setConnectionState('disconnected', 'Bluetooth kapalı');
-          return;
-        }
-      } catch (_) {}
-    }
-    this.setConnectionState('connecting', 'Yeniden bağlanıyor...');
-    let ok = false;
-    if (config.type === 'bluetooth' && config.address) {
-      ok = await this.connectBluetooth(config.address, config.name);
-    } else if (config.type === 'wifi' && config.ip) {
-      ok = await this.connectWiFi(config.ip, config.port || 35000);
-    } else if (config.type === 'usb') {
-      ok = await this.connectUSB();
-    }
-    if (!ok) {
-      this.setConnectionState('disconnected', 'Yeniden bağlanılamadı');
+    if (this._isConnected && this.transport) {
+      this.startForegroundService();
+      this.startPolling();
+      this.setConnectionState('connected', 'Devam ediliyor');
+    } else {
+      const config = await this.loadLastDevice();
+      if (!config) return;
+      this._lastConfig = config;
+      if (config.type === 'bluetooth') {
+        try {
+          if (!(await this.isBluetoothEnabled())) return;
+        } catch (_) {}
+      }
+      this.setConnectionState('connecting', 'Yeniden bağlanıyor...');
+      let ok = false;
+      if (config.type === 'bluetooth' && config.address) {
+        ok = await this.connectBluetooth(config.address, config.name);
+      } else if (config.type === 'wifi' && config.ip) {
+        ok = await this.connectWiFi(config.ip, config.port || 35000);
+      } else if (config.type === 'usb') {
+        ok = await this.connectUSB();
+      }
+      if (!ok) {
+        this.setConnectionState('disconnected', 'Bağlanılamadı');
+      }
     }
   }
 
@@ -3661,6 +3653,7 @@ class OBD2Service {
   private async disconnectTransport() {
     this._isConnected = false;
     this.stopPolling();
+    this.stopForegroundService();
     if (this.transport) {
       try {
         await this.transport.disconnect();
