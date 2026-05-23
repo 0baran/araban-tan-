@@ -6,6 +6,17 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.22',
+    date: '23 Mayis 2026',
+    items: [
+      'Tam Ekran Sifirlama: Veri akisi kesildiginde (veya kontak kapatildiginda) ekrandaki gostergelerin ve sicakliklarin donup kalmasi sorunu cozuldu. Baglanti koptugunda 3 saniye icinde tum veriler sifirlanir.',
+      'Arka Plan ve Widget Duzeltmesi: Android 14+ cihazlarda uygulama arka plana atildiginda widget\'in donmasi (veri senkronizasyonu eksikligi) giderildi. Yeni arka plan servisi eklendi.',
+      'Karakter Kodlamasi: Bildirim cubugundaki Turkce karakter bozulmasi tamamen duzeltildi.',
+      'Eski Telefon Duzeltmesi: Android 10 ve oncesi icin otomatik guncelleme ekraninin acilmamasi sorunu icin bildirim uyarisi eklendi.',
+      'Derleme Uyumlulugu: Android Manifest yapilandirmasinda yer alan onemsiz cakismalar (Foreground Service) duzeltildi.'
+    ],
+  },
+  {
     version: '3.1.0',
     date: '23 Mayis 2026',
     items: [

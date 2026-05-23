@@ -88,14 +88,9 @@ export async function downloadAndInstall(url: string, version: string): Promise<
     await fs.unlink(dest).catch(() => {});
 
     const res = await ReactNativeBlobUtil.config({
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
-        title: `ArabaniTani v${version}`,
-        description: 'Guncelleme indiriliyor...',
-        mime: 'application/vnd.android.package-archive',
-        path: dest,
-      }
+      path: dest,
+      fileCache: true,
+      appendExt: 'apk',
     })
       .fetch('GET', url)
       .progress((received, total) => {
@@ -106,14 +101,14 @@ export async function downloadAndInstall(url: string, version: string): Promise<
     setProgress(100);
     await new Promise(r => setTimeout(r, 500));
 
-    // Otomatik kurulum ekranını açmayı dene
+    // Otomatik kurulum ekranını açmayı dene (FileProvider üzerinden)
     try {
-      android.actionViewIntent(dest, 'application/vnd.android.package-archive');
+      android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
     } catch (e) {}
 
     Alert.alert(
       'İndirme Tamamlandı',
-      'Eğer kurulum ekranı otomatik açılmadıysa, lütfen telefonun bildirim panelini (yukarıdan aşağı) kaydırıp indirilen dosyaya tıklayın.',
+      'Kurulum ekranı otomatik açılmadıysa, lütfen "İndirilenler" klasöründen veya bildirim panelinden dosyayı (ArabaniTani-v' + version + '.apk) bularak kurun.',
       [{ text: 'Tamam' }]
     );
 
