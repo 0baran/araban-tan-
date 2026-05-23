@@ -27,6 +27,7 @@ import TripSummaryScreen from './src/screens/TripSummaryScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
+import {useKeepAwake} from 'react-native-keep-awake';
 
 const APP_VERSION = '2.9.29';
 
@@ -59,6 +60,7 @@ export default function App() {
 }
 
 function MainScreen() {
+  useKeepAwake();
   const [rpm, setRpm] = useState(0);
   const [speed, setSpeed] = useState(0);
   const [coolant, setCoolant] = useState(0);

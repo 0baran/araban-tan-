@@ -678,7 +678,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_refuel_quantity',
     name: 'Ek Yakıt Bilgisi',
-    description: 'Deponun dolması için gereken yakıt miktarını litre olarak gösterir',
+    description:
+      'Deponun dolması için gereken yakıt miktarını litre olarak gösterir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (Gösterge Paneli - 17)',
@@ -691,7 +692,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_us_sidemarkers',
     name: 'Amerikan Park Sinyaller',
-    description: 'Ön sinyal lambalarının parklar ile birlikte %30 kısık yanması',
+    description:
+      'Ön sinyal lambalarının parklar ile birlikte %30 kısık yanması',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (BCM - 09)',
@@ -704,7 +706,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_tpms_temp',
     name: 'Lastik Basınç ve Sıcaklık',
-    description: 'iDrive ekranında lastik basıncına ek olarak sıcaklık değerlerini gösterir',
+    description:
+      'iDrive ekranında lastik basıncına ek olarak sıcaklık değerlerini gösterir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (HU_NBT/HU_MGU)',
@@ -717,7 +720,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_rear_drl',
     name: 'Arka Stoplar Gündüz Farı',
-    description: 'Gündüz farları (DRL) yanarken arka stopların da yanmasını sağlar',
+    description:
+      'Gündüz farları (DRL) yanarken arka stopların da yanmasını sağlar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (BDC/REM)',
@@ -730,7 +734,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'renault_tpms_disable',
     name: 'TPMS (Lastik Basınç) Kapatma',
-    description: 'Lastik basınç sensörü uyarısını gösterge panelinden tamamen kapatır',
+    description:
+      'Lastik basınç sensörü uyarısını gösterge panelinden tamamen kapatır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['renault'],
     compatibility: 'Renault Megane 3/4, Clio 4/5',
@@ -743,7 +748,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'opel_advanced_trip',
     name: 'Gelişmiş Yol Bilgisayarı',
-    description: 'Göstergedeki ek sekmeleri açar (Akü voltajı, soğutma suyu, eko trend)',
+    description:
+      'Göstergedeki ek sekmeleri açar (Akü voltajı, soğutma suyu, eko trend)',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['opel'],
     compatibility: 'Opel Astra J/K, Insignia A/B',
@@ -756,7 +762,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_coming_home',
     name: 'Coming / Leaving Home (Far Gecikmesi)',
-    description: 'Aracı kilitlediğinizde veya açtığınızda farların belirli bir süre yanık kalması',
+    description:
+      'Aracı kilitlediğinizde veya açtığınızda farların belirli bir süre yanık kalması',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (BCM - 09)',
@@ -769,7 +776,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_start_stop_disable',
     name: 'Start/Stop İptali',
-    description: 'Voltaj limitini değiştirerek Start/Stop sistemini kalıcı olarak devre dışı bırakır',
+    description:
+      'Voltaj limitini değiştirerek Start/Stop sistemini kalıcı olarak devre dışı bırakır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (Gateway - 19)',
@@ -782,7 +790,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_oil_temp',
     name: 'Yol Bilgisayarı Yağ Sıcaklığı',
-    description: 'Yol bilgisayarı (MFA) ekranına anlık yağ sıcaklığı göstergesini ekler',
+    description:
+      'Yol bilgisayarı (MFA) ekranına anlık yağ sıcaklığı göstergesini ekler',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (Gösterge - 17)',
@@ -795,7 +804,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_sport_displays',
     name: 'Spor Göstergeler (Sport Displays)',
-    description: 'iDrive ekranında anlık beygir ve tork gösteren spor ekranları aktif eder',
+    description:
+      'iDrive ekranında anlık beygir ve tork gösteren spor ekranları aktif eder',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (HU_NBT)',
@@ -808,7 +818,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_m_startup',
     name: 'M Performance Açılış Logosu',
-    description: 'NBT ve Kadranda açılışta BMW logosu yerine M logosunu gösterir',
+    description:
+      'NBT ve Kadranda açılışta BMW logosu yerine M logosunu gösterir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F Serisi (Kombi/NBT)',
@@ -873,7 +884,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'toyota_lane_assist',
     name: 'Şerit Takip Hassasiyeti',
-    description: 'LTA (Şerit takip) sisteminin direksiyon müdahale hassasiyetini artırır',
+    description:
+      'LTA (Şerit takip) sisteminin direksiyon müdahale hassasiyetini artırır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['toyota'],
     compatibility: 'Toyota Safety Sense destekli araçlar',
@@ -899,7 +911,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_teardrop_wipe',
     name: 'Gözyaşı Silme (Teardrop Wiping)',
-    description: 'Silecekler durduktan 3 saniye sonra camda kalan suyu silmek için 1 kez daha çalışır',
+    description:
+      'Silecekler durduktan 3 saniye sonra camda kalan suyu silmek için 1 kez daha çalışır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (Silecek Modülü - 09)',
@@ -912,7 +925,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_fog_highbeam',
     name: 'Selektörde Sis Farları',
-    description: 'Selektör yaptığınızda uzun farlarla birlikte sis farları da çakar',
+    description:
+      'Selektör yaptığınızda uzun farlarla birlikte sis farları da çakar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (BCM - 09)',
@@ -925,7 +939,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_legal_disclaimer',
     name: 'Yasal Uyarı İptali (iDrive)',
-    description: 'Her çalıştırmada iDrive ekranında çıkan yasal uyarı metnini kaldırır',
+    description:
+      'Her çalıştırmada iDrive ekranında çıkan yasal uyarı metnini kaldırır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (HU_NBT)',
@@ -938,7 +953,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_ac_memory',
     name: 'Klima Hafızası (AC Memory)',
-    description: 'Aracı kapattığınızdaki klima ayarını (Açık/Kapalı) sonraki çalıştırmada hatırlar',
+    description:
+      'Aracı kapattığınızdaki klima ayarını (Açık/Kapalı) sonraki çalıştırmada hatırlar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (IHKA)',
@@ -951,7 +967,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_door_radio_off',
     name: 'Kapı Açılınca Teyp Kapanması',
-    description: 'Motoru stop edip şoför kapısını açtığınızda iDrive ve radyo otomatik kapanır',
+    description:
+      'Motoru stop edip şoför kapısını açtığınızda iDrive ve radyo otomatik kapanır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (BDC/FEM)',
@@ -964,7 +981,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'ford_bambi_mode',
     name: 'Bambi Modu (Sis + Uzun Far)',
-    description: 'Uzun farları yaktığınızda sis farlarının kapanmasını engeller (İkisi de yanar)',
+    description:
+      'Uzun farları yaktığınızda sis farlarının kapanmasını engeller (İkisi de yanar)',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['ford'],
     compatibility: 'Ford Focus, Ranger, F-150',
@@ -977,7 +995,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'ford_double_honk',
     name: 'Çift Korna İptali',
-    description: 'Araç çalışırken anahtarla dışarı çıkıp kapıyı kapattığınızdaki uyarı kornasını iptal eder',
+    description:
+      'Araç çalışırken anahtarla dışarı çıkıp kapıyı kapattığınızdaki uyarı kornasını iptal eder',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['ford'],
     compatibility: 'Ford Anahtarsız Çalıştırma (Keyless)',
@@ -990,7 +1009,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'ford_temp_numbers',
     name: 'Göstergede Hararet Derecesi',
-    description: 'Analog motor sıcaklık ibresinin üstünde dijital olarak net dereceyi (C) gösterir',
+    description:
+      'Analog motor sıcaklık ibresinin üstünde dijital olarak net dereceyi (C) gösterir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['ford'],
     compatibility: 'Ford Sync 3 / Dijital Kadran',
@@ -1003,7 +1023,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'renault_carplay_androidauto',
     name: 'Apple CarPlay & Android Auto',
-    description: 'R-Link 2 sisteminde gizli olan CarPlay ve Android Auto menülerini aktif eder',
+    description:
+      'R-Link 2 sisteminde gizli olan CarPlay ve Android Auto menülerini aktif eder',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['renault'],
     compatibility: 'Renault Megane 4, Kadjar (R-Link 2 v3.3+)',
@@ -1016,7 +1037,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'renault_video_in_motion',
     name: 'Hareket Halinde Video İzleme',
-    description: 'R-Link ekranında araç giderken video izleme kilidini kaldırır',
+    description:
+      'R-Link ekranında araç giderken video izleme kilidini kaldırır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['renault'],
     compatibility: 'Renault R-Link 2',
@@ -1029,7 +1051,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'renault_welcome_anim',
     name: 'GT/RS Açılış Animasyonu',
-    description: 'Ekran açılışında Renault logosu yerine GT veya RS Line animasyonu koyar',
+    description:
+      'Ekran açılışında Renault logosu yerine GT veya RS Line animasyonu koyar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['renault'],
     compatibility: 'Renault R-Link 2 / Easy Link',
@@ -1042,7 +1065,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'fiat_srt_pages',
     name: 'SRT Performance Pages',
-    description: 'Uconnect ekranında G-Force, Timer, Motor Verileri gibi SRT ekranlarını açar',
+    description:
+      'Uconnect ekranında G-Force, Timer, Motor Verileri gibi SRT ekranlarını açar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['fiat'], // Fiat Chrysler Automobiles (FCA)
     compatibility: 'Fiat Egea, Jeep, Dodge (Uconnect 7/8.4)',
@@ -1055,7 +1079,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'peugeot_diag_menu',
     name: 'Gizli Diagnostik Menüsü (SMEG)',
-    description: 'Teyp üzerinde lastik basınçları ve hata kodlarını gösteren mühendislik menüsü',
+    description:
+      'Teyp üzerinde lastik basınçları ve hata kodlarını gösteren mühendislik menüsü',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['peugeot'],
     compatibility: 'Peugeot / Citroen SMEG Ekran',
@@ -1068,7 +1093,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'opel_vauxhall_logo',
     name: 'Vauxhall/Buick Logosu',
-    description: 'Kadran veya IntelliLink ekranında Opel yerine Vauxhall/Buick logosu gösterimi',
+    description:
+      'Kadran veya IntelliLink ekranında Opel yerine Vauxhall/Buick logosu gösterimi',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['opel'],
     compatibility: 'Opel Astra, Insignia',
@@ -1081,7 +1107,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'mercedes_max_ac',
     name: 'Klima MAX AC Modu',
-    description: 'Sıcak ülkeler için gizlenmiş olan "MAX AC" modunu klima paneline ekler',
+    description:
+      'Sıcak ülkeler için gizlenmiş olan "MAX AC" modunu klima paneline ekler',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['mercedes'],
     compatibility: 'Mercedes W205, W213',
@@ -1120,7 +1147,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_brake_force_display',
     name: 'Acil Frende Çakarlı Stoplar (BFD)',
-    description: 'Sert fren yapıldığında arka stop lambalarının hızla çakarak uyarı vermesi',
+    description:
+      'Sert fren yapıldığında arka stop lambalarının hızla çakarak uyarı vermesi',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F ve G Serisi (BDC)',
@@ -1133,7 +1161,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_drl_menu',
     name: 'Teypte Gündüz Farı (DRL) Menüsü',
-    description: 'Teyp menüsüne gündüz farlarını açıp kapatabilmeniz için bir buton ekler',
+    description:
+      'Teyp menüsüne gündüz farlarını açıp kapatabilmeniz için bir buton ekler',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (Discover / Composition Media)',
@@ -1146,7 +1175,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_blower_speed_auto',
     name: 'Klima AUTO Modunda Fan Hızı',
-    description: 'Klima AUTO konumundayken fanın hangi hızda (kademe) çalıştığını ledlerde gösterir',
+    description:
+      'Klima AUTO konumundayken fanın hangi hızda (kademe) çalıştığını ledlerde gösterir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (Klima - 08)',
@@ -1159,7 +1189,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_comfort_turn',
     name: 'Konfor Sinyali (3 yerine 5)',
-    description: 'Sinyal koluna hafif dokunuşta 3 kez yanan sinyalin 5 kez yanmasını sağlar',
+    description:
+      'Sinyal koluna hafif dokunuşta 3 kez yanan sinyalin 5 kez yanmasını sağlar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (BCM - 09)',
@@ -1172,7 +1203,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_winking_drl',
     name: 'Sinyalde Sönen Gündüz Farı (Winking)',
-    description: 'Sinyal verilen tarafın gündüz farının (DRL) sönmesini veya kısılmasını sağlar',
+    description:
+      'Sinyal verilen tarafın gündüz farının (DRL) sönmesini veya kısılmasını sağlar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (BCM - 09)',
@@ -1185,7 +1217,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_close_trunk_fob',
     name: 'Kumandadan Bagaj Kapatma',
-    description: 'Elektrikli bagaja sahip araçlarda, anahtardaki bagaj tuşuna basılı tutarak bagajı kapatma',
+    description:
+      'Elektrikli bagaja sahip araçlarda, anahtardaki bagaj tuşuna basılı tutarak bagajı kapatma',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F/G Serisi (HKL/HKFM)',
@@ -1198,7 +1231,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_driving_mode_mem',
     name: 'Sürüş Modu Hafızası (Eco Pro / Sport)',
-    description: 'Aracı Eco Pro gibi bir modda kapattığınızda, tekrar çalıştırıldığında o modda açılır',
+    description:
+      'Aracı Eco Pro gibi bir modda kapattığınızda, tekrar çalıştırıldığında o modda açılır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F/G Serisi (BDC)',
@@ -1211,7 +1245,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_door_handle_reverse',
     name: 'Geri Viteste Kapı Kolu Işıkları',
-    description: 'Geri vitese takıldığında çevre aydınlatması için kapı kollarındaki LED lerin yanması',
+    description:
+      'Geri vitese takıldığında çevre aydınlatması için kapı kollarındaki LED lerin yanması',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW F/G Serisi (BDC/FEM)',
@@ -1224,7 +1259,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'bmw_m_digital_dash',
     name: 'M Performance Kadran Ekranı',
-    description: 'Tam hayalet ekranda (6WB) klasik gösterge yerine BMW M logosu ve kırmızı şeritli M gösterge',
+    description:
+      'Tam hayalet ekranda (6WB) klasik gösterge yerine BMW M logosu ve kırmızı şeritli M gösterge',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['bmw'],
     compatibility: 'BMW G Serisi (Kombi 6WB)',
@@ -1237,7 +1273,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'ford_sync3_climate',
     name: 'Sync 3 Klima Menüsü (Climate)',
-    description: 'Sync 3 dokunmatik ekranına Klima (Climate) kontrol sekmesini ekler',
+    description:
+      'Sync 3 dokunmatik ekranına Klima (Climate) kontrol sekmesini ekler',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['ford'],
     compatibility: 'Ford Sync 3 (APIM Modülü)',
@@ -1250,7 +1287,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'ford_perimeter_alarm',
     name: 'Fabrika Güvenlik Alarmı',
-    description: 'Kilitli aracın kapısı anahtarsız açıldığında kornalı ve dörtlü flaşörlü alarm',
+    description:
+      'Kilitli aracın kapısı anahtarsız açıldığında kornalı ve dörtlü flaşörlü alarm',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['ford'],
     compatibility: 'Ford Focus, Fiesta, Courier',
@@ -1263,7 +1301,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'ford_washer_fluid',
     name: 'Silecek Suyu Seviye Uyarısı',
-    description: 'Cam suyu sensörü bulunan araçlarda düşük seviye uyarısını aktif eder',
+    description:
+      'Cam suyu sensörü bulunan araçlarda düşük seviye uyarısını aktif eder',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['ford'],
     compatibility: 'Ford (IPC/BCM)',
@@ -1276,7 +1315,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'renault_eco_mode',
     name: 'Eco Modu Aktifleştirme',
-    description: 'Araçta fiziksel ECO tuşu olmasa bile R-Link ekranına Eco Mod butonunu ekler',
+    description:
+      'Araçta fiziksel ECO tuşu olmasa bile R-Link ekranına Eco Mod butonunu ekler',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['renault'],
     compatibility: 'Renault Megane 4, Clio 4/5',
@@ -1289,7 +1329,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'renault_visual_park',
     name: 'Görsel Park Asistanı',
-    description: 'Sadece sesle uyarı veren park sensörlerini multimedya ekranında 360 derece görselleştirir',
+    description:
+      'Sadece sesle uyarı veren park sensörlerini multimedya ekranında 360 derece görselleştirir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['renault'],
     compatibility: 'Renault R-Link / MediaNav',
@@ -1302,7 +1343,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'toyota_shift_lock',
     name: 'Vitese Duyarlı Kapı Kilidi',
-    description: 'Vites P den D ye alınınca kapıları kilitler, P ye dönünce kapıları açar',
+    description:
+      'Vites P den D ye alınınca kapıları kilitler, P ye dönünce kapıları açar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['toyota'],
     compatibility: 'Toyota Otomatik Vitesli Araçlar',
@@ -1315,7 +1357,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'mercedes_amg_menu',
     name: 'AMG Performans Menüsü (Kombi)',
-    description: 'Standart gösterge paneline AMG Performans (Yağ, Akü, G-Force) menüsünü getirir',
+    description:
+      'Standart gösterge paneline AMG Performans (Yağ, Akü, G-Force) menüsünü getirir',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['mercedes'],
     compatibility: 'Mercedes W205, W213 (IC Modülü)',
@@ -1328,7 +1371,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'mercedes_dvd_motion',
     name: 'Hareket Halinde DVD/Video İzleme',
-    description: 'COMAND ekranında araç giderken DVD ve Video izleme kilidini açar',
+    description:
+      'COMAND ekranında araç giderken DVD ve Video izleme kilidini açar',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['mercedes'],
     compatibility: 'Mercedes COMAND NTG4.5 / NTG5',
@@ -1341,7 +1385,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'vag_xds_tuning',
     name: 'XDS Diferansiyel Performans Artışı',
-    description: 'Virajlarda içte kalan tekerleğe fren yapan elektronik kilit diferansiyelini (XDS) "Güçlü" moda alır',
+    description:
+      'Virajlarda içte kalan tekerleğe fren yapan elektronik kilit diferansiyelini (XDS) "Güçlü" moda alır',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['vag'],
     compatibility: 'VAG Grubu (ABS - 03)',
@@ -1354,7 +1399,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'opel_camera_menu',
     name: 'Sürüş Kamera Menüsü',
-    description: 'IntelliLink teypte geri görüş kamerasını hareket halindeyken bile açma sekmesi ekler',
+    description:
+      'IntelliLink teypte geri görüş kamerasını hareket halindeyken bile açma sekmesi ekler',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['opel'],
     compatibility: 'Opel Astra, Insignia',
@@ -1367,7 +1413,8 @@ export const ALL_FEATURES: HiddenFeature[] = [
   {
     id: 'fiat_cornering_fog',
     name: 'Viraj Aydınlatması',
-    description: 'Direksiyonu çevirdiğinizde o yöndeki sis lambasının dönerek aydınlatma yapması',
+    description:
+      'Direksiyonu çevirdiğinizde o yöndeki sis lambasının dönerek aydınlatma yapması',
     category: 'Gizli Özellik (Kodlama)',
     manufacturer: ['fiat'],
     compatibility: 'Fiat Egea, Tipo (BCM)',
@@ -1376,7 +1423,7 @@ export const ALL_FEATURES: HiddenFeature[] = [
     writeOn: '2E700301',
     writeOff: '2E700300',
     writeHeader: '732',
-  }
+  },
 ];
 
 export function getFeaturesForManufacturer(mfr: Manufacturer): HiddenFeature[] {
