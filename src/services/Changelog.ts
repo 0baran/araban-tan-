@@ -6,6 +6,13 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.6.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Bildirim Paneli Guncellemesi: Arka planda calisirken ustten inen bildirim paneline "BAĞLANTIYI KES" butonu eklendi. Artik uygulamaya girmeden tek tıkla araba baglantisini kesip batarya tasarrufu yapabilirsiniz.'
+    ],
+  },
+  {
     version: '3.5.0',
     date: '24 Mayis 2026',
     items: [

@@ -1,5 +1,8 @@
 # Sürüm Notları (Changelog)
 
+## v3.6.0 (Güncel Sürüm)
+* **Bildirim Paneli Güncellemesi**: Arka planda çalışırken telefonun üst bildirim panelinde çıkan "ArabaniTani Çalışıyor" bildiriminin hemen altına **"BAĞLANTIYI KES"** butonu eklendi. Artık uygulamayı açmadan tek tuşla arabanızla olan iletişimi durdurabilir ve telefonunuzun bataryasından tasarruf edebilirsiniz.
+
 ## v3.5.0 (Güncel Sürüm)
 * **Genel Kararlılık ve Uyumluluk Paketi**: Açık kaynaklı dev projelerin (AndrOBD, python-OBD vb.) iletişim kodları örnek alınarak ELM327 bağlantı altyapısı "Kurşun Geçirmez" hale getirildi.
 * **Auto-Recovery (Otomatik Kurtarma)**: Seyir halindeyken elektrik dalgalanması yüzünden bağlantı kopsa bile ("UNABLE TO CONNECT"), uygulama sizi hatayla ana ekrana atmaz; arka planda 2 saniye içinde çaktırmadan cihazı sıfırlar (ATZ) ve verileri okumaya devam eder.
