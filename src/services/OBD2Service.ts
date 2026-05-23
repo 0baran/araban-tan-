@@ -485,8 +485,8 @@ const CONNECT_TIMEOUT = 10000;
 class OBD2Service {
   private transport: Transport | null = null;
   private _isConnected = false;
-  private dataCallback: OBD2Callback | null = null;
-  private connectionCallback: ConnectionCallback | null = null;
+  private dataCallbacks: Set<OBD2Callback> = new Set();
+  private connectionCallbacks: Set<ConnectionCallback> = new Set();
   private _vin: string = '';
   private _connecting = false;
   private lastCallbackTime = 0;
@@ -1134,26 +1134,24 @@ class OBD2Service {
       d.widebandO2S3 = +(Math.random() * 5).toFixed(2);
       this.updateTripData(d.speed);
       this.addLogEntry(d);
-      if (this.dataCallback) {
-        this.dataCallback({...d});
-      }
+      this.dataCallbacks.forEach(cb => cb({...d}));
       this.pollTimer = setTimeout(simPoll, 300);
     };
     this.pollTimer = setTimeout(simPoll, 100);
   }
 
   private setConnectionState(state: ConnectionState, message?: string) {
-    if (this.connectionCallback) {
-      this.connectionCallback(state, message);
-    }
+    this.connectionCallbacks.forEach(cb => cb(state, message));
   }
 
   onConnectionUpdate(callback: ConnectionCallback) {
-    this.connectionCallback = callback;
+    this.connectionCallbacks.add(callback);
+    return () => this.connectionCallbacks.delete(callback);
   }
 
   onDataUpdate(callback: OBD2Callback) {
-    this.dataCallback = callback;
+    this.dataCallbacks.add(callback);
+    return () => this.dataCallbacks.delete(callback);
   }
 
   getLastData(): OBD2Data {
@@ -1614,9 +1612,7 @@ class OBD2Service {
 
     this.updateTripData(this.currentData.speed);
     this.addLogEntry(this.currentData);
-    if (this.dataCallback) {
-      this.dataCallback({...this.currentData});
-    }
+    this.dataCallbacks.forEach(cb => cb({...this.currentData}));
     this.updateWidget();
     return true;
   }
@@ -1665,9 +1661,7 @@ class OBD2Service {
           this.currentData.speed = 0;
           this.currentData.engineLoad = 0;
           this.currentData.batteryVoltage = 0;
-          if (this.dataCallback) {
-            this.dataCallback({...this.currentData});
-          }
+          this.dataCallbacks.forEach(cb => cb({...this.currentData}));
           this.updateWidget();
         }
 
@@ -2054,13 +2048,13 @@ class OBD2Service {
         }
 
         this.pollTimer = setTimeout(poll, isIdle ? 500 : 15);
-        if (this.dataCallback && Date.now() - this.lastCallbackTime > 80) {
+        if (this.dataCallbacks.size > 0 && Date.now() - this.lastCallbackTime > 80) {
           if (this._validKeysDirty) {
             this.validKeysArray = Array.from(this.validKeys);
             this._validKeysDirty = false;
           }
           this.currentData._validKeys = this.validKeysArray;
-          this.dataCallback({...this.currentData});
+          this.dataCallbacks.forEach(cb => cb({...this.currentData}));
           this.lastCallbackTime = Date.now();
         }
         this.pollErrorCount = 0;

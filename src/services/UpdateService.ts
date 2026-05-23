@@ -99,20 +99,17 @@ export async function downloadAndInstall(url: string, version: string): Promise<
 
     setProgress(100);
 
-    await fs.cp(res.path(), dest);
-    await fs.unlink(res.path()).catch(() => {});
-
     await new Promise(r => setTimeout(r, 500));
 
     await android.addCompleteDownload({
       title: 'ProCarScanner v' + version,
-      description: 'Yuklemek icin tiklayin',
+      description: 'Yüklemek için tıklayın',
       mime: 'application/vnd.android.package-archive',
-      path: dest,
+      path: res.path(),
       showNotification: true,
     });
 
-    android.actionViewIntent(dest, 'application/vnd.android.package-archive');
+    android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
 
     downloadActive = false;
     setTimeout(() => setProgress(0), 2000);

@@ -22,8 +22,14 @@ $pkg = Get-Content package.json | ConvertFrom-Json
 $pkg.version = $version
 $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 
-# Sürüm notlarını ayıkla
-$fullNotes = ("v" + $version + ":; - Uygulama ici APK indirme (progress bar + bildirim ile kurulum); - Foreground Service ile arka planda calisma; - Ana ekran widget (RPM, Hiz, Hararet); - Performans optimizasyonu (polling hizi 2x, UI 100ms); - Tum Android 8-16 uyumlulugu (izinler, padding, baglanti).")
+# Sürüm notlarını ayıkla (CHANGELOG.md'den)
+$changelogPath = Join-Path $root "CHANGELOG.md"
+if (Test-Path $changelogPath) {
+  $notesRaw = Get-Content $changelogPath | Select-Object -First 5
+  $fullNotes = $notesRaw -join "\n"
+} else {
+  $fullNotes = "Yenilikler eklendi."
+}
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---

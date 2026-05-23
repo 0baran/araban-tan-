@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
-  obd2Service, OBD2Data, ConnectionState,
+  obd2Service, ConnectionState,
 } from './src/services/OBD2Service';
 import {loadSettings, getSettings} from './src/services/AppSettings';
 import {dataLogService} from './src/services/DataLogService';
@@ -27,8 +27,11 @@ import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate, downloadActive, downloadProgress, onDownloadProgress} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
+import GaugesContainer from './src/components/GaugesContainer';
+import FeaturesGrid from './src/components/FeaturesGrid';
+import VehicleStatusCard from './src/components/VehicleStatusCard';
 
-const APP_VERSION = '3.1.15';
+const APP_VERSION = '3.1.16';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -67,13 +70,7 @@ function MainScreen() {
     KeepAwake.activate();
     return () => KeepAwake.deactivate();
   }, []);
-  const [rpm, setRpm] = useState(0);
-  const [speed, setSpeed] = useState(0);
-  const [coolant, setCoolant] = useState(0);
-  const [maf, setMaf] = useState(0);
-  const [hp, setHp] = useState(0);
-  const [map, setMap] = useState(0);
-  const [batteryVoltage, setBatteryVoltage] = useState(0);
+  
   const [isConnected, setIsConnected] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -85,9 +82,6 @@ function MainScreen() {
   const [wifiIP, setWifiIP] = useState('192.168.0.10');
   const [wifiPort, setWifiPort] = useState('35000');
   const [protocolLabel, setProtocolLabel] = useState('Otomatik');
-  const [speedWarnActive, setSpeedWarnActive] = useState(false);
-  const [coolantWarnActive, setCoolantWarnActive] = useState(false);
-  const [dtcCount, setDtcCount] = useState(0);
   const [updateStatus, setUpdateStatus] = useState('');
   const [downloadPercent, setDownloadPercent] = useState(0);
   const [showDownloadBar, setShowDownloadBar] = useState(false);
@@ -97,32 +91,13 @@ function MainScreen() {
   useEffect(() => {
     initLogCapture();
     loadSettings();
-    let lastUiUpdate = 0;
-    obd2Service.onDataUpdate((data: OBD2Data) => {
-      const now = Date.now();
-      if (now - lastUiUpdate > 100) {
-        lastUiUpdate = now;
-        const s = getSettings();
-        setSpeedWarnActive(s.speedWarningEnabled && data.speed >= s.speedWarningThreshold);
-        setCoolantWarnActive(s.coolantWarningEnabled && data.coolantTemp >= s.coolantWarningThreshold);
-        setRpm(data.rpm);
-        setSpeed(data.speed);
-        setCoolant(data.coolantTemp);
-        setMaf(data.maf);
-        setHp(Math.round((data.maf / 0.73) * 1.15));
-        setMap(data.map);
-        setBatteryVoltage(data.batteryVoltage);
-        setDtcCount(data.dtcCount);
-      }
-    });
 
-    obd2Service.onConnectionUpdate((state: ConnectionState, message?: string) => {
+    const unsubConnection = obd2Service.onConnectionUpdate((state: ConnectionState, message?: string) => {
       setConnectionState(state);
       if (message) setStatusText(message);
       if (state === 'connected') {
         setIsConnected(true);
         setProtocolLabel(obd2Service.protocolLabel);
-        readDtcOnConnect();
         if (getSettings().autoRecord && !dataLogService.isRecording) {
           dataLogService.setFuelPrice(getSettings().fuelPricePerLiter);
           dataLogService.start();
@@ -134,7 +109,6 @@ function MainScreen() {
       if (state === 'disconnected') {
         setIsConnected(false);
         setStatusText('Bağlantı Kesildi.');
-        setDtcCount(0);
         if (dataLogService.isRecording) dataLogService.stop();
       }
       if (state === 'error') setStatusText('Bağlantı Hatası!');
@@ -167,19 +141,9 @@ function MainScreen() {
       });
     }
 
-    // Otomatik DTC kontrolü (her 30sn)
-    let dtcInterval: ReturnType<typeof setInterval> | null = setInterval(async () => {
-      if (obd2Service.isConnected) {
-        const status = await obd2Service.readMonitorStatus();
-        setDtcCount(status.dtcCount);
-      }
-    }, 30000);
-
-    // Arka planda pil tasarrufu kaldirildi (Foreground Service ile arka planda calismaya devam edecek)
-
     return () => {
       obd2Service.disconnect();
-      if (dtcInterval) clearInterval(dtcInterval);
+      unsubConnection();
     };
   }, []);
 
@@ -256,14 +220,9 @@ function MainScreen() {
       let discovered: any[] = [];
       try {
         const result = await obd2Service.startDiscovery();
-        console.log('Discovery result:', result?.length, 'devices');
-        if (result && result.length > 0) {
-          discovered = result;
-        }
+        if (result && result.length > 0) discovered = result;
       } catch (discErr) {
-        console.warn('Discovery error:', discErr);
         try { await obd2Service.cancelDiscovery(); } catch {}
-        // CancelDiscovery sonrası kalan cihazları al
         await new Promise(r => setTimeout(r, 500));
         try {
           const fallback = await obd2Service.startDiscovery();
@@ -272,16 +231,11 @@ function MainScreen() {
       }
 
       const paired = await obd2Service.getPairedDevices();
-      console.log('Bonded devices:', paired?.length);
-
-      // Adresleri büyük harfe çevirerek karşılaştır
       const addrKey = (d: any) => (d.address || '').trim().toUpperCase();
       const pairedSet = new Set((paired || []).map(addrKey));
-
       const newDevices = (discovered || []).filter(d => !pairedSet.has(addrKey(d)));
       const discoveredPaired = (discovered || []).filter(d => pairedSet.has(addrKey(d)));
       const newAddrSet = new Set(newDevices.map(addrKey));
-
       const seen = new Set<string>();
       const merged: any[] = [];
       for (const d of [...newDevices, ...discoveredPaired, ...(paired || [])]) {
@@ -295,12 +249,6 @@ function MainScreen() {
       setStatusText(merged.length > 0 ? `${merged.length} cihaz bulundu` : 'Cihaz bulunamadı');
     } catch (e) { console.error('Scan error:', e); }
     setIsScanning(false);
-  };
-
-  const readDtcOnConnect = async () => {
-    const status = await obd2Service.readMonitorStatus();
-    setDtcCount(status.dtcCount);
-    console.log('DTC on connect:', status.dtcCount, 'MIL:', status.milOn);
   };
 
   const connectToDevice = async (device: any) => {
@@ -340,7 +288,6 @@ function MainScreen() {
   };
 
   const navigate = (screen: string | null) => setCurrentScreen(screen);
-
   const screenProps = {onBack: () => navigate(null), onNavigate: navigate};
   const styles = getStyles(colors);
 
@@ -374,83 +321,16 @@ function MainScreen() {
               </TouchableOpacity>
             </View>
 
-            <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
-              <Text style={[styles.cardLabel, {color: colors.textDim}]}>ARAÇ DURUMU</Text>
-              <Text style={[styles.vehicleText, {color: colors.text}, isConnected && styles.textNeonGreen]}>{statusText}</Text>
-              {updateStatus ? (
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6}}>
-                  <ActivityIndicator size="small" color="#00bfff" />
-                  <Text style={[styles.protocolText, {color: '#00bfff'}]}>{updateStatus}</Text>
-                </View>
-              ) : null}
-              {isConnected && <Text style={[styles.protocolText, {color: colors.textMuted}]}>Protokol: {protocolLabel}</Text>}
-              {!isConnected && !updateStatus && <Text style={[styles.protocolText, {color: colors.textMuted}]}>Bluetooth / WiFi / Simülasyon ile bağlanın.</Text>}
-              {isConnected && (
-                <View style={styles.vehicleInfoRow}>
-                  <Text style={[styles.vehicleInfoItem, {color: colors.textDim}]}>⚡ {batteryVoltage.toFixed(1)}V</Text>
-                  <Text style={[styles.vehicleInfoItem, {color: colors.textDim}]}>🌬️ {map} kPa</Text>
-                </View>
-              )}
-            </View>
+            <VehicleStatusCard 
+              statusText={statusText} 
+              updateStatus={updateStatus} 
+              protocolLabel={protocolLabel} 
+              isConnected={isConnected} 
+            />
 
-            <View style={styles.gaugesContainer}>
-              <View style={[styles.glassCard, styles.gaugeCard, {backgroundColor: colors.card}]}>
-                <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>MOTOR DEVRİ</Text>
-                <Text style={[styles.gaugeValue, {color: colors.accent}]}>{rpm}</Text>
-                <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>RPM</Text>
-              </View>
-              <View style={[styles.glassCard, styles.gaugeCard, {backgroundColor: colors.card}]}>
-                <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>HIZ</Text>
-                <Text style={[styles.gaugeValue, {color: speedWarnActive ? '#ff4757' : '#2ed573'}]}>{speed}</Text>
-                <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>KM/H</Text>
-              </View>
-            </View>
+            <GaugesContainer />
 
-            <View style={styles.featuresGrid}>
-              <View style={[styles.glassCard, styles.featureCard, {backgroundColor: coolantWarnActive ? 'rgba(255,71,87,0.12)' : colors.card, borderColor: coolantWarnActive ? '#ff4757' : colors.cardBorder}]}>
-                <Text style={[styles.featureIcon, {color: coolantWarnActive ? '#ff4757' : colors.accent}]}>🌡️</Text>
-                <Text style={[styles.featureValue, {color: coolantWarnActive ? '#ff4757' : colors.text}]}>{coolant}°C</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>SOĞUTMA SIVISI</Text>
-              </View>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('errorcodes')}>
-                <Text style={[styles.featureIcon, dtcCount > 0 && {color: '#ff4757'}]}>⚠️</Text>
-                {dtcCount > 0 && <View style={styles.dtcBadge}><Text style={styles.dtcBadgeText}>{dtcCount}</Text></View>}
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>HATA KODLARI</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>DTC Tara</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('performance')}>
-                <Text style={styles.featureIcon}>🏁</Text>
-                <Text style={[styles.featureValue, {fontSize: 22, color: colors.text}]}>{hp} BG</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>PERFORMANS</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>0-100 Testi & HP</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('vehicleinfo')}>
-                <Text style={styles.featureIcon}>🚗</Text>
-                <Text style={[styles.featureValue, {fontSize: 20, color: colors.text}]}>BİLGİ</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>ARAÇ BİLGİSİ</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>VIN / Mode 09</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('freezeframe')}>
-                <Text style={styles.featureIcon}>❄️</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>DONMA NOKTASI</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Hata Anı Sensörler</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('datalog')}>
-                <Text style={styles.featureIcon}>📊</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>YOL BİLGİSAYARI</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Veri Kaydı & Tüketim</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('hiddenfeature')}>
-                <Text style={styles.featureIcon}>🔧</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>GİZLİ ÖZELLİK</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Kodlama</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('settings')}>
-                <Text style={styles.featureIcon}>⚙️</Text>
-                <Text style={styles.featureLabel}>AYARLAR</Text>
-                <Text style={styles.featureHint}>Tercihler</Text>
-              </TouchableOpacity>
-            </View>
+            <FeaturesGrid onNavigate={navigate} />
 
             <View style={styles.quickActions}>
               <TouchableOpacity style={[styles.quickAction, {backgroundColor: colors.card, borderColor: colors.cardBorder}]} onPress={() => navigate('livedata')}>
@@ -599,47 +479,13 @@ const getStyles = (colors: any) => StyleSheet.create({
   connectButtonText: {color: colors.text, fontWeight: '800', fontSize: 13, letterSpacing: 1},
   statusDot: {width: 8, height: 8, borderRadius: 4, backgroundColor: '#ff4757'},
   statusDotActive: {backgroundColor: '#00ff7f'},
-  glassCard: {
-    borderRadius: 24, padding: 20, borderWidth: 1, marginBottom: 20,
-  },
-  cardLabel: {color: colors.textDim, fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 10},
-  vehicleText: {color: colors.text, fontSize: 20, fontWeight: 'bold', marginBottom: 5},
-  textNeonGreen: {color: '#00ff7f'},
-  protocolText: {color: colors.textMuted, fontSize: 14},
-  vehicleInfoRow: {flexDirection: 'row', gap: 16, marginTop: 10},
-  vehicleInfoItem: {color: colors.textDim, fontSize: 13, fontWeight: '600'},
-  gaugesContainer: {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20},
-  gaugeCard: {flex: 1, alignItems: 'center', marginHorizontal: 5, paddingVertical: 35},
-  gaugeLabel: {color: colors.textDim, fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 20},
-  gaugeCircle: {width: 150, height: 150, borderRadius: 75, borderWidth: 5, borderColor: 'rgba(0, 191, 255, 0.3)', justifyContent: 'center', alignItems: 'center'},
-  gaugeCircleGreen: {borderColor: 'rgba(0, 255, 127, 0.3)'},
-  gaugeValue: {fontSize: 44, fontWeight: '900'},
-  gaugeValueGreen: {color: '#00ff7f', fontSize: 44, fontWeight: '900'},
-  gaugeUnit: {color: colors.textMuted, fontSize: 12, fontWeight: 'bold', marginTop: 5},
-  warningBanner: {flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,165,0,0.12)', borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: '#ffa502'},
-  warningIcon: {fontSize: 20, marginRight: 10},
-  warningText: {color: '#ffa502', fontSize: 15, fontWeight: '800', letterSpacing: 0.5},
-  featuresGrid: {flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'},
-  featureCard: {width: '48%', alignItems: 'center', paddingVertical: 25, position: 'relative'},
-  featureIcon: {fontSize: 32, marginBottom: 10},
-  dtcBadge: {
-    position: 'absolute', top: 4, right: 4, backgroundColor: '#ff4757',
-    borderRadius: 10, minWidth: 20, height: 20, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: colors.bg,
-  },
-  dtcBadgeText: {color: '#fff', fontSize: 10, fontWeight: '900'},
-  featureValue: {color: colors.text, fontSize: 28, fontWeight: '900', marginBottom: 5},
-  featureLabel: {color: colors.text, fontSize: 12, fontWeight: 'bold', letterSpacing: 1, textAlign: 'center'},
-  featureHint: {color: colors.textMuted, fontSize: 10, marginTop: 4, letterSpacing: 1},
   quickActions: {flexDirection: 'row', justifyContent: 'space-between'},
   quickAction: {flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: 5, gap: 8},
   quickActionIcon: {fontSize: 18},
   quickActionText: {color: colors.textDim, fontSize: 12, fontWeight: '800', letterSpacing: 1},
   tabRow: {flexDirection: 'row', marginBottom: 20, gap: 8},
   tab: {flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.inputBg, alignItems: 'center', borderWidth: 1, borderColor: colors.cardBorder},
-  tabActive: {backgroundColor: colors.gaugeBg, borderColor: colors.accent},
   tabText: {color: colors.textDim, fontWeight: '700', fontSize: 12, letterSpacing: 1},
-  tabTextActive: {color: colors.accent},
   modalOverlay: {flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-end'},
   modalContent: {backgroundColor: colors.bg, borderTopLeftRadius: 30, borderTopRightRadius: 30, padding: 30, minHeight: 400, maxHeight: 650},
   modalHeader: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10},
