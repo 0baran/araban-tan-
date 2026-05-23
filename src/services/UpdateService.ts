@@ -1,5 +1,6 @@
-import {Alert, AppState, Linking} from 'react-native';
+import {Alert, AppState} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 import {showUpdateNotification} from './UpdateNotifications';
 
 const UPDATE_URL =
@@ -15,6 +16,19 @@ type UpdateInfo = {
 export type CheckResult =
   | {found: true; info: UpdateInfo}
   | {found: false; reason: 'uptodate' | 'skipped' | 'network'};
+
+export let downloadProgress = 0;
+export let downloadActive = false;
+type ProgressListener = (pct: number) => void;
+let progressListeners: ProgressListener[] = [];
+export function onDownloadProgress(fn: ProgressListener) {
+  progressListeners.push(fn);
+  return () => { progressListeners = progressListeners.filter(l => l !== fn); };
+}
+function setProgress(pct: number) {
+  downloadProgress = pct;
+  progressListeners.forEach(l => l(pct));
+}
 
 export async function checkForUpdate(
   currentVersion: string,
@@ -50,20 +64,66 @@ export function promptUpdate(info: UpdateInfo) {
   _lastNotificationVersion = info.version;
 
   Alert.alert('Guncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
-    {
-      text: 'Simdi Guncelle',
-      onPress: () => {
-        Linking.openURL(info.url).catch(() =>
-          Alert.alert('Hata', 'Tarayici acilamadi. Lutfen manuel guncelleyin.'),
-        );
-      },
-    },
+    {text: 'Simdi Guncelle', onPress: () => downloadAndInstall(info.url, info.version)},
     {
       text: 'Daha Sonra',
       style: 'cancel',
       onPress: () => AsyncStorage.setItem(SKIPPED_KEY, info.version),
     },
   ]);
+}
+
+export async function downloadAndInstall(url: string, version: string): Promise<boolean> {
+  if (downloadActive) {
+    Alert.alert('Indirme Devam Ediyor', 'Mevcut indirme tamamlanana kadar bekleyin.');
+    return false;
+  }
+  downloadActive = true;
+  setProgress(0);
+
+  const { fs, android } = ReactNativeBlobUtil;
+  const dest = `${fs.dirs.DownloadDir}/ProCarScanner-v${version}.apk`;
+
+  try {
+    await fs.unlink(dest).catch(() => {});
+
+    const res = await ReactNativeBlobUtil.config({
+      fileCache: true,
+      appendExt: 'apk',
+    })
+      .fetch('GET', url)
+      .progress((received: number, total: number) => {
+        const pct = total > 0 ? Math.round((received / total) * 100) : 0;
+        setProgress(pct);
+      });
+
+    setProgress(100);
+
+    await fs.cp(res.path(), dest);
+    await fs.unlink(res.path()).catch(() => {});
+
+    await new Promise(r => setTimeout(r, 500));
+
+    await android.addCompleteDownload({
+      title: 'ProCarScanner v' + version,
+      description: 'Yuklemek icin tiklayin',
+      mime: 'application/vnd.android.package-archive',
+      path: dest,
+      showNotification: true,
+    });
+
+    android.actionViewIntent(dest, 'application/vnd.android.package-archive');
+
+    downloadActive = false;
+    setTimeout(() => setProgress(0), 2000);
+    return true;
+  } catch (err: any) {
+    downloadActive = false;
+    setProgress(0);
+    await fs.unlink(dest).catch(() => {});
+    Alert.alert('Indirme Hatasi', 'APK indirilemedi.');
+    return false;
+  }
 }
 
 function compareVersions(a: string, b: string): number {
