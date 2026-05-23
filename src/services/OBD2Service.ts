@@ -510,7 +510,7 @@ class OBD2Service {
   private _validKeysDirty = false;
   
   private isPidSupported(pid: string): boolean {
-    if (this.supportedPids.size === 0) return true;
+    if (this.supportedPids.size <= 1) return true;
     return this.supportedPids.has(pid);
   }
 
