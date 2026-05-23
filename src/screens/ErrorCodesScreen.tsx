@@ -240,7 +240,7 @@ export default function ErrorCodesScreen({onBack}: Props) {
                 </Text>
                 <Text style={[styles.modalDesc, {color: colors.textDim}]}>
                   {selected.description}
-
+                </Text>
                 {DTC_AI_ADVICE[selected.code] && (
                   <View style={styles.aiCard}>
                     <View style={styles.aiHeader}>

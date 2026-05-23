@@ -119,7 +119,7 @@ export default function IMReadinessScreen({onBack}: Props) {
             ]}>
             <Text style={[styles.cardLabel, {color: colors.textMuted}]}>
               BİLEŞEN TESTLERİ (I/M READINESS)
-
+            </Text>
             {availableTests.length === 0 ? (
               <Text style={[styles.emptyText, {color: colors.textMuted}]}>
                 Test verisi okunamadı.

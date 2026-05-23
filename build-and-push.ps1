@@ -47,7 +47,7 @@ if (-not $SkipBuild) {
   Push-Location -LiteralPath (Join-Path $root "android")
   try {
     Write-Host "==> Building APK..." -ForegroundColor Yellow
-    $buildOutput = & .\gradlew assembleRelease --no-daemon 2>&1 | Out-String
+    $buildOutput = cmd.exe /c ".\gradlew assembleRelease --no-daemon"
     Write-Host $buildOutput
     if ($LASTEXITCODE -ne 0) { throw "Gradle build failed (exit $LASTEXITCODE)" }
 
