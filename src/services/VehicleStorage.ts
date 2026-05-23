@@ -18,11 +18,24 @@ export type Vehicle = {
 };
 
 let vehicles: Vehicle[] = [];
+let activeVehicleId: string | null = null;
+const ACTIVE_KEY = '@arabanitani/active_vehicle';
+
+export async function getActiveVehicleId(): Promise<string | null> {
+  return activeVehicleId;
+}
+
+export async function setActiveVehicleId(id: string | null): Promise<void> {
+  activeVehicleId = id;
+  if (id) await AsyncStorage.setItem(ACTIVE_KEY, id);
+  else await AsyncStorage.removeItem(ACTIVE_KEY);
+}
 
 export async function loadVehicles(): Promise<Vehicle[]> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     vehicles = data ? JSON.parse(data) : [];
+    activeVehicleId = await AsyncStorage.getItem(ACTIVE_KEY);
   } catch {
     vehicles = [];
   }
@@ -60,6 +73,7 @@ export async function updateVehicle(
 
 export async function deleteVehicle(id: string): Promise<void> {
   vehicles = vehicles.filter(v => v.id !== id);
+  if (activeVehicleId === id) await setActiveVehicleId(null);
   await saveVehicles();
 }
 

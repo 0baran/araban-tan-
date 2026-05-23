@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.7.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Arac Secme Ozelligi: Araclarim menusunden artik eklediginiz bir araci ustune tiklayarak "Aktif Arac" olarak secebilirsiniz.',
+      'Secilen aracin ismi uygulamanin ana ekraninda en tepede gosterilecektir.'
+    ],
+  },
+  {
     version: '3.6.0',
     date: '24 Mayis 2026',
     items: [

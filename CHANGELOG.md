@@ -1,5 +1,8 @@
 # Sürüm Notları (Changelog)
 
+## v3.7.0 (Güncel Sürüm)
+* **Araç Seçme Özelliği**: Araçlarım menüsüne kaydettiğiniz araçlardan birini üstüne dokunarak "Aktif Araç" olarak seçebileceğiniz yepyeni bir özellik eklendi. Seçtiğiniz aracın ismi ve markası artık uygulamanın Ana Ekranında en tepede, havalı bir şekilde görünecek!
+
 ## v3.6.0 (Güncel Sürüm)
 * **Bildirim Paneli Güncellemesi**: Arka planda çalışırken telefonun üst bildirim panelinde çıkan "ArabaniTani Çalışıyor" bildiriminin hemen altına **"BAĞLANTIYI KES"** butonu eklendi. Artık uygulamayı açmadan tek tuşla arabanızla olan iletişimi durdurabilir ve telefonunuzun bataryasından tasarruf edebilirsiniz.
 

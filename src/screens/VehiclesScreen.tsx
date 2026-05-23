@@ -17,6 +17,8 @@ import {
   addVehicle,
   updateVehicle,
   deleteVehicle,
+  getActiveVehicleId,
+  setActiveVehicleId,
   type Vehicle,
   generateId,
 } from '../services/VehicleStorage';
@@ -28,6 +30,7 @@ interface Props {
 export default function VehiclesScreen({onBack}: Props) {
   const {colors} = useTheme();
   const [list, setList] = useState<Vehicle[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [name, setName] = useState('');
@@ -40,12 +43,19 @@ export default function VehiclesScreen({onBack}: Props) {
   const refresh = useCallback(async () => {
     await loadVehicles();
     setList([...getVehicles()]);
+    setActiveId(await getActiveVehicleId());
   }, []);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
 
+  
+  const selectVehicle = async (id: string) => {
+    await setActiveVehicleId(id);
+    setActiveId(id);
+  };
+  
   const openNew = () => {
     setEditId(null);
     setName('');
@@ -143,19 +153,25 @@ export default function VehiclesScreen({onBack}: Props) {
             key={v.id}
             style={[
               styles.card,
-              {backgroundColor: colors.card, borderColor: colors.cardBorder},
+              {backgroundColor: colors.card, borderColor: activeId === v.id ? colors.accent : colors.cardBorder},
+              activeId === v.id && {borderWidth: 2}
             ]}
-            onPress={() => openEdit(v)}
+            onPress={() => selectVehicle(v.id)}
             onLongPress={() => remove(v.id)}>
             <View style={styles.cardHeader}>
               <Text style={[styles.cardBrand, {color: colors.text}]}>
                 {v.name}
               </Text>
-              {v.plate ? (
-                <Text style={[styles.cardPlate, {color: colors.accent}]}>
-                  {v.plate}
-                </Text>
-              ) : null}
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                {v.plate ? (
+                  <Text style={[styles.cardPlate, {color: colors.accent}]}>
+                    {v.plate}
+                  </Text>
+                ) : null}
+                <TouchableOpacity onPress={() => openEdit(v)}>
+                  <Text style={{fontSize: 16}}>✏️</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             {v.brand || v.model || v.year ? (
               <Text style={[styles.cardDetail, {color: colors.textMuted}]}>

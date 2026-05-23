@@ -9,6 +9,7 @@ import {
   obd2Service, ConnectionState,
 } from './src/services/OBD2Service';
 import {loadSettings, getSettings} from './src/services/AppSettings';
+import {loadVehicles, getVehicles, getActiveVehicleId, Vehicle} from './src/services/VehicleStorage';
 import {dataLogService} from './src/services/DataLogService';
 import {initLogCapture} from './src/services/AppLog';
 import ErrorCodesScreen from './src/screens/ErrorCodesScreen';
@@ -31,7 +32,7 @@ import GaugesContainer from './src/components/GaugesContainer';
 import FeaturesGrid from './src/components/FeaturesGrid';
 import VehicleStatusCard from './src/components/VehicleStatusCard';
 
-const APP_VERSION = '3.1.36';
+const APP_VERSION = '3.1.37';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -74,6 +75,7 @@ function MainScreen() {
   const [isConnected, setIsConnected] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [activeVehicle, setActiveVehicle] = useState<Vehicle | null>(null);
   const [devices, setDevices] = useState<any[]>([]);
   const [statusText, setStatusText] = useState('Bağlantı Bekleniyor...');
   const [_connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
@@ -91,6 +93,13 @@ function MainScreen() {
   useEffect(() => {
     initLogCapture();
     loadSettings();
+    loadVehicles().then(async (vs) => {
+      const activeId = await getActiveVehicleId();
+      if (activeId) {
+        const v = vs.find(x => x.id === activeId);
+        setActiveVehicle(v || null);
+      }
+    });
 
     const unsubConnection = obd2Service.onConnectionUpdate((state: ConnectionState, message?: string) => {
       setConnectionState(state);
@@ -287,7 +296,19 @@ function MainScreen() {
     setStatusText('Simülasyon Modu Aktif');
   };
 
-  const navigate = (screen: string | null) => setCurrentScreen(screen);
+  const navigate = async (screen: string | null) => {
+    setCurrentScreen(screen);
+    if (!screen) {
+      const vs = getVehicles();
+      const activeId = await getActiveVehicleId();
+      if (activeId) {
+        const v = vs.find(x => x.id === activeId);
+        setActiveVehicle(v || null);
+      } else {
+        setActiveVehicle(null);
+      }
+    }
+  };
   const screenProps = {onBack: () => navigate(null), onNavigate: navigate};
   const styles = getStyles(colors);
 
@@ -312,8 +333,8 @@ function MainScreen() {
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
               <TouchableOpacity onPress={() => navigate('vehicles')}>
-                <Text style={[styles.title, {color: colors.text}]}>ARAÇLARIM</Text>
-                <Text style={[styles.headerSub, {color: colors.textMuted}]}>OBD2 Diagnostik</Text>
+                <Text style={[styles.title, {color: colors.text}]}>{activeVehicle ? activeVehicle.name : 'ARAÇLARIM'}</Text>
+                <Text style={[styles.headerSub, {color: colors.textMuted}]}>{activeVehicle ? (activeVehicle.brand || 'Seçili Araç') : 'OBD2 Diagnostik'}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.connectButton, {backgroundColor: colors.card, borderColor: colors.cardBorder}, isConnected && styles.connectButtonActive]} onPress={handleConnectPress}>
                 <View style={[styles.statusDot, isConnected && styles.statusDotActive]} />
