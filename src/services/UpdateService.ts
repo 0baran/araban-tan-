@@ -71,8 +71,8 @@ export function promptUpdate(info: UpdateInfo) {
   }
   _lastNotificationVersion = info.version;
 
-  Alert.alert('Güncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
-    {text: 'Şimdi Güncelle', onPress: () => downloadAndInstall(info.url, info.version)},
+  Alert.alert('Guncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
+    {text: 'Simdi Guncelle', onPress: () => downloadAndInstall(info.url, info.version)},
     {
       text: 'Daha Sonra',
       style: 'cancel',
@@ -83,13 +83,17 @@ export function promptUpdate(info: UpdateInfo) {
 
 export async function downloadAndInstall(url: string, version: string): Promise<boolean> {
   if (downloadActive) {
-    Alert.alert('İndirme Devam Ediyor', 'Mevcut indirme tamamlanana kadar bekleyin.');
+    Alert.alert('Indirme Devam Ediyor', 'Mevcut indirme tamamlanana kadar bekleyin.');
     return false;
   }
   downloadActive = true;
   setProgress(0);
 
+  const dest = `${ReactNativeBlobUtil.fs.dirs.DownloadDir}/ProCarScanner-v${version}.apk`;
+
   try {
+    await ReactNativeBlobUtil.fs.unlink(dest).catch(() => {});
+
     const res = await ReactNativeBlobUtil.config({
       fileCache: true,
       appendExt: 'apk',
@@ -102,7 +106,10 @@ export async function downloadAndInstall(url: string, version: string): Promise<
 
     setProgress(100);
 
-    ReactNativeBlobUtil.android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
+    await ReactNativeBlobUtil.fs.cp(res.path(), dest);
+    await ReactNativeBlobUtil.fs.unlink(res.path()).catch(() => {});
+
+    ReactNativeBlobUtil.android.actionViewIntent(dest, 'application/vnd.android.package-archive');
 
     downloadActive = false;
     setTimeout(() => setProgress(0), 2000);
@@ -110,11 +117,8 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   } catch (err: any) {
     downloadActive = false;
     setProgress(0);
-    const msg = String(err.message || err).toLowerCase();
-    if (msg.includes('cancel') || msg.includes('timeout')) {
-      return false;
-    }
-    Alert.alert('İndirme Hatası', 'APK indirilemedi.');
+    await ReactNativeBlobUtil.fs.unlink(dest).catch(() => {});
+    Alert.alert('Indirme Hatasi', 'APK indirilemedi.');
     return false;
   }
 }
@@ -125,12 +129,8 @@ function compareVersions(a: string, b: string): number {
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
     const na = pa[i] || 0;
     const nb = pb[i] || 0;
-    if (na > nb) {
-      return 1;
-    }
-    if (na < nb) {
-      return -1;
-    }
+    if (na > nb) return 1;
+    if (na < nb) return -1;
   }
   return 0;
 }

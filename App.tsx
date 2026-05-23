@@ -28,7 +28,7 @@ import {checkForUpdate, promptUpdate, downloadActive, downloadProgress, onDownlo
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.7';
+const APP_VERSION = '3.1.8';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
