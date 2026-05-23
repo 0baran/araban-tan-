@@ -8,7 +8,7 @@ import RNBluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import notifee, { AndroidImportance, AndroidForegroundServiceType } from '@notifee/react-native';
+import notifee, { AndroidImportance, AndroidForegroundServiceType, EventType } from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
 
 const STORAGE_LAST_DEVICE = '@arabanitani/last_device';
@@ -698,15 +698,25 @@ class OBD2Service {
         importance: AndroidImportance.LOW,
       });
 
-      await notifee.displayNotification({
+            await notifee.displayNotification({
         title: 'ArabaniTani Calisiyor',
         body: 'Aracla baglanti kuruldu, veri okunuyor...',
         android: {
-          channelId: 'default',
+          channelId,
           asForegroundService: true,
-          foregroundServiceTypes: [(AndroidForegroundServiceType as any).DATA_SYNC || AndroidForegroundServiceType.FOREGROUND_SERVICE_TYPE_DATA_SYNC || 2048],
           ongoing: true,
-          color: '#00bfff',
+          color: '#e74c3c',
+          colorized: true,
+          importance: AndroidImportance.HIGH,
+          pressAction: {
+            id: 'default',
+          },
+          actions: [
+            {
+              title: 'BAĞLANTIYI KES',
+              pressAction: { id: 'disconnect_obd' },
+            }
+          ]
         },
       });
       this.foregroundServiceActive = true;
