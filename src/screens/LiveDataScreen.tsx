@@ -1005,13 +1005,15 @@ export default function LiveDataScreen({onBack}: Props) {
         )}
 
         {/* CYBERPUNK DASHBOARD FOR KEY METRICS */}
-        <View style={{backgroundColor: 'rgba(255,255,255,0.02)', marginHorizontal: 16, borderRadius: 16, padding: 10, marginBottom: 15, borderWidth: 1, borderColor: 'rgba(0,191,255,0.2)'}}>
-          <CyberBar label="MOTOR DEVRİ" value={data.rpm} max={8000} unit="RPM" color="#00bfff" />
-          <CyberBar label="HIZ" value={data.speed} max={240} unit="KM/H" color={data.speed > 120 ? '#ff4757' : '#00ff7f'} />
-          <CyberBar label="SOĞUTMA" value={data.coolantTemp} max={130} unit="°C" color={data.coolantTemp > 105 ? '#ff4757' : '#ff9ff3'} />
-          <CyberBar label="MOTOR YÜKÜ" value={data.engineLoad} max={100} unit="%" color="#feca57" />
-          <CyberBar label="AKÜ VOLTAJI" value={data.batteryVoltage} max={16} unit="V" color="#8ecae6" valueFormatter={v => v.toFixed(1)} />
-        </View>
+        {isHudMode && (
+          <View style={{backgroundColor: 'rgba(255,255,255,0.02)', marginHorizontal: 16, borderRadius: 16, padding: 10, marginBottom: 15, borderWidth: 1, borderColor: 'rgba(0,191,255,0.2)'}}>
+            <CyberBar label="MOTOR DEVRİ" value={data.rpm} max={8000} unit="RPM" color="#00bfff" />
+            <CyberBar label="HIZ" value={data.speed} max={240} unit="KM/H" color={data.speed > 120 ? '#ff4757' : '#00ff7f'} />
+            <CyberBar label="SOĞUTMA" value={data.coolantTemp} max={130} unit="°C" color={data.coolantTemp > 105 ? '#ff4757' : '#ff9ff3'} />
+            <CyberBar label="MOTOR YÜKÜ" value={data.engineLoad} max={100} unit="%" color="#feca57" />
+            <CyberBar label="AKÜ VOLTAJI" value={data.batteryVoltage} max={16} unit="V" color="#8ecae6" valueFormatter={v => v.toFixed(1)} />
+          </View>
+        )}
 
         {pinnedMeta.length > 0 && (
           <ScrollView

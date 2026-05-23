@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.28',
+    date: '24 Mayis 2026',
+    items: [
+      'HUD Duzeltmesi: Ekranin yarisini kaplayan buyuk Canli Veri paneli (Cyberpunk Dashboard) varsayilan olarak gizlendi. Artik sadece sag ustteki "HUD" butonuna bastiginizda acilacak.',
+      'Klon Cihaz Uyumlulugu 2.0: Ucuz klon cihazlarin sensor sorgulamasina hic yanit verememesi (0100 timeout) durumunda tum sensorlerin ekrandan silinmesi hatasi giderildi. Artik yanit gelmese bile sistem otomatik varsayilan sensorleri okumaya devam eder.'
+    ],
+  },
+  {
     version: '3.1.26',
     date: '24 Mayis 2026',
     items: [

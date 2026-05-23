@@ -1,5 +1,9 @@
 # Sürüm Notları (Changelog)
 
+## v3.1.28 (Güncel Sürüm)
+* **HUD Düzeltmesi**: Ekranın yarısını kaplayan büyük gösterge paneli artık standart görünümde kapalı. Sadece sağ üstteki "HUD" tuşuna basınca (Cama yansıtma modu) açılıyor.
+* **Klon Cihaz Uyumluluğu 2.0**: Ucuz klon cihazların ilk tarama (0100 sorgusu) aşamasında çökmesi veya sessiz kalması durumunda tüm verilerin ekrandan kaybolması (beyaz sayfa) sorunu tamamen çözüldü. Sistem akıllıca varsayılan sensörlere geri dönüyor.
+
 ## v3.1.26 (Güncel Sürüm)
 * **Arayüz Düzeltmesi**: Canlı Veri ekranında "Liste" görünümüne geçildiğinde sayfanın aşağıya kaydırılamaması (ve en alttaki sensörlerin gizli kalması) sorunu çözüldü. Artık tüm listeyi kesintisiz kaydırabilirsiniz.
 
