@@ -6,6 +6,21 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.9.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Arac Fotografi Ekleme: Artik araclarim menusunden kendi arabanizin fotografini galerinizden secerek profil resmi yapabilirsiniz!',
+      'Gorsel Gelistirme: Sectiginiz aracin fotografi ana ekranda (Home) en tepede ve Araclarim menusundeki kartlarda dairesel ve şık bir sekilde gosterilecek.'
+    ],
+  },
+  {
+    version: '3.8.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Kararlilik Guncellemesi (Hotfix): Arka plandaki servislerin stabilitesi artirildi. İletişim dongulerindeki kucuk gecikmeler ve performans darboğazları giderildi.'
+    ],
+  },
+  {
     version: '3.7.0',
     date: '24 Mayis 2026',
     items: [

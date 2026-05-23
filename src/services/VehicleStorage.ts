@@ -15,6 +15,7 @@ export type Vehicle = {
   deviceAddress?: string;
   deviceName?: string;
   connectionType?: 'bluetooth' | 'wifi' | 'usb';
+  imageUri?: string;
 };
 
 let vehicles: Vehicle[] = [];

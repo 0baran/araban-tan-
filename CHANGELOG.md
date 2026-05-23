@@ -1,5 +1,12 @@
 # Sürüm Notları (Changelog)
 
+## v3.9.0 (Güncel Sürüm)
+* **Galeriden Fotoğraf Seçme**: Araçlarım menüsüne eklediğiniz araçlar için galerinizden kendi çektiğiniz o güzel araba fotoğraflarını yükleyebilirsiniz.
+* **Arayüz İyileştirmesi**: Seçtiğiniz aktif aracın profil fotoğrafı uygulamanın ana ekranında en üstte, ismi ve markasıyla birlikte yuvarlak şık bir şekilde sergilenecek.
+
+## v3.8.0 (Güncel Sürüm)
+* **Kararlılık Güncellemesi (Hotfix)**: Arka plandaki veri okuma döngüleri ve bağlantı kontrol servisleri optimize edildi. Olası kilitlenmelere ve performans darboğazlarına karşı iyileştirmeler yapıldı.
+
 ## v3.7.0 (Güncel Sürüm)
 * **Araç Seçme Özelliği**: Araçlarım menüsüne kaydettiğiniz araçlardan birini üstüne dokunarak "Aktif Araç" olarak seçebileceğiniz yepyeni bir özellik eklendi. Seçtiğiniz aracın ismi ve markası artık uygulamanın Ana Ekranında en tepede, havalı bir şekilde görünecek!
 

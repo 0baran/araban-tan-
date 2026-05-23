@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, Image,
   Modal, ActivityIndicator, FlatList, Platform, Alert, PermissionsAndroid,
   TextInput, BackHandler, AppState, StatusBar, Permission,
 } from 'react-native';
@@ -32,7 +32,7 @@ import GaugesContainer from './src/components/GaugesContainer';
 import FeaturesGrid from './src/components/FeaturesGrid';
 import VehicleStatusCard from './src/components/VehicleStatusCard';
 
-const APP_VERSION = '3.1.37';
+const APP_VERSION = '3.1.39';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -332,10 +332,21 @@ function MainScreen() {
         <SafeAreaView edges={['top', 'bottom']} style={[styles.container, {backgroundColor: colors.bg}]}>
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigate('vehicles')}>
-                <Text style={[styles.title, {color: colors.text}]}>{activeVehicle ? activeVehicle.name : 'ARAÇLARIM'}</Text>
-                <Text style={[styles.headerSub, {color: colors.textMuted}]}>{activeVehicle ? (activeVehicle.brand || 'Seçili Araç') : 'OBD2 Diagnostik'}</Text>
+              
+              <TouchableOpacity onPress={() => navigate('vehicles')} style={{flexDirection: 'row', alignItems: 'center'}}>
+                {activeVehicle && activeVehicle.imageUri ? (
+                  <Image source={{uri: activeVehicle.imageUri}} style={{width: 44, height: 44, borderRadius: 22, marginRight: 12, borderWidth: 2, borderColor: colors.accent}} />
+                ) : (
+                  <View style={{width: 44, height: 44, borderRadius: 22, backgroundColor: colors.inputBg, marginRight: 12, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{fontSize: 20}}>🚗</Text>
+                  </View>
+                )}
+                <View>
+                  <Text style={[styles.title, {color: colors.text}]}>{activeVehicle ? activeVehicle.name : 'ARAÇLARIM'}</Text>
+                  <Text style={[styles.headerSub, {color: colors.textMuted}]}>{activeVehicle ? (activeVehicle.brand || 'Seçili Araç') : 'OBD2 Diagnostik'}</Text>
+                </View>
               </TouchableOpacity>
+
               <TouchableOpacity style={[styles.connectButton, {backgroundColor: colors.card, borderColor: colors.cardBorder}, isConnected && styles.connectButtonActive]} onPress={handleConnectPress}>
                 <View style={[styles.statusDot, isConnected && styles.statusDotActive]} />
                 <Text style={[styles.connectButtonText, {color: colors.text}]}>{isConnected ? 'BAĞLI' : 'BAĞLAN'}</Text>

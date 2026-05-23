@@ -9,7 +9,9 @@ import {
   Alert,
   TextInput,
   Modal,
+  Image,
 } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 import {useTheme} from '../services/ThemeContext';
 import {
   loadVehicles,
@@ -39,6 +41,7 @@ export default function VehiclesScreen({onBack}: Props) {
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [year, setYear] = useState('');
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     await loadVehicles();
@@ -64,6 +67,7 @@ export default function VehiclesScreen({onBack}: Props) {
     setBrand('');
     setModel('');
     setYear('');
+    setImageUri(null);
     setShowForm(true);
   };
 
@@ -75,7 +79,25 @@ export default function VehiclesScreen({onBack}: Props) {
     setBrand(v.brand || '');
     setModel(v.model || '');
     setYear(v.year || '');
+    setImageUri(v.imageUri || null);
     setShowForm(true);
+  };
+
+
+  const handleSelectImage = async () => {
+    try {
+      const result = await launchImageLibrary({mediaType: 'photo', quality: 0.5});
+      if (result.didCancel) return;
+      if (result.errorCode) {
+        Alert.alert('Hata', result.errorMessage || 'Resim seçilemedi');
+        return;
+      }
+      if (result.assets && result.assets.length > 0) {
+        setImageUri(result.assets[0].uri || null);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const save = async () => {
@@ -92,6 +114,7 @@ export default function VehiclesScreen({onBack}: Props) {
           brand: brand.trim(),
           model: model.trim(),
           year: year.trim(),
+          imageUri: imageUri || undefined,
         });
       } else {
         await addVehicle({
@@ -102,6 +125,7 @@ export default function VehiclesScreen({onBack}: Props) {
           brand: brand.trim(),
           model: model.trim(),
           year: year.trim(),
+          imageUri: imageUri || undefined,
         });
       }
       setShowForm(false);
@@ -158,7 +182,17 @@ export default function VehiclesScreen({onBack}: Props) {
             ]}
             onPress={() => selectVehicle(v.id)}
             onLongPress={() => remove(v.id)}>
-            <View style={styles.cardHeader}>
+            
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {v.imageUri ? (
+                <Image source={{uri: v.imageUri}} style={{width: 50, height: 50, borderRadius: 25, marginRight: 15}} />
+              ) : (
+                <View style={{width: 50, height: 50, borderRadius: 25, backgroundColor: colors.inputBg, marginRight: 15, justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style={{fontSize: 24}}>🚗</Text>
+                </View>
+              )}
+              <View style={{flex: 1}}>
+<View style={styles.cardHeader}>
               <Text style={[styles.cardBrand, {color: colors.text}]}>
                 {v.name}
               </Text>
@@ -188,6 +222,8 @@ export default function VehiclesScreen({onBack}: Props) {
                 Son: {v.lastConnected}
               </Text>
             ) : null}
+            </View>
+          </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -201,6 +237,17 @@ export default function VehiclesScreen({onBack}: Props) {
               <Text style={[styles.modalTitle, {color: colors.text}]}>
                 {editId ? 'ARACI DÜZENLE' : 'YENİ ARAÇ'}
               </Text>
+
+              <View style={{alignItems: 'center', marginVertical: 15}}>
+                <TouchableOpacity onPress={handleSelectImage} style={{width: 100, height: 100, borderRadius: 50, backgroundColor: colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: colors.cardBorder, overflow: 'hidden'}}>
+                  {imageUri ? (
+                    <Image source={{uri: imageUri}} style={{width: 100, height: 100}} />
+                  ) : (
+                    <Text style={{fontSize: 30}}>📸</Text>
+                  )}
+                </TouchableOpacity>
+                <Text style={{color: colors.textMuted, fontSize: 11, marginTop: 8}}>Fotoğraf Seç (İsteğe Bağlı)</Text>
+              </View>
               <Text style={[styles.label, {color: colors.textDim}]}>
                 Araç Adı *
               </Text>
