@@ -22,7 +22,7 @@ $pkg.version = $version
 $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 
 # Sürüm notlarını ayıkla
-$fullNotes = "v3.1.6 Guncellemeleri:; - Arka Planda Calisma (Foreground Service) destegi eklendi. Uygulama kucultulse de veri okumaya devam eder (Widget altyapisi).; - Baglanti koptugunda veya 3 saniyeden uzun sure yanit alinamadiginda hiz ve devir ibreleri 0'a duserek kendini sifirlayacak.; - Veri isleme hizi optimize edildi, ibreler artik daha akici ve tepkisel."
+$fullNotes = "v3.1.6 Guncellemeleri:; - Uygulama Ici Indirme: APK artik uygulama icinden progress bar ile indirilir, indirme bitince otomatik kurulum acilir.; - Arka Planda Calisma (Foreground Service) destegi eklendi. Uygulama kucultulse de veri okumaya devam eder (Widget altyapisi).; - Baglanti koptugunda veya 3 saniyeden uzun sure yanit alinamadiginda hiz ve devir ibreleri 0'a duserek kendini sifirlayacak.; - Veri isleme hizi optimize edildi, ibreler artik daha akici ve tepkisel."
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---

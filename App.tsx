@@ -24,11 +24,11 @@ import ChangelogScreen from './src/screens/ChangelogScreen';
 import VehiclesScreen from './src/screens/VehiclesScreen';
 import TripSummaryScreen from './src/screens/TripSummaryScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
-import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
+import {checkForUpdate, promptUpdate, downloadActive, downloadProgress, onDownloadProgress} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.6.20260523.1459';
+const APP_VERSION = '3.1.6.20260523.1752';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -89,6 +89,8 @@ function MainScreen() {
   const [coolantWarnActive, setCoolantWarnActive] = useState(false);
   const [dtcCount, setDtcCount] = useState(0);
   const [updateStatus, setUpdateStatus] = useState('');
+  const [downloadPercent, setDownloadPercent] = useState(0);
+  const [showDownloadBar, setShowDownloadBar] = useState(false);
   const autoConnectDone = useRef(false);
   const {colors, darkMode} = useTheme();
 
@@ -186,6 +188,18 @@ function MainScreen() {
     BackHandler.addEventListener('hardwareBackPress', onBack);
     return () => BackHandler.removeEventListener('hardwareBackPress', onBack);
   }, [currentScreen]);
+
+  useEffect(() => {
+    const unsub = onDownloadProgress((pct: number) => {
+      setDownloadPercent(pct);
+      if (pct > 0 && pct < 100) {
+        setShowDownloadBar(true);
+      } else {
+        setShowDownloadBar(false);
+      }
+    });
+    return unsub;
+  }, []);
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -560,6 +574,15 @@ function MainScreen() {
               </View>
             </View>
           </Modal>
+
+          {showDownloadBar && (
+            <View style={{position:'absolute', bottom:0, left:0, right:0, backgroundColor:colors.card, padding:16, paddingBottom:24, borderTopLeftRadius:20, borderTopRightRadius:20, borderWidth:1, borderColor:colors.cardBorder}}>
+              <Text style={{color:colors.text, fontWeight:'800', fontSize:14, marginBottom:10}}>Güncelleme İndiriliyor... %{downloadPercent}</Text>
+              <View style={{height:6, backgroundColor:colors.inputBg, borderRadius:3, overflow:'hidden'}}>
+                <View style={{height:6, backgroundColor:colors.accent, borderRadius:3, width:`${downloadPercent}%`}} />
+              </View>
+            </View>
+          )}
         </SafeAreaView>
       )}
     </>

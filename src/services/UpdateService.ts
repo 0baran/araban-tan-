@@ -1,5 +1,6 @@
 import {Alert, AppState, Linking} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 import {showUpdateNotification} from './UpdateNotifications';
 
 const UPDATE_URL =
@@ -15,6 +16,19 @@ type UpdateInfo = {
 export type CheckResult =
   | {found: true; info: UpdateInfo}
   | {found: false; reason: 'uptodate' | 'skipped' | 'network'};
+
+export let downloadProgress = 0;
+export let downloadActive = false;
+type ProgressListener = (pct: number) => void;
+let progressListeners: ProgressListener[] = [];
+export function onDownloadProgress(fn: ProgressListener) {
+  progressListeners.push(fn);
+  return () => { progressListeners = progressListeners.filter(l => l !== fn); };
+}
+function setProgress(pct: number) {
+  downloadProgress = pct;
+  progressListeners.forEach(l => l(pct));
+}
 
 export async function checkForUpdate(
   currentVersion: string,
@@ -58,7 +72,7 @@ export function promptUpdate(info: UpdateInfo) {
   _lastNotificationVersion = info.version;
 
   Alert.alert('Güncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
-    {text: 'Şimdi Güncelle', onPress: () => downloadAndInstall(info.url)},
+    {text: 'Şimdi Güncelle', onPress: () => downloadAndInstall(info.url, info.version)},
     {
       text: 'Daha Sonra',
       style: 'cancel',
@@ -67,7 +81,49 @@ export function promptUpdate(info: UpdateInfo) {
   ]);
 }
 
-async function downloadAndInstall(url: string) {
+export async function downloadAndInstall(url: string, version: string): Promise<boolean> {
+  if (downloadActive) {
+    Alert.alert('İndirme Devam Ediyor', 'Mevcut indirme tamamlanana kadar bekleyin.');
+    return false;
+  }
+  downloadActive = true;
+  setProgress(0);
+
+  const android = ReactNativeBlobUtil.android;
+
+  try {
+    const res = await ReactNativeBlobUtil.config({
+      fileCache: true,
+      appendExt: 'apk',
+    })
+      .fetch('GET', url)
+      .progress((received: number, total: number) => {
+        const pct = total > 0 ? Math.round((received / total) * 100) : 0;
+        setProgress(pct);
+      });
+
+    setProgress(100);
+
+    const filePath = res.path();
+    android.actionViewIntent(filePath, 'application/vnd.android.package-archive');
+
+    await ReactNativeBlobUtil.fs.unlink(filePath);
+    downloadActive = false;
+    setProgress(0);
+    return true;
+  } catch (err: any) {
+    downloadActive = false;
+    setProgress(0);
+    const msg = String(err.message || err).toLowerCase();
+    if (msg.includes('cancel') || msg.includes('timeout')) {
+      return false;
+    }
+    Alert.alert('İndirme Hatası', 'APK indirilemedi. Lütfen internet bağlantınızı kontrol edin.');
+    return false;
+  }
+}
+
+async function downloadAndInstallLegacy(url: string) {
   try {
     await Linking.openURL(url);
   } catch {
