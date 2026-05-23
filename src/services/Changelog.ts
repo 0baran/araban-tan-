@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.0.0',
+    date: '23 Mayıs 2026',
+    items: [
+      '🚀 Dev Güncelleme: Pazardaki ticari uygulamalara rakip olacak 47 Adet Yepyeni Gizli Özellik (Advanced Coding) sisteme eklendi.',
+      '📱 Ekran Uyanıklığı (Keep-Awake): Uygulama açık olduğu sürece telefon ekranının otomatik kapanması ve kararması engellendi.',
+      '🛠️ Altyapı Optimizasyonu: Sistem genelinde kullanılmayan gereksiz veri yığınları temizlendi, tüm kodlar (Lint) yüksek hız ve performans için optimize edildi.',
+      '🏎️ Yeni Özellikler (VAG, BMW, Ford, Renault vb.): Tur zamanlayıcı, Start/Stop iptali, Spor göstergeler, Amerikan park, M-Performance kadran, Çakarlı stoplar (BFD), Eco/Klima/Medya gizli menüleri ve çok daha fazlası.',
+    ],
+  },
+  {
     version: '2.9.29',
     date: '22 Mayıs 2026',
     items: [
