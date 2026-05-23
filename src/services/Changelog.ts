@@ -6,6 +6,21 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.4.1',
+    date: '24 Mayis 2026',
+    items: [
+      'Hata Düzeltmesi: Araçlarım menüsünde kendi belirlediğiniz araç adının yerine markanın gösterilmesi sorunu çözüldü. Artık karta aracınıza verdiğiniz özel isim büyük harflerle yazılacak.'
+    ],
+  },
+  {
+    version: '3.4.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Ultimate Gizli Ozellik Paketi (All-in-One): BimmerCode, OBDeleven, Carista ve AlfaOBD gibi devlerin parali sundugu en gozde gizli ozellikler eklendi.',
+      'Yeni Markalar & Ozellikler: BMW (M Logo, Dijital Hiz, Angel Parlakligi), Toyota/Lexus (Cam Indirme, Geri Vites Bip Iptali, Sinyal Tık Sayisi), FCA/Jeep (Proxi Hizalama, SRT Menusu), PSA/Peugeot (GT Line Tema).'
+    ],
+  },
+  {
     version: '3.3.0',
     date: '24 Mayis 2026',
     items: [

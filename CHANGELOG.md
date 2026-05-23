@@ -1,5 +1,12 @@
 # Sürüm Notları (Changelog)
 
+## v3.4.1 (Güncel Sürüm)
+* **Hata Düzeltmesi**: Araçlarım menüsünde kendi belirlediğiniz araç isminin (Örn: "Benim Arabam") yerine markanın (Örn: "Ford") gösterilme sorunu giderildi. Artık kendi koyduğunuz isim kocaman puntolarla en tepede yazacak. Altında ise Marka/Model/Yıl detayları görünecek.
+
+## v3.4.0 (Güncel Sürüm)
+* **Ultimate Gizli Özellik Paketi (All-in-One)**: Piyasada yer alan dev uygulamaların (BimmerCode, Carista, AlfaOBD vs.) paralı olarak sunduğu marka spesifik gizli özellikler sisteme eklendi.
+* **Neler Eklendi?**: BMW için M Performance logosu, Angel parlaklığı ve emniyet kemeri susturma; Toyota için tek dokunuşla 5'li sinyal ve geri vites bip iptali; FCA (Jeep/Fiat) için Proxi hizalama ve SRT menüsü; PSA (Peugeot) için GT Line teması tek tuşla aktifleştirilebilir duruma getirildi.
+
 ## v3.3.0 (Güncel Sürüm)
 * **Gizli Özellik Mega Paketi**: Volkswagen, Audi, Seat, Skoda, Ford, Renault ve Dacia araçları için en çok talep edilen gizli özellik kodlamaları (UDS ve CAN Payload) sisteme eklendi.
 * **Yeni Özellikler Neler?**: Kadran Selamlama (Needle Sweep), Amerikan Park, Korna ile Kilit Onayı, Video in Motion, Otomatik Kapı Kilitleme, Eko Mod Menüsü, Start-Stop İptali ve R-Link CarPlay aktivasyonu gibi profesyonel kodlamaları artık tek tuşla yapabilirsiniz.

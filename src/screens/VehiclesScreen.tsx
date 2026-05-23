@@ -149,7 +149,7 @@ export default function VehiclesScreen({onBack}: Props) {
             onLongPress={() => remove(v.id)}>
             <View style={styles.cardHeader}>
               <Text style={[styles.cardBrand, {color: colors.text}]}>
-                {v.brand || v.name}
+                {v.name}
               </Text>
               {v.plate ? (
                 <Text style={[styles.cardPlate, {color: colors.accent}]}>
@@ -157,9 +157,9 @@ export default function VehiclesScreen({onBack}: Props) {
                 </Text>
               ) : null}
             </View>
-            {v.model || v.year ? (
+            {v.brand || v.model || v.year ? (
               <Text style={[styles.cardDetail, {color: colors.textMuted}]}>
-                {[v.model, v.year].filter(Boolean).join(' / ')}
+                {[v.brand, v.model, v.year].filter(Boolean).join(' / ')}
               </Text>
             ) : null}
             {v.vin ? (
