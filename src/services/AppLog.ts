@@ -10,13 +10,23 @@ let logs: LogEntry[] = [];
 let originalConsole: Record<string, (...args: any[]) => void> = {};
 
 function addLog(level: string, ...args: any[]) {
-  const msg = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-  logs.push({time: new Date().toISOString().slice(11, 23), level, message: msg});
-  if (logs.length > MAX_LOGS) logs.shift();
+  const msg = args
+    .map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
+    .join(' ');
+  logs.push({
+    time: new Date().toISOString().slice(11, 23),
+    level,
+    message: msg,
+  });
+  if (logs.length > MAX_LOGS) {
+    logs.shift();
+  }
 }
 
 export function initLogCapture() {
-  if (originalConsole.log) return;
+  if (originalConsole.log) {
+    return;
+  }
   const methods = ['log', 'warn', 'error'] as const;
   for (const m of methods) {
     originalConsole[m] = (console as any)[m].bind(console);

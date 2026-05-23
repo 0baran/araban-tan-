@@ -44,7 +44,9 @@ export async function loadSettings(): Promise<AppSettings> {
   return cached;
 }
 
-export async function saveSettings(settings: Partial<AppSettings>): Promise<void> {
+export async function saveSettings(
+  settings: Partial<AppSettings>,
+): Promise<void> {
   cached = {...cached, ...settings};
   try {
     await AsyncStorage.setItem('@arabanitani/settings', JSON.stringify(cached));

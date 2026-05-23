@@ -22,7 +22,11 @@ export async function setupUpdateChannel() {
   });
 }
 
-export async function showUpdateNotification(version: string, notes: string, url: string) {
+export async function showUpdateNotification(
+  version: string,
+  notes: string,
+  url: string,
+) {
   await notifee.displayNotification({
     title: `v${version} güncellemesi hazır`,
     body: notes.split('\n')[0],

@@ -23,7 +23,9 @@ export async function loadVehicles(): Promise<Vehicle[]> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     vehicles = data ? JSON.parse(data) : [];
-  } catch { vehicles = []; }
+  } catch {
+    vehicles = [];
+  }
   return vehicles;
 }
 
@@ -45,7 +47,10 @@ export async function addVehicle(v: Vehicle): Promise<void> {
   await saveVehicles();
 }
 
-export async function updateVehicle(id: string, updates: Partial<Vehicle>): Promise<void> {
+export async function updateVehicle(
+  id: string,
+  updates: Partial<Vehicle>,
+): Promise<void> {
   const idx = vehicles.findIndex(v => v.id === id);
   if (idx >= 0) {
     vehicles[idx] = {...vehicles[idx], ...updates};

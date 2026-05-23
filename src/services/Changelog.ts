@@ -11,7 +11,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       '⚡ İleri Seviye Sensör Paketi: Turbo, DPF, Egzoz, NOx ve Geniş Bant O2 gibi toplam 23 yeni profesyonel sensör (PID) eklendi.',
       '🛠️ Akıllı Canlı Veri: Artık Canlı Veri ekranında sadece aracınızın desteklediği (okunabilen) sensörler filtrelenerek gösteriliyor.',
-      '🌍 Emisyon Testi: I/M Readiness (Emisyon Testine Hazırlık) ekranına ana menüden erişim kısayolu eklendi.'
+      '🌍 Emisyon Testi: I/M Readiness (Emisyon Testine Hazırlık) ekranına ana menüden erişim kısayolu eklendi.',
     ],
   },
   {
@@ -20,7 +20,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'HUD (Ayna) Modu: Gece sürüşlerinde verileri ön cama yansıtmak için Canlı Veri ekranına HUD modu eklendi.',
       'Akıllı Sesli Uyarı: Motor sıcaklığı (105°C), Akü voltajı (11.5V) ve Hız limiti (120km/h) aşıldığında telefon artık Türkçe konuşarak uyarıyor.',
-      'Yapay Zeka Arıza Asistanı: Sık karşılaşılan hata kodlarına tıklandığında olası sebepleri ve tamirci tavsiyelerini gösteren akıllı asistan eklendi.'
+      'Yapay Zeka Arıza Asistanı: Sık karşılaşılan hata kodlarına tıklandığında olası sebepleri ve tamirci tavsiyelerini gösteren akıllı asistan eklendi.',
     ],
   },
   {
@@ -29,7 +29,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Akıllı Filtreleme: Canlı veri ekranında artık sadece aracınızın beyninin desteklediği (okunabilen) veriler gösteriliyor. Boş sensörler gizleniyor.',
       'Ekstra PID Eklentisi: Google taraması sonucu daha nadir 5 sensör daha sisteme eklendi.',
-      'Yeni Eklenenler: Yakıt Hattı Gösterge Basıncı, Enjeksiyon Zamanlaması, Motor Sürtünme Torku, Yüksek Çözünürlüklü Mesafe ve Gaz Kelebeği Pozisyonu G.'
+      'Yeni Eklenenler: Yakıt Hattı Gösterge Basıncı, Enjeksiyon Zamanlaması, Motor Sürtünme Torku, Yüksek Çözünürlüklü Mesafe ve Gaz Kelebeği Pozisyonu G.',
     ],
   },
   {
@@ -37,28 +37,28 @@ export const CHANGELOG: VersionEntry[] = [
     date: '22 Mayıs 2026',
     items: [
       'Gelişmiş Sensör Eklentisi: Toplam 7 yeni gelişmiş PID eklendi.',
-      'Yeni Okunan Değerler: Araç Kilometresi (Odometer), Hibrit Batarya Ömrü, DPF Fark Basıncı, DPF Sıcaklığı, Egzoz Basıncı, Turbo Devri (RPM) ve Intercooler Sıcaklığı.'
+      'Yeni Okunan Değerler: Araç Kilometresi (Odometer), Hibrit Batarya Ömrü, DPF Fark Basıncı, DPF Sıcaklığı, Egzoz Basıncı, Turbo Devri (RPM) ve Intercooler Sıcaklığı.',
     ],
   },
   {
     version: '2.9.24',
     date: '22 Mayıs 2026',
     items: [
-      'Gelişmiş Sensör Okuması: Akü voltajı ölçümü için araç motor beyni yerine direkt olarak OBD2 adaptörünün kendi pin voltajı okuma komutu (AT RV) eklendi. Artık eski veya yeni fark etmeksizin tüm araçlarda Akü Voltajı 100% kesinlikle çalışacak.'
+      'Gelişmiş Sensör Okuması: Akü voltajı ölçümü için araç motor beyni yerine direkt olarak OBD2 adaptörünün kendi pin voltajı okuma komutu (AT RV) eklendi. Artık eski veya yeni fark etmeksizin tüm araçlarda Akü Voltajı 100% kesinlikle çalışacak.',
     ],
   },
   {
     version: '2.9.23',
     date: '22 Mayıs 2026',
     items: [
-      'Donanım Optimizasyonu: ELM327 adaptör çipine doğrudan AT komutları gönderilerek (ATS0, ATAT1, ATST32) çipin kendi yanıt süresi ve Bluetooth veri aktarım hızı donanımsal olarak maksimuma çıkarıldı.'
+      'Donanım Optimizasyonu: ELM327 adaptör çipine doğrudan AT komutları gönderilerek (ATS0, ATAT1, ATST32) çipin kendi yanıt süresi ve Bluetooth veri aktarım hızı donanımsal olarak maksimuma çıkarıldı.',
     ],
   },
   {
     version: '2.9.22',
     date: '22 Mayıs 2026',
     items: [
-      'Performans Optimizasyonu: Veri okuma hızı (Polling) inanılmaz derecede artırıldı! Rölanti ve bekleme süreleri kısıtlamaları kaldırılarak 300ms olan döngü gecikmesi 25ms seviyesine düşürüldü.'
+      'Performans Optimizasyonu: Veri okuma hızı (Polling) inanılmaz derecede artırıldı! Rölanti ve bekleme süreleri kısıtlamaları kaldırılarak 300ms olan döngü gecikmesi 25ms seviyesine düşürüldü.',
     ],
   },
   {
@@ -66,14 +66,14 @@ export const CHANGELOG: VersionEntry[] = [
     date: '22 Mayıs 2026',
     items: [
       'Bağlantı Optimizasyonu: Bluetooth timeout hataları nedeniyle uygulamanın askıda kalması çözüldü.',
-      'Veri Çözümleme Hatası: Araca bağlandıktan sonra verilerin ekrana yansımama sorunu (ELM327 boşluk karakterleri sorunu) tamamen giderildi.'
+      'Veri Çözümleme Hatası: Araca bağlandıktan sonra verilerin ekrana yansımama sorunu (ELM327 boşluk karakterleri sorunu) tamamen giderildi.',
     ],
   },
   {
     version: '2.9.20',
     date: '22 Mayıs 2026',
     items: [
-      'Kritik Hata Çözümü: Önceki sürümde oluşan Bluetooth ile bağlanamama ve ELM327 başlatılamama sorunu (bağlantı bayrağı sırası) düzeltildi.'
+      'Kritik Hata Çözümü: Önceki sürümde oluşan Bluetooth ile bağlanamama ve ELM327 başlatılamama sorunu (bağlantı bayrağı sırası) düzeltildi.',
     ],
   },
   {
@@ -92,7 +92,7 @@ export const CHANGELOG: VersionEntry[] = [
       'Veri okuma sorunu kök neden çözüldü: ELM327 echo (ATE0) sorunu.',
       'sendCommand/sendCommandFast yanıt temizleme: 41XX prefix bulunup echo atılır.',
       'Tüm sensörler (RPM, Speed, MAF, MAP, sıcaklık, vs.) artık güvenilir okunur.',
-      'Klon ELM327 adaptörlerle tam uyumluluk.'
+      'Klon ELM327 adaptörlerle tam uyumluluk.',
     ],
   },
   {
@@ -102,7 +102,7 @@ export const CHANGELOG: VersionEntry[] = [
       'PID tespit aralığı genişletildi: 60, 80, A0 desteği eklendi — daha fazla sensör okunur.',
       'Araç kaydetme hatası düzeltildi: hata yönetimi eklendi, yeniden dene mekanizması.',
       'Veri okuma hızlandırıldı: polling aralığı 400ms → 300ms, FAST_INTERVAL 40ms → 25ms.',
-      'Genel kararlılık iyileştirmeleri.'
+      'Genel kararlılık iyileştirmeleri.',
     ],
   },
   {
@@ -111,7 +111,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Trip Özeti eklendi: mesafe, yakıt, ortalama tüketim, hız, maks. hız, yakıt maliyeti (TL).',
       'Trip verileri bağlantı anından itibaren otomatik kaydedilir.',
-      'Ana sayfaya Trip Özeti butonu eklendi.'
+      'Ana sayfaya Trip Özeti butonu eklendi.',
     ],
   },
   {
@@ -121,14 +121,14 @@ export const CHANGELOG: VersionEntry[] = [
       'Tip güvenliği iyileştirmeleri: Tüm TypeScript hataları giderildi.',
       'Bluetooth veri okuma iyileştirmesi: readAll() while döngüsü ile daha kararlı.',
       'Güncelleme bildirimi: notifee API düzeltildi, background event desteği eklendi.',
-      'Genel kararlılık ve hata düzeltmeleri.'
+      'Genel kararlılık ve hata düzeltmeleri.',
     ],
   },
   {
     version: '2.9.13',
     date: '22 Mayıs 2026',
     items: [
-      'Güncelleme kontrolü Hermes uyumlu hale getirildi (atob hatası giderildi).'
+      'Güncelleme kontrolü Hermes uyumlu hale getirildi (atob hatası giderildi).',
     ],
   },
   {
@@ -139,7 +139,7 @@ export const CHANGELOG: VersionEntry[] = [
       'Veri okuma sorunları giderildi: CAN çok parçalı yanıt desteği eklendi (modern araçlar artık veri gönderiyor).',
       'ELM327 zaman aşımı iyileştirildi (ATST32→ATST64) ve adaptif zamanlama kapatıldı (ATAT1→ATAT0).',
       'Rölantide sensör donması düzeltildi: extended sensörler periyodik okunmaya devam ediyor.',
-      'Güncelleme kontrolü GitHub API üzerinden yapılıyor (cache sorunu giderildi).'
+      'Güncelleme kontrolü GitHub API üzerinden yapılıyor (cache sorunu giderildi).',
     ],
   },
   {
@@ -149,7 +149,7 @@ export const CHANGELOG: VersionEntry[] = [
       'Veri okuma sorunları giderildi: CAN çok parçalı yanıt desteği eklendi (modern araçlar artık veri gönderiyor).',
       'ELM327 zaman aşımı iyileştirildi (ATST32→ATST64) ve adaptif zamanlama kapatıldı (ATAT1→ATAT0).',
       'Rölantide sensör donması düzeltildi: extended sensörler periyodik okunmaya devam ediyor.',
-      'Güncelleme bildirimi eklendi: yeni sürüm geldiğinde sistem notification gönderir.'
+      'Güncelleme bildirimi eklendi: yeni sürüm geldiğinde sistem notification gönderir.',
     ],
   },
   {
@@ -157,7 +157,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '21 Mayıs 2026',
     items: [
       'Performans Güncellemesi: Ekrana veri basma frekansı (UI Throttling) optimize edildi. Kasma/donma sorunları çözülerek mükemmel akıcı bir deneyim sağlandı.',
-      'Uygulamanın motor resmi (App Icon) yapay zeka ile kırpılarak sınırlarına kadar dev boyuta getirildi.'
+      'Uygulamanın motor resmi (App Icon) yapay zeka ile kırpılarak sınırlarına kadar dev boyuta getirildi.',
     ],
   },
   {
@@ -165,7 +165,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '21 Mayıs 2026',
     items: [
       'Uygulama motor ikonu tasarımı büyütüldü ve Sürüm Notları (Changelog) sayfası güncellendi.',
-      'Bağlantı ve OTA kararlılığı devam ediyor.'
+      'Bağlantı ve OTA kararlılığı devam ediyor.',
     ],
   },
   {
@@ -173,7 +173,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '21 Mayıs 2026',
     items: [
       'Uygulama ikonu (motor resmi) daha büyük ve belirgin hale getirildi.',
-      'Bağlantı ve OTA kararlılığı devam ediyor.'
+      'Bağlantı ve OTA kararlılığı devam ediyor.',
     ],
   },
   {
@@ -182,7 +182,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Hata kodu (DTC) okuma algoritması iyileştirildi, tüm araç kodları sorunsuz okunuyor.',
       'Otomatik bağlantı izni sistemi eklendi.',
-      'Kullanılmayan sensör sorguları tamamen iptal edilerek hız & RPM gecikmeleri ortadan kaldırıldı.'
+      'Kullanılmayan sensör sorguları tamamen iptal edilerek hız & RPM gecikmeleri ortadan kaldırıldı.',
     ],
   },
   {
@@ -192,7 +192,7 @@ export const CHANGELOG: VersionEntry[] = [
       'Tüm ekran boyutları (çentikli, kavisli vs.) için SafeArea tam uyumluluğu.',
       'WiFi OBD2 (V-Gate vb.) cihazlarına bağlanamama sorunu giderildi (tcp-socket eklentisi).',
       'Uygulama temel mimarisi %100 Saf (Bare) React Native seviyesine çekilerek optimize edildi.',
-      'Yeni ve hızlı cihaz tarama algoritması eklendi.'
+      'Yeni ve hızlı cihaz tarama algoritması eklendi.',
     ],
   },
   {
@@ -249,7 +249,7 @@ export const CHANGELOG: VersionEntry[] = [
       'Kapsamlı DTC veritabanı (400+ kod, Türkçe açıklama)',
       'DTC kategorileri ve alt kategoriler (P/C/B/U)',
       'Gizli özellikler yenilendi: DPF izleme, boğaz kalibrasyonu, servis sıfırlama',
-      'Ekstra sensör PID\'leri eklendi (short/long term fuel trim, fuel pressure)',
+      "Ekstra sensör PID'leri eklendi (short/long term fuel trim, fuel pressure)",
       'ErrorCodesScreen: kategori özet kartları, badge gösterimi',
       'SettingsScreen: Otomatik Kayıt aç/kapa',
       'build-and-push.ps1 otomatik scripti',
@@ -261,12 +261,12 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Bluetooth bağlantı hatası düzeltildi (onDataReceived try-catch)',
       'Simülasyon recursive setTimeout ile yenilendi',
-      'Güncelleme spam\'i düzeltildi (AsyncStorage ile 1 kere bildirim)',
+      "Güncelleme spam'i düzeltildi (AsyncStorage ile 1 kere bildirim)",
       'Polling optimize edildi: kritik 3 sensör her döngü, genişletilmiş her 6 döngü',
       'Gauge daireler kaldırıldı, düz metin gösterim',
       'Saatlik versiyon formatı (2.2.YYYYMMDD.SSdd)',
       'Logo yenilendi (çift renkli gauge arkı + araç silueti)',
-      'Gereksiz sensörler polling\'den çıkarıldı',
+      "Gereksiz sensörler polling'den çıkarıldı",
       'Hız ve hararet uyarı bannerları kaldırıldı',
     ],
   },

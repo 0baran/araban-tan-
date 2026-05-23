@@ -1,4 +1,10 @@
-import React, {createContext, useContext, useState, useEffect, ReactNode} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import {loadSettings, saveSettings} from './AppSettings';
 
 export type ThemeColors = {
@@ -54,7 +60,9 @@ export function ThemeProvider({children}: {children: ReactNode}) {
 
   useEffect(() => {
     loadSettings().then(s => {
-      if (s.darkMode !== undefined) setDarkMode(s.darkMode);
+      if (s.darkMode !== undefined) {
+        setDarkMode(s.darkMode);
+      }
     });
   }, []);
 
@@ -66,7 +74,8 @@ export function ThemeProvider({children}: {children: ReactNode}) {
   };
 
   return (
-    <ThemeContext.Provider value={{darkMode, colors: darkMode ? dark : light, toggleTheme}}>
+    <ThemeContext.Provider
+      value={{darkMode, colors: darkMode ? dark : light, toggleTheme}}>
       {children}
     </ThemeContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
@@ -41,7 +41,7 @@ export default function PerformanceScreen({onBack}: Props) {
       const now = Date.now();
       if (fuelLastUpdateRef.current > 0 && d.fuelRate > 0) {
         const dt = (now - fuelLastUpdateRef.current) / 1000;
-        const l = d.fuelRate * dt / 3600;
+        const l = (d.fuelRate * dt) / 3600;
         fuelConsumedRef.current += l;
         setFuelUsed(fuelConsumedRef.current);
         setFuelCost(fuelConsumedRef.current * fuelPriceRef.current);
@@ -64,7 +64,9 @@ export default function PerformanceScreen({onBack}: Props) {
       }
     });
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
   }, []);
 
@@ -83,7 +85,9 @@ export default function PerformanceScreen({onBack}: Props) {
   };
 
   const stopTimer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
     const finalTime = (Date.now() - startTimeRef.current) / 1000;
     setElapsed(finalTime);
     setTimerState('done');
@@ -91,7 +95,9 @@ export default function PerformanceScreen({onBack}: Props) {
   };
 
   const resetTimer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
     setElapsed(0);
     setTimerState('idle');
     setPeakSpeed(0);
@@ -107,7 +113,9 @@ export default function PerformanceScreen({onBack}: Props) {
   };
 
   return (
-    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView
+      edges={['top', 'bottom', 'left', 'right']}
+      style={[styles.container, {backgroundColor: colors.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>
@@ -121,7 +129,11 @@ export default function PerformanceScreen({onBack}: Props) {
         <Text style={styles.cardLabel}>0-100 KM/H SÜRE</Text>
 
         <View style={styles.timerRow}>
-          <Text style={[styles.timerValue, timerState === 'running' && styles.timerRunning]}>
+          <Text
+            style={[
+              styles.timerValue,
+              timerState === 'running' && styles.timerRunning,
+            ]}>
             {timerState === 'idle' ? '—' : formatTime(elapsed)}
           </Text>
         </View>
@@ -129,9 +141,13 @@ export default function PerformanceScreen({onBack}: Props) {
         <View style={styles.statusRow}>
           <View style={[styles.statusBadge, statusStyle(timerState)]}>
             <Text style={styles.statusText}>
-              {timerState === 'idle' ? 'DURAKLAMA' :
-               timerState === 'ready' ? 'HAZIR' :
-               timerState === 'running' ? 'ÖLÇÜM AKTİF' : 'TAMAMLANDI'}
+              {timerState === 'idle'
+                ? 'DURAKLAMA'
+                : timerState === 'ready'
+                ? 'HAZIR'
+                : timerState === 'running'
+                ? 'ÖLÇÜM AKTİF'
+                : 'TAMAMLANDI'}
             </Text>
           </View>
           {bestTime !== null && (
@@ -153,15 +169,22 @@ export default function PerformanceScreen({onBack}: Props) {
         </View>
 
         <Text style={styles.helpText}>
-          {timerState === 'idle' ? '💡 5 km/s altına düşünce otomatik hazır olur.' :
-           timerState === 'ready' ? '⚡ Gaza basınca süre başlar!' :
-           timerState === 'running' ? '⏱️ 100 km/h görülünce durur...' :
-           '✅ Süre kaydedildi. Tekrar dene!'}
+          {timerState === 'idle'
+            ? '💡 5 km/s altına düşünce otomatik hazır olur.'
+            : timerState === 'ready'
+            ? '⚡ Gaza basınca süre başlar!'
+            : timerState === 'running'
+            ? '⏱️ 100 km/h görülünce durur...'
+            : '✅ Süre kaydedildi. Tekrar dene!'}
         </Text>
       </View>
 
       {/* HP CARD */}
-      <View style={[styles.glassCard, {flexDirection: 'row', justifyContent: 'space-around'}]}>
+      <View
+        style={[
+          styles.glassCard,
+          {flexDirection: 'row', justifyContent: 'space-around'},
+        ]}>
         <View style={{alignItems: 'center'}}>
           <Text style={styles.hpLabel}>Tekerlek BG</Text>
           <Text style={[styles.hpValue, {color: '#00bfff'}]}>{hp.whp}</Text>
@@ -185,7 +208,9 @@ export default function PerformanceScreen({onBack}: Props) {
       <View style={styles.gaugesRow}>
         <View style={[styles.glassCard, styles.gaugeCardSmall]}>
           <Text style={styles.gaugeLabelSmall}>HIZ</Text>
-          <Text style={[styles.gaugeVal, {color: '#00ff7f'}]}>{data?.speed || 0}</Text>
+          <Text style={[styles.gaugeVal, {color: '#00ff7f'}]}>
+            {data?.speed || 0}
+          </Text>
           <Text style={styles.gaugeUnitSmall}>KM/H</Text>
         </View>
         <View style={[styles.glassCard, styles.gaugeCardSmall]}>
@@ -195,27 +220,39 @@ export default function PerformanceScreen({onBack}: Props) {
         </View>
         <View style={[styles.glassCard, styles.gaugeCardSmall]}>
           <Text style={styles.gaugeLabelSmall}>DEVİR</Text>
-          <Text style={[styles.gaugeVal, {color: '#00bfff'}]}>{data?.rpm || 0}</Text>
+          <Text style={[styles.gaugeVal, {color: '#00bfff'}]}>
+            {data?.rpm || 0}
+          </Text>
           <Text style={styles.gaugeUnitSmall}>RPM</Text>
         </View>
       </View>
 
       {/* FUEL COST */}
       {fuelPriceRef.current > 0 && fuelUsed > 0 && (
-        <View style={[styles.glassCard, {flexDirection: 'row', justifyContent: 'space-around'}]}>
+        <View
+          style={[
+            styles.glassCard,
+            {flexDirection: 'row', justifyContent: 'space-around'},
+          ]}>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.hpLabel}>⛽ Yakıt</Text>
-            <Text style={[styles.hpValue, {color: '#e9c46a'}]}>{fuelUsed.toFixed(2)}</Text>
+            <Text style={[styles.hpValue, {color: '#e9c46a'}]}>
+              {fuelUsed.toFixed(2)}
+            </Text>
             <Text style={styles.hpUnit}>L</Text>
           </View>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.hpLabel}>💰 Maliyet</Text>
-            <Text style={[styles.hpValue, {color: '#ffa502'}]}>₺{fuelCost.toFixed(1)}</Text>
+            <Text style={[styles.hpValue, {color: '#ffa502'}]}>
+              ₺{fuelCost.toFixed(1)}
+            </Text>
             <Text style={styles.hpUnit}>TL</Text>
           </View>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.hpLabel}>₺/L</Text>
-            <Text style={[styles.hpValue, {color: '#fff'}]}>{fuelPriceRef.current}</Text>
+            <Text style={[styles.hpValue, {color: '#fff'}]}>
+              {fuelPriceRef.current}
+            </Text>
             <Text style={styles.hpUnit}>TL</Text>
           </View>
         </View>
@@ -226,61 +263,134 @@ export default function PerformanceScreen({onBack}: Props) {
 
 const statusStyle = (s: TimerState) => {
   switch (s) {
-    case 'ready': return {backgroundColor: 'rgba(0, 255, 127, 0.15)', borderColor: '#00ff7f'};
-    case 'running': return {backgroundColor: 'rgba(0, 191, 255, 0.15)', borderColor: '#00bfff'};
-    case 'done': return {backgroundColor: 'rgba(255, 165, 0, 0.15)', borderColor: '#ffa502'};
-    default: return {backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)'};
+    case 'ready':
+      return {
+        backgroundColor: 'rgba(0, 255, 127, 0.15)',
+        borderColor: '#00ff7f',
+      };
+    case 'running':
+      return {
+        backgroundColor: 'rgba(0, 191, 255, 0.15)',
+        borderColor: '#00bfff',
+      };
+    case 'done':
+      return {
+        backgroundColor: 'rgba(255, 165, 0, 0.15)',
+        borderColor: '#ffa502',
+      };
+    default:
+      return {
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderColor: 'rgba(255,255,255,0.1)',
+      };
   }
 };
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#0a0b10'},
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    padding: 20, paddingTop: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    paddingTop: 40,
   },
   backButton: {padding: 8},
   backText: {color: '#00bfff', fontSize: 16, fontWeight: '700'},
   title: {color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 1},
   glassCard: {
-    backgroundColor: 'rgba(30,33,40,0.7)', borderRadius: 24, padding: 20,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginHorizontal: 16, marginBottom: 16,
+    backgroundColor: 'rgba(30,33,40,0.7)',
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+    marginHorizontal: 16,
+    marginBottom: 16,
   },
   cardLabel: {
-    color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 'bold',
-    letterSpacing: 1, marginBottom: 10,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 12,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+    marginBottom: 10,
   },
   timerRow: {alignItems: 'center', marginVertical: 10},
   timerValue: {
-    color: '#fff', fontSize: 52, fontWeight: '900', fontFamily: 'monospace',
-    textShadowColor: 'rgba(0,191,255,0.5)', textShadowOffset: {width: 0, height: 0}, textShadowRadius: 15,
+    color: '#fff',
+    fontSize: 52,
+    fontWeight: '900',
+    fontFamily: 'monospace',
+    textShadowColor: 'rgba(0,191,255,0.5)',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 15,
   },
   timerRunning: {
     color: '#00bfff',
-    textShadowColor: 'rgba(0,191,255,0.5)', textShadowOffset: {width: 0, height: 0}, textShadowRadius: 20,
+    textShadowColor: 'rgba(0,191,255,0.5)',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 20,
   },
-  statusRow: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'},
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   statusBadge: {
-    paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 10,
     borderWidth: 1,
   },
-  statusText: {color: '#fff', fontSize: 12, fontWeight: '700', letterSpacing: 1},
+  statusText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
   bestTime: {color: '#ffa502', fontSize: 13, fontWeight: '700'},
   resetBtn: {
-    flex: 1, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 14, padding: 12,
-    alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 14,
+    padding: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
-  resetBtnText: {color: '#fff', fontWeight: '700', fontSize: 13, letterSpacing: 1},
+  resetBtnText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13,
+    letterSpacing: 1,
+  },
   helpText: {
-    color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 16, textAlign: 'center',
+    color: 'rgba(255,255,255,0.35)',
+    fontSize: 12,
+    marginTop: 16,
+    textAlign: 'center',
   },
-  hpLabel: {color: 'rgba(255,255,255,0.4)', fontSize: 11, fontWeight: '700', letterSpacing: 1, marginBottom: 8},
+  hpLabel: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
   hpValue: {fontSize: 32, fontWeight: '900'},
   hpUnit: {color: 'rgba(255,255,255,0.3)', fontSize: 11, marginTop: 2},
   gaugesRow: {flexDirection: 'row', marginHorizontal: 12},
-  gaugeCardSmall: {flex: 1, marginHorizontal: 4, alignItems: 'center', paddingVertical: 20},
+  gaugeCardSmall: {
+    flex: 1,
+    marginHorizontal: 4,
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
   gaugeLabelSmall: {
-    color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: '700', letterSpacing: 1, marginBottom: 8,
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 8,
   },
   gaugeVal: {fontSize: 28, fontWeight: '900'},
   gaugeUnitSmall: {color: 'rgba(255,255,255,0.3)', fontSize: 10, marginTop: 2},
