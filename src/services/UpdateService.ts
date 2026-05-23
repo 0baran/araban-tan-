@@ -82,33 +82,31 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   setProgress(0);
 
   const { fs, android } = ReactNativeBlobUtil;
-  const dest = `${fs.dirs.DownloadDir}/ProCarScanner-v${version}.apk`;
+  const dest = fs.dirs.DownloadDir + `/ArabaniTani-v${version}.apk`;
 
   try {
     await fs.unlink(dest).catch(() => {});
 
     const res = await ReactNativeBlobUtil.config({
-      fileCache: true,
-      appendExt: 'apk',
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        title: `ArabanıTanı v${version}`,
+        description: 'Güncelleme indiriliyor...',
+        mime: 'application/vnd.android.package-archive',
+        path: dest,
+      }
     })
       .fetch('GET', url)
-      .progress((received: number, total: number) => {
-        const pct = total > 0 ? Math.round((received / total) * 100) : 0;
-        setProgress(pct);
+      .progress((received, total) => {
+        const p = Math.round((Number(received) / Number(total)) * 100);
+        setProgress(p);
       });
 
     setProgress(100);
-
     await new Promise(r => setTimeout(r, 500));
 
-    await android.addCompleteDownload({
-      title: 'ProCarScanner v' + version,
-      description: 'Yüklemek için tıklayın',
-      mime: 'application/vnd.android.package-archive',
-      path: res.path(),
-      showNotification: true,
-    });
-
+    // Otomatik kurulum ekranını aç
     android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
 
     downloadActive = false;
