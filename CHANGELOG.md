@@ -1,5 +1,9 @@
 # Sürüm Notları (Changelog)
 
+## v3.2.0 (Güncel Sürüm)
+* **Mega Sensör Paketi**: Piyasada standart SAE J1979 protokolü ile desteklenen **30'dan fazla yeni sensör** uygulamaya gömüldü. Artık araç destekliyorsa Yakıt Basıncı, Motor Yağı Sıcaklığı, Tork Verileri (Referans ve Güncel), Anlık Yakıt Tüketimi (L/h), Katalizör Sıcaklığı gibi profesyonel verileri canlı olarak görebileceksiniz.
+* **Genel Uyumluluk Paketi**: Kullanıcı talebi üzerine, ucuz ELM327 klon cihazlarındaki kronik hatalar ve kitlenmeleri önlemek amacıyla agresif bir arka plan filtreleyici (Compatibility Module) geliştirildi. Cihaz kopmaları minimuma indirildi.
+
 ## v3.1.30 (Güncel Sürüm)
 * **Özel Gösterge Eklentisi**: Artık sabitlediğiniz (favoriye aldığınız) tüm sensörler, büyük gösterge (PANEL/HUD) modunun altında kocaman rakamlarla listeleniyor. Böylece size özel bir HUD ekranı yaratabilirsiniz.
 

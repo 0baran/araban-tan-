@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.2.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Mega Sensor Paket: Yakit Basinci, Hava Debisi (MAF), Gaz Pedali Konumu (Tork), Motor Yagi Sicakligi, Katalitik Sicakligi ve Motor Yakit Tuketimi (L/h) dahil 30+ yeni sensor destegi eklendi.',
+      'Genel Uyumluluk Paketi: Ucuz ELM327 klon cihazlarinda yasanan kilitlenme, sensor listesinin eksik gelmesi veya baglanti kopmasi gibi sorunlari cozen agresif filtreleme modulu devreye alindi. Araciniz hangi sensorleri destekliyorsa, en ufak bir sorun yasamadan listede belirecek.'
+    ],
+  },
+  {
     version: '3.1.30',
     date: '24 Mayis 2026',
     items: [

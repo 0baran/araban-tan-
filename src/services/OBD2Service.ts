@@ -97,6 +97,9 @@ export type OBD2Data = {
   turboRpm: number;
   chargeAirCoolerTemp: number;
   fuelRailGaugePressure: number;
+  engineFuelRate: number;
+  actualEngineTorque: number;
+  engineReferenceTorque: number;
   engineFrictionTorque: number;
   distanceSinceDTCClearHighRes: number;
   throttlePositionG: number;
@@ -630,6 +633,9 @@ class OBD2Service {
       turboRpm: 0,
       chargeAirCoolerTemp: 0,
       fuelRailGaugePressure: 0,
+      engineFuelRate: 0,
+      actualEngineTorque: 0,
+      engineReferenceTorque: 0,
       engineFrictionTorque: 0,
       distanceSinceDTCClearHighRes: 0,
       throttlePositionG: 0,
@@ -1854,11 +1860,24 @@ class OBD2Service {
             }
             break;
           }
-          case 5: {
+          case 5: { 
             if (this.isPidSupported('0107')) {
               const r1 = await this.sendCommandFast('0107', 'shortTermFuelTrim');
               this.parseShortTermFuelTrim(r1);
+             
+            if (this.isPidSupported('015E')) {
+              const r = await this.sendCommandFast('015E', 'engineFuelRate');
+              this.parseEngineFuelRate(r);
             }
+            if (this.isPidSupported('0162')) {
+              const r = await this.sendCommandFast('0162', 'actualEngineTorque');
+              this.parseActualEngineTorque(r);
+            }
+            if (this.isPidSupported('0163')) {
+              const r = await this.sendCommandFast('0163', 'engineReferenceTorque');
+              this.parseEngineReferenceTorque(r);
+            }
+ }
             if (this.isPidSupported('0108')) {
               const r2 = await this.sendCommandFast('0108', 'longTermFuelTrim');
               this.parseLongTermFuelTrim(r2);
