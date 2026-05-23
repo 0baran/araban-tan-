@@ -170,7 +170,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 16,
   },
   backButton: {padding: 8},
   backText: {color: colors.accent, fontSize: 16, fontWeight: '700'},

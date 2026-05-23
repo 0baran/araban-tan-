@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 16,
   },
   backBtn: {fontSize: 14, fontWeight: '800', letterSpacing: 1},
   title: {fontSize: 20, fontWeight: '900', letterSpacing: 1.5},

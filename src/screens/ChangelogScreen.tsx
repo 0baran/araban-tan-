@@ -63,7 +63,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 16,
   },
   backBtn: {padding: 8},
   backText: {fontSize: 16, fontWeight: '700'},

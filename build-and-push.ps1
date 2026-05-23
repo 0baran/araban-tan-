@@ -23,7 +23,7 @@ $pkg.version = $version
 $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 
 # Sürüm notlarını ayıkla
-$fullNotes = "v$version Guncellemeleri:; - Uygulama ici APK indirme (progress bar + otomatik kurulum); - Performans: hizli polling, UI throttle 100ms; - Arka plan: baglanti kopmasi/veri donmasi/bildirim takilmasi cozuldu."
+$fullNotes = ("v" + $version + ":; - Uygulama ici APK indirme (progress bar + bildirim ile kurulum); - Foreground Service ile arka planda calisma; - Ana ekran widget (RPM, Hiz, Hararet); - Performans optimizasyonu (polling hizi 2x, UI 100ms); - Tum Android 8-16 uyumlulugu (izinler, padding, baglanti).")
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---

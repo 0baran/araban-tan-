@@ -6,6 +6,19 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.0',
+    date: '23 Mayis 2026',
+    items: [
+      'Uygulama Ici Guncelleme: APK indirme progress bar ile indirilir, Downloads uygulamasina eklenir, bildirimle kurulum yapilir.',
+      'Arka Plan Calisma (Foreground Service): Uygulama kucultulse de OBD2 veri okumaya devam eder, baglanti kopmaz.',
+      'Widget: Ana ekranda RPM, Hiz ve Hararet canli gosterilir.',
+      'Performans: Veri okuma hizi 2 kat artti (polling 25ms-15ms), UI guncelleme 250ms-80ms, Proxy validKeys optimize edildi.',
+      'Baglanti Kararliligi: USB/WiFi baglanti hatasi duzeltildi, ATST64 timeout, _connecting mutex, double baglanti onlemi.',
+      'Genel Iyilestirmeler: Arka plan bildirimi takilma sorunu cozuldu, veri donmasi giderildi, tum Android surumlerde (8-16) izin uyumlulugu.',
+      'Kod Optimizasyonu: Gereksiz regex tekrarlari temizlendi, dead code kaldirildi, API level kontrolu eklendi, short version (3.1.x).',
+    ],
+  },
+  {
     version: '3.0.0',
     date: '23 Mayıs 2026',
     items: [

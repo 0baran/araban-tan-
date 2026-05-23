@@ -28,7 +28,7 @@ import {checkForUpdate, promptUpdate, downloadActive, downloadProgress, onDownlo
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.12';
+const APP_VERSION = '3.1.13';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -594,7 +594,7 @@ function MainScreen() {
 
 const getStyles = (colors: any) => StyleSheet.create({
   container: {flex: 1, backgroundColor: colors.bg},
-  scrollContent: {padding: 20, paddingTop: 40},
+  scrollContent: {padding: 20, paddingTop: 16},
   header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30},
   title: {color: colors.text, fontSize: 22, fontWeight: '900', letterSpacing: 2},
   headerSub: {color: colors.textMuted, fontSize: 12, fontWeight: '500', letterSpacing: 1, marginTop: 2},
