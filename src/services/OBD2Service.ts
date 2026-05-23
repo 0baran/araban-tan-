@@ -8,7 +8,7 @@ import RNBluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import notifee, { AndroidImportance, AndroidForegroundServiceType } from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
 
 const STORAGE_LAST_DEVICE = '@arabanitani/last_device';
@@ -648,6 +648,7 @@ class OBD2Service {
         android: {
           channelId,
           asForegroundService: true,
+          foregroundServiceTypes: [AndroidForegroundServiceType.DATA_SYNC],
           color: '#00bfff',
           ongoing: true,
         },
@@ -1657,10 +1658,18 @@ class OBD2Service {
           this.lastDataTime = Date.now();
         } else if (Date.now() - this.lastDataTime > 3000) {
           // Reset data if no response for > 3 seconds
-          this.currentData.rpm = 0;
-          this.currentData.speed = 0;
-          this.currentData.engineLoad = 0;
-          this.currentData.batteryVoltage = 0;
+          Object.keys(this.currentData).forEach(k => {
+            if (
+              k !== '_validKeys' &&
+              k !== 'fuelSystemStatus' &&
+              k !== 'fuelType' &&
+              k !== 'milOn'
+            ) {
+              (this.currentData as any)[k] = 0;
+            }
+          });
+          this.currentData.fuelSystemStatus = '';
+          this.currentData.fuelType = '';
           this.dataCallbacks.forEach(cb => cb({...this.currentData}));
           this.updateWidget();
         }

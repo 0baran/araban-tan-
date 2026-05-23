@@ -1,6 +1,10 @@
 # Sürüm Notları (Changelog)
 
-## v3.1.19 (Güncel Sürüm)
+## v3.1.21 (Güncel Sürüm)
+* **Tam Ekran Sıfırlama**: Veri akışı kesildiğinde (veya kontak kapatıldığında) ekrandaki göstergelerin ve sıcaklıkların donup kalması sorunu çözüldü; artık bağlantı kopsa bile 3 saniye içinde tüm veriler anında sıfırlanıyor.
+* **Arka Plan ve Widget Düzeltmesi**: Android 14 ve üzeri (Android 15-16) yeni nesil cihazlarda, uygulama arka plana atıldığında sistemin veri akışını kesmesi sorunu (ve Widget'ın donması) giderildi. Yeni "Veri Senkronizasyonu" arka plan servisi eklendi.
+
+## v3.1.19
 * **Karakter Kodlaması Düzeltmesi**: Bildirim çubuğunda (uyarılar ve bildirimler) görünen Türkçe karakterlerin (ı, ş, ğ vb.) bozuk gözükmesine sebep olan yazılımsal kodlama hatası (encoding) giderildi. Artık bildirimler düzgün ve okunaklı çıkacak.
 
 ## v3.1.18
