@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $now = Get-Date
 $versionSuffix = $now.ToString("yyyyMMdd.HHmm")
-$baseVersion = "3.1.2"
+$baseVersion = "3.1.4"
 $version = "$baseVersion.$versionSuffix"
 $apkName = "ArabaniTani-v$version.apk"
 $apkUrl = "https://raw.githubusercontent.com/0baran/araban-tan-/main/$apkName"
@@ -22,7 +22,7 @@ $pkg.version = $version
 $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 
 # Sürüm notlarını ayıkla
-$fullNotes = "Guncellemeler:; - Neon modu kaldirildi ve arayuz klasik koyu temaya cevrildi."
+$fullNotes = "v3.1.4 Guncellemeleri:; - Kalan butun neon parlamalari silindi.; - Ana menudeki gereksiz 'Emisyon Testi' kisayolu kaldirildi.; - Emisyon testi yalnizca 'Arac Bilgisi' menusu icinden calistirilacak."
 Write-Host "==> Notes: $fullNotes" -ForegroundColor Cyan
 
 # --- Update App.tsx ---

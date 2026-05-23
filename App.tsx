@@ -29,7 +29,7 @@ import {checkForUpdate, promptUpdate} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
 import KeepAwake from 'react-native-keep-awake';
 
-const APP_VERSION = '3.1.2.20260523.1410';
+const APP_VERSION = '3.1.3.20260523.1420';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -425,12 +425,6 @@ function MainScreen() {
                 <Text style={[styles.featureLabel, {color: colors.textDim}]}>HATA KODLARI</Text>
                 <Text style={[styles.featureHint, {color: colors.textMuted}]}>DTC Tara</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('imreadiness')}>
-                <Text style={styles.featureIcon}>🌍</Text>
-                <Text style={[styles.featureValue, {fontSize: 18, color: '#1dd1a1'}]}>EMİSYON</Text>
-                <Text style={[styles.featureLabel, {color: colors.textDim}]}>TESTE HAZIRLIK</Text>
-                <Text style={[styles.featureHint, {color: colors.textMuted}]}>Smog Check (I/M)</Text>
-              </TouchableOpacity>
               <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => navigate('performance')}>
                 <Text style={styles.featureIcon}>🏁</Text>
                 <Text style={[styles.featureValue, {fontSize: 22, color: colors.text}]}>{hp} BG</Text>
@@ -605,11 +599,10 @@ const styles = StyleSheet.create({
   statusDotActive: {backgroundColor: '#00ff7f'},
   glassCard: {
     borderRadius: 24, padding: 20, borderWidth: 1, marginBottom: 20,
-    shadowColor: '#00e5ff', shadowOffset: {width: 0, height: 4}, shadowOpacity: 0.15, shadowRadius: 20, elevation: 5,
   },
   cardLabel: {color: 'rgba(255, 255, 255, 0.5)', fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 10},
   vehicleText: {color: '#ffffff', fontSize: 20, fontWeight: 'bold', marginBottom: 5},
-  textNeonGreen: {color: '#00ff7f', textShadowColor: 'rgba(0, 255, 127, 0.8)', textShadowOffset: {width: 0, height: 0}, textShadowRadius: 15},
+  textNeonGreen: {color: '#00ff7f'},
   protocolText: {color: 'rgba(255, 255, 255, 0.4)', fontSize: 14},
   vehicleInfoRow: {flexDirection: 'row', gap: 16, marginTop: 10},
   vehicleInfoItem: {color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600'},
@@ -619,7 +612,7 @@ const styles = StyleSheet.create({
   gaugeCircle: {width: 150, height: 150, borderRadius: 75, borderWidth: 5, borderColor: 'rgba(0, 191, 255, 0.3)', justifyContent: 'center', alignItems: 'center'},
   gaugeCircleGreen: {borderColor: 'rgba(0, 255, 127, 0.3)'},
   gaugeValue: {fontSize: 44, fontWeight: '900'},
-  gaugeValueGreen: {color: '#00ff7f', fontSize: 44, fontWeight: '900', textShadowColor: 'rgba(0, 255, 127, 0.8)', textShadowOffset: {width: 0, height: 0}, textShadowRadius: 15},
+  gaugeValueGreen: {color: '#00ff7f', fontSize: 44, fontWeight: '900'},
   gaugeUnit: {color: 'rgba(255, 255, 255, 0.3)', fontSize: 12, fontWeight: 'bold', marginTop: 5},
   warningBanner: {flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,165,0,0.12)', borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: '#ffa502'},
   warningIcon: {fontSize: 20, marginRight: 10},
