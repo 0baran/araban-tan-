@@ -89,10 +89,11 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   downloadActive = true;
   setProgress(0);
 
-  const dest = `${ReactNativeBlobUtil.fs.dirs.DownloadDir}/ProCarScanner-v${version}.apk`;
+  const fs = ReactNativeBlobUtil.fs;
+  const dest = `${fs.dirs.DownloadDir}/ProCarScanner-v${version}.apk`;
 
   try {
-    await ReactNativeBlobUtil.fs.unlink(dest).catch(() => {});
+    await fs.unlink(dest).catch(() => {});
 
     const res = await ReactNativeBlobUtil.config({
       fileCache: true,
@@ -106,10 +107,16 @@ export async function downloadAndInstall(url: string, version: string): Promise<
 
     setProgress(100);
 
-    await ReactNativeBlobUtil.fs.cp(res.path(), dest);
-    await ReactNativeBlobUtil.fs.unlink(res.path()).catch(() => {});
+    await fs.cp(res.path(), dest);
+    await fs.unlink(res.path()).catch(() => {});
 
-    ReactNativeBlobUtil.android.actionViewIntent(dest, 'application/vnd.android.package-archive');
+    await ReactNativeBlobUtil.android.addCompleteDownload({
+      title: 'ProCarScanner v' + version,
+      description: 'Yuklemek icin tiklayin',
+      mime: 'application/vnd.android.package-archive',
+      path: dest,
+      showNotification: true,
+    });
 
     downloadActive = false;
     setTimeout(() => setProgress(0), 2000);
@@ -117,7 +124,7 @@ export async function downloadAndInstall(url: string, version: string): Promise<
   } catch (err: any) {
     downloadActive = false;
     setProgress(0);
-    await ReactNativeBlobUtil.fs.unlink(dest).catch(() => {});
+    await fs.unlink(dest).catch(() => {});
     Alert.alert('Indirme Hatasi', 'APK indirilemedi.');
     return false;
   }
