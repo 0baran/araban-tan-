@@ -1,6 +1,5 @@
-import {Alert, AppState} from 'react-native';
+import {Alert, AppState, Linking} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ReactNativeBlobUtil from 'react-native-blob-util';
 import {showUpdateNotification} from './UpdateNotifications';
 
 const UPDATE_URL =
@@ -17,19 +16,6 @@ export type CheckResult =
   | {found: true; info: UpdateInfo}
   | {found: false; reason: 'uptodate' | 'skipped' | 'network'};
 
-export let downloadProgress = 0;
-export let downloadActive = false;
-type ProgressListener = (pct: number) => void;
-let progressListeners: ProgressListener[] = [];
-export function onDownloadProgress(fn: ProgressListener) {
-  progressListeners.push(fn);
-  return () => { progressListeners = progressListeners.filter(l => l !== fn); };
-}
-function setProgress(pct: number) {
-  downloadProgress = pct;
-  progressListeners.forEach(l => l(pct));
-}
-
 export async function checkForUpdate(
   currentVersion: string,
   signal?: AbortSignal,
@@ -41,17 +27,13 @@ export async function checkForUpdate(
       cache: 'no-cache',
       signal,
     });
-    if (!resp.ok) {
-      return {found: false, reason: 'network'};
-    }
+    if (!resp.ok) return {found: false, reason: 'network'};
     const info: UpdateInfo = await resp.json();
     if (compareVersions(info.version, currentVersion) <= 0) {
       return {found: false, reason: 'uptodate'};
     }
     const skipped = await AsyncStorage.getItem(SKIPPED_KEY);
-    if (skipped === info.version) {
-      return {found: false, reason: 'skipped'};
-    }
+    if (skipped === info.version) return {found: false, reason: 'skipped'};
     return {found: true, info};
   } catch {
     return {found: false, reason: 'network'};
@@ -63,71 +45,25 @@ let _lastNotificationVersion = '';
 export function promptUpdate(info: UpdateInfo) {
   showUpdateNotification(info.version, info.notes, info.url);
 
-  if (AppState.currentState !== 'active') {
-    return;
-  }
-  if (_lastNotificationVersion === info.version) {
-    return;
-  }
+  if (AppState.currentState !== 'active') return;
+  if (_lastNotificationVersion === info.version) return;
   _lastNotificationVersion = info.version;
 
   Alert.alert('Guncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
-    {text: 'Simdi Guncelle', onPress: () => downloadAndInstall(info.url, info.version)},
+    {
+      text: 'Simdi Guncelle',
+      onPress: () => {
+        Linking.openURL(info.url).catch(() =>
+          Alert.alert('Hata', 'Tarayici acilamadi. Lutfen manuel guncelleyin.'),
+        );
+      },
+    },
     {
       text: 'Daha Sonra',
       style: 'cancel',
       onPress: () => AsyncStorage.setItem(SKIPPED_KEY, info.version),
     },
   ]);
-}
-
-export async function downloadAndInstall(url: string, version: string): Promise<boolean> {
-  if (downloadActive) {
-    Alert.alert('Indirme Devam Ediyor', 'Mevcut indirme tamamlanana kadar bekleyin.');
-    return false;
-  }
-  downloadActive = true;
-  setProgress(0);
-
-  const fs = ReactNativeBlobUtil.fs;
-  const dest = `${fs.dirs.DownloadDir}/ProCarScanner-v${version}.apk`;
-
-  try {
-    await fs.unlink(dest).catch(() => {});
-
-    const res = await ReactNativeBlobUtil.config({
-      fileCache: true,
-      appendExt: 'apk',
-    })
-      .fetch('GET', url)
-      .progress((received: number, total: number) => {
-        const pct = total > 0 ? Math.round((received / total) * 100) : 0;
-        setProgress(pct);
-      });
-
-    setProgress(100);
-
-    await fs.cp(res.path(), dest);
-    await fs.unlink(res.path()).catch(() => {});
-
-    await ReactNativeBlobUtil.android.addCompleteDownload({
-      title: 'ProCarScanner v' + version,
-      description: 'Yuklemek icin tiklayin',
-      mime: 'application/vnd.android.package-archive',
-      path: dest,
-      showNotification: true,
-    });
-
-    downloadActive = false;
-    setTimeout(() => setProgress(0), 2000);
-    return true;
-  } catch (err: any) {
-    downloadActive = false;
-    setProgress(0);
-    await fs.unlink(dest).catch(() => {});
-    Alert.alert('Indirme Hatasi', 'APK indirilemedi.');
-    return false;
-  }
 }
 
 function compareVersions(a: string, b: string): number {
