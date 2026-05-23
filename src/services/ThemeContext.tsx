@@ -1,10 +1,11 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
   useEffect,
   ReactNode,
 } from 'react';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {loadSettings, saveSettings} from './AppSettings';
 
 export type ThemeColors = {
@@ -60,7 +61,11 @@ export function ThemeProvider({children}: {children: ReactNode}) {
 
   useEffect(() => {
     loadSettings().then(s => {
-      if (s.darkMode !== undefined) setDarkMode(s.darkMode);
+      const isDark = s.darkMode !== undefined ? s.darkMode : true;
+      setDarkMode(isDark);
+      try {
+        changeNavigationBarColor(isDark ? dark.bg : light.bg, !isDark, true);
+      } catch (e) {}
     });
   }, []);
 
@@ -68,6 +73,9 @@ export function ThemeProvider({children}: {children: ReactNode}) {
     const next = !darkMode;
     setDarkMode(next);
     saveSettings({darkMode: next});
+    try {
+      changeNavigationBarColor(next ? dark.bg : light.bg, !next, true);
+    } catch (e) {}
   };
 
   return (
