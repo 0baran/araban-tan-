@@ -25,8 +25,9 @@ $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json
 # Sürüm notlarını ayıkla (CHANGELOG.md'den)
 $changelogPath = Join-Path $root "CHANGELOG.md"
 if (Test-Path $changelogPath) {
-  $notesRaw = Get-Content $changelogPath | Select-Object -First 5
+  $notesRaw = Get-Content $changelogPath -Encoding UTF8 | Select-Object -Skip 3 | Select-Object -First 2
   $fullNotes = $notesRaw -join "\n"
+  $fullNotes = $fullNotes -replace 'ı','i' -replace 'ş','s' -replace 'ğ','g' -replace 'İ','I' -replace 'Ş','S' -replace 'Ğ','G' -replace 'ç','c' -replace 'Ç','C' -replace 'ö','o' -replace 'Ö','O' -replace 'ü','u' -replace 'Ü','U'
 } else {
   $fullNotes = "Yenilikler eklendi."
 }

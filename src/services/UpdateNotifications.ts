@@ -27,9 +27,11 @@ export async function showUpdateNotification(
   notes: string,
   url: string,
 ) {
+  const cleanBody = notes.split('\n')[0].replace(/^\*\s\*\*/, '').replace(/\*\*:/, ':');
+  
   await notifee.displayNotification({
     title: `v${version} guncellemesi hazir`,
-    body: notes.split('\n')[0],
+    body: cleanBody,
     data: {url},
     android: {
       channelId: CHANNEL_ID,
