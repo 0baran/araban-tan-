@@ -10,6 +10,7 @@ import RNBluetoothClassic, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import notifee, { AndroidImportance, AndroidForegroundServiceType, EventType } from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
+import { OemSensorDef, OEM_SENSORS, detectBrandFromVIN } from './OemSensors';
 
 const STORAGE_LAST_DEVICE = '@arabanitani/last_device';
 const STORAGE_LAST_TYPE = '@arabanitani/connection_type';
@@ -492,6 +493,9 @@ class OBD2Service {
   private dataCallbacks: Set<OBD2Callback> = new Set();
   private connectionCallbacks: Set<ConnectionCallback> = new Set();
   private _vin: string = '';
+  public carBrand: string = 'UNKNOWN';
+  public supportedOemPids: OemSensorDef[] = [];
+  public oemData: Record<string, number | string> = {};
   private _connecting = false;
   private lastCallbackTime = 0;
   private lastDataTime = Date.now();
@@ -1087,6 +1091,45 @@ class OBD2Service {
     this.currentProtocolLabel = 'Simülasyon';
     this.setConnectionState('connected', 'Simülasyon Modu Aktif');
 
+
+    // OEM Discovery
+    if (this._vin) {
+      this.carBrand = detectBrandFromVIN(this._vin);
+    }
+    
+    // Asynchronous discovery of OEM sensors
+    setTimeout(async () => {
+      this.supportedOemPids = [];
+      const brand = this.carBrand;
+      // Eğer VIN yoksa veya marka bulunamadıysa (UNKNOWN), tüm sensörleri dener (Brute-Force)
+      const candidates = brand === 'UNKNOWN' 
+        ? OEM_SENSORS 
+        : OEM_SENSORS.filter(s => s.brands.includes(brand) || s.brands.includes('ALL'));
+      
+      for (const sensor of candidates) {
+        try {
+          if (sensor.header) {
+            await this.sendCommandFast('ATSH' + sensor.header);
+            await this.delay(50);
+          }
+          const resp = await this.sendCommandFast(sensor.command);
+          if (sensor.header) {
+            await this.sendCommandFast('ATSH7E0'); // reset to default engine header
+            await this.delay(50);
+          }
+          
+          if (resp && !resp.includes('NO DATA') && !resp.includes('ERROR') && !resp.includes('7F')) {
+            const parsed = sensor.parse(resp);
+            if (parsed !== null) {
+              this.supportedOemPids.push(sensor);
+              this.oemData[sensor.id] = parsed;
+              console.log('OEM Sensor Discovered:', sensor.name, parsed);
+            }
+          }
+        } catch(e){}
+      }
+    }, 2000);
+  
     this.pollRunning = true;
     this.currentData.speed = 0;
 
@@ -1702,7 +1745,7 @@ class OBD2Service {
     
     this.updateTripData(this.currentData.speed);
     this.addLogEntry(this.currentData);
-    this.dataCallbacks.forEach(cb => cb({...this.currentData}));
+    this.dataCallbacks.forEach(cb => cb({...this.currentData, ...this.oemData}));
     this.updateWidget();
     return true;
   }
@@ -1759,7 +1802,7 @@ class OBD2Service {
           });
           this.currentData.fuelSystemStatus = '';
           this.currentData.fuelType = '';
-          this.dataCallbacks.forEach(cb => cb({...this.currentData}));
+          this.dataCallbacks.forEach(cb => cb({...this.currentData, ...this.oemData}));
           this.updateWidget();
         }
 

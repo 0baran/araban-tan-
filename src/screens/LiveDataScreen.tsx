@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
+import { OEM_SENSORS } from '../services/OemSensors';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';
 import {voiceAlertService} from '../services/VoiceAlertService';

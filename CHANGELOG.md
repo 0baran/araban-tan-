@@ -1,5 +1,11 @@
 # Sürüm Notları (Changelog)
 
+## v4.0.1 (Güncel Sürüm) - BRUTE-FORCE TARAMASI
+* **Gelişmiş Sensör Taraması**: Eğer aracınız eskiyse veya Şasi Numarasını okumamıza izin vermiyorsa, uygulama pes etmez. Bilinen tüm markalara ait tüm gizli sensör şifrelerini (Brute-Force yöntemiyle) sırayla araca yollar ve aracın cevap verdiği her gizli sensörü ekranınıza zorla çıkarır!
+
+## v4.0.0 (Güncel Sürüm) - AKILLI TEŞHİS MOTORU
+* **Otomatik OEM Sensör Keşfi**: Uygulama artık profesyonel cihazlar gibi çalışıyor! Araca bağlandığı an arka planda **Şasi Numarasını (VIN)** okuyor, arabanın markasını anlıyor ve o markaya özel gizli sensörleri (Şanzıman Sıcaklığı, DPF, Hibrit vs.) tarayıp otomatik olarak Canlı Veriler ekranınıza ekliyor.
+
 ## v3.9.0 (Güncel Sürüm)
 * **Galeriden Fotoğraf Seçme**: Araçlarım menüsüne eklediğiniz araçlar için galerinizden kendi çektiğiniz o güzel araba fotoğraflarını yükleyebilirsiniz.
 * **Arayüz İyileştirmesi**: Seçtiğiniz aktif aracın profil fotoğrafı uygulamanın ana ekranında en üstte, ismi ve markasıyla birlikte yuvarlak şık bir şekilde sergilenecek.

@@ -6,6 +6,22 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '4.0.1',
+    date: '24 Mayis 2026',
+    items: [
+      'Gelisitirilmis Brute-Force Taramasi: Sasi numarasini (VIN) vermeyen eski araclar icin tam kapsamli Kaba Kuvvet (Brute-Force) sensor tarama sistemi aktif edildi.',
+      'Markasi bilinmeyen araclarda uygulama pes etmez, bilinen tum gizli OEM sensor sifrelerini araca firlatarak ne var ne yok bulur.'
+    ],
+  },
+  {
+    version: '4.0.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Otomatik OEM (Markaya Ozel) Sensor Kesif Motoru Eklendi!',
+      'Uygulama artik sasiden (VIN) aracin markasini taniyip arka planda markaya ozel sensorleri (Sanziman Sicakligi, DPF, Hibrit Bataryasi) bulur ve ekrana otomatik yansitir.'
+    ],
+  },
+  {
     version: '3.9.0',
     date: '24 Mayis 2026',
     items: [
