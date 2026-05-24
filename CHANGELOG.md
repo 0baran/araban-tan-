@@ -1,5 +1,10 @@
 # Sürüm Notları (Changelog)
 
+## v9.1.2 (Hotfix) - UI KİLİTLENMESİ ÇÖZÜLDÜ 📱
+* **Ekran Donma Hatası (UI Freeze):** Ekrana tek seferde eklediğimiz 109 sensörün saniyede 12 kez güncellenmesi telefonların işlemcisine (ve uygulamanın arayüz motoruna) aşırı yük bindirerek uygulamanın kilitlenmesine sebep oluyordu. Bu kilitlenme yüzünden Bluetooth bağlantısı zaman aşımına uğruyor, hem arıza okuma hem de canlı veri tamamen kopuyordu. Ekran (ScrollView) mimarisi tamamen FlatList (Sadece ekranda görünenleri işleme) teknolojisiyle değiştirilerek sonsuz bir akıcılık sağlandı.
+
+
+
 ## v9.1.1 (Hotfix) - KUSURSUZ ARIZA OKUMA 🛠️
 * **Boşluk (Space) Bug'ı Giderildi:** Piyasada çokça bulunan bazı klon (v2.1) ELM327 cihazları, ECU'dan gelen arıza kodlarını (DTC) ekrana basarken aralardaki "boşluk" karakterlerini (Space) yutuyordu. Bu durum eski ayrıştırma (parsing) motorumuzun çökmesine ve ekranda hiç arıza yokmuş gibi görünmesine sebep oluyordu. Yeni yazdığım ardışık okuma algoritması sayesinde cihaz boşlukları yutsa bile arıza kodları (P0, C0, B0, U0) saniyesinde taranıp tespit edilebilecek.
 

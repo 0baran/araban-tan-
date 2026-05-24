@@ -5,7 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  ScrollView, FlatList,
   TextInput,
   Platform,
 } from 'react-native';
@@ -1104,13 +1104,19 @@ export default function LiveDataScreen({onBack}: Props) {
           ))}
         </View>
 
-        <ScrollView
+        <FlatList
           style={{flex: 1}}
           contentContainerStyle={listView ? styles.list : styles.grid}
-          nestedScrollEnabled>
-          {filtered.map(p => (
+          data={filtered}
+          key={listView ? 'list' : 'grid'}
+          numColumns={listView ? 1 : 2}
+          keyExtractor={p => p.key}
+          initialNumToRender={8}
+          maxToRenderPerBatch={4}
+          windowSize={3}
+          removeClippedSubviews={true}
+          renderItem={({item: p}) => (
             <SensorCard
-              key={p.key}
               p={p}
               val={fmt(p)}
               isPinned={pinned.includes(p.key)}
@@ -1118,13 +1124,13 @@ export default function LiveDataScreen({onBack}: Props) {
               listView={listView}
               colors={colors}
             />
-          ))}
-          {filtered.length === 0 && (
+          )}
+          ListEmptyComponent={
             <Text style={[styles.noResult, {color: colors.textMuted}]}>
               Eşleşen sensör bulunamadı.
             </Text>
-          )}
-        </ScrollView>
+          }
+        />
       </View>
     </SafeAreaView>
   );
