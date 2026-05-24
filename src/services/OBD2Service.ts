@@ -1642,13 +1642,32 @@ class OBD2Service {
   }
 
   private async sendCommandFast(cmd: string, key?: string): Promise<string> {
+    const now = Date.now();
+    // Smart Sleep (Ping after 10s)
+    if (this.sleepingPids[cmd]) {
+      if (now - this.sleepingPids[cmd] < 10000) {
+        return '';
+      } else {
+        delete this.sleepingPids[cmd];
+      }
+    }
+
     if (key && !this.shouldPoll(key)) {
       return '';
     }
+
     if (cmd.startsWith('01') && cmd.length === 4) {
       if (!this.canPoll(cmd)) {
         return '';
       }
+      // AI v2.0 FAST_PIDS Logic (Maximize Speed for UI Expansion)
+      const isFast = ['0C', '0D', '0B', '10', '11', '22', '23', '14', '15', '16', '17', '18', '19', '1A', '1B'].includes(cmd.substring(2));
+      if (!isFast) {
+        if (this.lastPollTimes[cmd] && now - this.lastPollTimes[cmd] < 2000) {
+          return ''; // Yavas degisen sensorleri 2 saniyede bir guncelle
+        }
+      }
+      this.lastPollTimes[cmd] = now;
     }
     const t = this.transport;
     if (!t || !this._isConnected) {
