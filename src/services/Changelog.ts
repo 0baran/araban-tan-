@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '5.0.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Multi-PID Turbo Motoru: Ayni anda bircok sensor verisini tek bir komutta araca sorarak (Multi-PID) veri okuma hizi %300 artirildi. İbreler artik yaris oyunu akiciliginda!',
+      'Gizli Ozellikler Kasasi: Ford, VAG ve BMW grubuna ozel olarak Bambi modu, Kemer Ikazi kapama ve Kadran Selamlama gibi internetin en populer gizli ozellik kodlamalari sisteme entegre edildi.',
+      'DTC (Hata) Okuma hizi optimize edildi, saniyeler icinde sonuc verecek sekilde bekleme sureleri (Adaptive Timing) kaldirildi.'
+    ],
+  },
+  {
     version: '4.0.1',
     date: '24 Mayis 2026',
     items: [

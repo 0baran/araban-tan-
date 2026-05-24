@@ -1696,26 +1696,19 @@ class OBD2Service {
   }
 
   private async sendCritical(): Promise<boolean> {
-    if (this.isPidSupported('010C')) {
-              if (this.isPidSupported('010C')) {
-      const r1 = await this.sendCommandFast('010C');
-      this.parseRPM(r1);
+        // Multi-PID Turbo Reading (RPM, Speed, Coolant)
+    let multiCmd = '01';
+    let pids = [];
+    if (this.isPidSupported('010C')) { multiCmd += ' 0C'; pids.push('0C'); }
+    if (this.isPidSupported('010D')) { multiCmd += ' 0D'; pids.push('0D'); }
+    if (this.isPidSupported('0105')) { multiCmd += ' 05'; pids.push('05'); }
+    
+    if (pids.length > 0) {
+      const multiResp = await this.sendCommandFast(multiCmd.replace(/ /g, ''));
+      if (multiResp) {
+        this.parseMultiResponse(multiResp);
+      }
     }
-            }
-    if (!this.pollRunning) {
-      return false;
-    }
-    if (this.isPidSupported('010D')) {
-              const r2 = await this.sendCommandFast('010D');
-      this.parseSpeed(r2);
-            }
-    if (!this.pollRunning) {
-      return false;
-    }
-    if (this.isPidSupported('0105')) {
-              const r3 = await this.sendCommandFast('0105');
-      this.parseCoolantTemp(r3);
-            }
     if (!this.pollRunning) {
       return false;
     }
@@ -1748,6 +1741,32 @@ class OBD2Service {
     this.dataCallbacks.forEach(cb => cb({...this.currentData, ...this.oemData}));
     this.updateWidget();
     return true;
+  }
+
+
+  private parseMultiResponse(hex: string) {
+    // Typical multi response: 41 0C 1A 2B 0D 3C 05 4D
+    // But since spaces are removed by sendCommandFast: 410C1A2B0D3C054D
+    if (!hex.startsWith('41')) return;
+    
+    // We look for known PID patterns in the string
+    // 0C (RPM - 2 bytes) -> 0Cxxxx
+    const idx0C = hex.indexOf('0C');
+    if (idx0C > 0 && idx0C % 2 === 0 && hex.length >= idx0C + 6) {
+       this.parseRPM(hex.substring(0, 2) + hex.substring(idx0C, idx0C + 6));
+    }
+    
+    // 0D (Speed - 1 byte) -> 0Dxx
+    const idx0D = hex.indexOf('0D');
+    if (idx0D > 0 && idx0D % 2 === 0 && hex.length >= idx0D + 4) {
+       this.parseSpeed(hex.substring(0, 2) + hex.substring(idx0D, idx0D + 4));
+    }
+    
+    // 05 (Coolant - 1 byte) -> 05xx
+    const idx05 = hex.indexOf('05');
+    if (idx05 > 0 && idx05 % 2 === 0 && hex.length >= idx05 + 4) {
+       this.parseCoolantTemp(hex.substring(0, 2) + hex.substring(idx05, idx05 + 4));
+    }
   }
 
   private updateWidget() {

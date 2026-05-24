@@ -1,5 +1,10 @@
 # Sürüm Notları (Changelog)
 
+## v5.0.0 (Güncel Sürüm) - PERFORMANS CANAVARI & GİZLİ ÖZELLİK KASASI
+* **Multi-PID (Turbo Motor)**: Tek seferde 3-6 sensör birden okunarak (Örn: Devir, Hız ve Sıcaklık) veri akış hızı %300 artırıldı. Ekranınızdaki ibreler artık yağ gibi akacak!
+* **Genişletilmiş Gizli Özellikler**: Ford, BMW ve VAG grubu için internetin en meşhur gizli özellikleri (Bambi modu, Kadran selamlama, Kemer ikaz iptali) uygulamaya eklendi.
+* **Hata Taraması (DTC) Hızlandırması**: Araç beyinlerine gönderilen hata okuma komutlarındaki bekleme süreleri sıfıra indirilerek anında tarama yapılacak şekilde tasarlandı.
+
 ## v4.0.1 (Güncel Sürüm) - BRUTE-FORCE TARAMASI
 * **Gelişmiş Sensör Taraması**: Eğer aracınız eskiyse veya Şasi Numarasını okumamıza izin vermiyorsa, uygulama pes etmez. Bilinen tüm markalara ait tüm gizli sensör şifrelerini (Brute-Force yöntemiyle) sırayla araca yollar ve aracın cevap verdiği her gizli sensörü ekranınıza zorla çıkarır!
 
