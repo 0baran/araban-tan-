@@ -37,6 +37,60 @@ export const WMI_MAP: Record<string, string> = {
 const h2d = (hex: string) => parseInt(hex, 16);
 
 export const OEM_SENSORS: OemSensorDef[] = [
+
+  {
+    id: 'oem_renault_dpf',
+    name: 'DPF Doluluk Oranı (Renault)',
+    unit: 'g',
+    category: 'egzoz',
+    brands: ['RENAULT'],
+    command: '22042C',
+    color: '#3c40c6',
+    parse: (hex) => {
+      const idx = hex.indexOf('62042C');
+      if (idx >= 0 && hex.length >= idx + 10) {
+        const A = h2d(hex.substring(idx + 6, idx + 8));
+        const B = h2d(hex.substring(idx + 8, idx + 10));
+        return (A * 256 + B) / 100;
+      }
+      return null;
+    }
+  },
+  {
+    id: 'oem_fiat_trans_temp',
+    name: 'Şanzıman Sıcaklığı (Fiat/Chrysler)',
+    unit: '°C',
+    category: 'şanzıman',
+    brands: ['FCA'],
+    command: '221E1C',
+    color: '#ff5e57',
+    parse: (hex) => {
+      const idx = hex.indexOf('621E1C');
+      if (idx >= 0 && hex.length >= idx + 8) {
+        const A = h2d(hex.substring(idx + 6, idx + 8));
+        return A - 40;
+      }
+      return null;
+    }
+  },
+  {
+    id: 'oem_toyota_fan_speed',
+    name: 'Hibrit Batarya Fanı (Toyota)',
+    unit: '%',
+    category: 'elektrik',
+    brands: ['TOYOTA'],
+    command: '21C4',
+    color: '#05c46b',
+    parse: (hex) => {
+      const idx = hex.indexOf('61C4');
+      if (idx >= 0 && hex.length >= idx + 6) {
+        const A = h2d(hex.substring(idx + 4, idx + 6));
+        return (A * 100) / 255;
+      }
+      return null;
+    }
+  },
+
   {
     id: 'oem_ford_trans_temp',
     name: 'Şanzıman Sıcaklığı (Ford)',

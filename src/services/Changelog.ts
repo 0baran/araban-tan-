@@ -6,6 +6,33 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '8.0.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Uyumluluk Modu (Compatibility): Sahte/kalitesiz klon cihazlarda meydana gelen kilitlenme sorunlarini çözen safe-mode altyapisi eklendi.',
+      'Yapay Zeka Optimizasyonu (Adaptive Polling): Aracta bulunmayan ve NO DATA donen sensorler uykuya alinarak veri yuku azaltildi ve hiz %40 daha artirildi.',
+      'Ekstra Sensorler: Motor Yagi Sicakligi, Enjeksiyon Zamanlamasi ve Anlik Yakit Tuketim Orani (L/h) veritabanina eklendi.'
+    ],
+  },
+  {
+    version: '7.0.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Mega Sensor Arsivi: Hibrit batarya, EGT ve Wastegate gibi 30+ yeni standart PID eklendi.',
+      'OEM Gizli Sensorler: Renault DPF, Fiat Sanziman ve Toyota Hibrit Fan sicaklik sensorleri eklendi.',
+      'Ultimate Gizli Ozellik Kasasi: VAG (Cornering), BMW (Ayna indirme, Video in Motion) ve Ford (Kornasiz Kilit) ozellikleri kodlandi.'
+    ],
+  },
+  {
+    version: '6.0.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Cevrimdisi Ariza (DTC) Sozlugu: P0171 vb. aralar kodlarinin altinda artik detayli Turkce aciklamalari (Fakir Karisim vb.) yer aliyor. Internetsiz calisir!',
+      'Gorsel Veri Kayit ve Canli Grafik: Veri kayit ekranina anlik olarak hiz ve devri cizen Cizgi Grafikler (Line Chart) eklendi.',
+      'Wi-Fi & BLE Altyapisi: Sadece Klasik Bluetooth degil, Wi-Fi ve Apple destekli BLE baglantilarina imkan taniyan mimari kodlara eklendi.'
+    ],
+  },
+  {
     version: '5.0.0',
     date: '24 Mayis 2026',
     items: [

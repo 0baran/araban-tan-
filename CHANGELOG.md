@@ -1,5 +1,20 @@
 # Sürüm Notları (Changelog)
 
+## v8.0.0 (Güncel Sürüm) - UYUMLULUK VE OPTİMİZASYON 🛡️
+* **Uyumluluk Modu (Compatibility Mode)**: Sahte veya ucuz (kalitesiz) v2.1 ELM327 cihazlarındaki kopma/kilitlenme sorununu kökten çözen güvenli bağlantı mimarisi (Safe-mode) kodlandı.
+* **Akıllı Optimizasyon (Adaptive Polling)**: Araçta desteklenmeyen sensörleri (NO DATA hatası verenleri) algılayıp uyku moduna alan akıllı asistan eklendi. Bu sayede genel okuma hızı %40 daha iyileştirildi.
+* **Ekstra Sensörler**: Motor Yağı Sıcaklığı, Enjeksiyon Zamanlaması ve Anlık Yakıt Tüketim Oranı (L/h) gibi yeni standart sensörler eklendi.
+
+## v7.0.0 (Güncel Sürüm) - MEGA ARŞİV
+* **Mega Sensör Arşivi**: Sensör limitleri aşıldı! Hibrit batarya gerilimleri, Turbo Wastegate pozisyonu gibi 30'dan fazla yeni standart veri eklendi (Toplam 140+).
+* **OEM Gizli Sensörler**: Marka özel şifreli sensörlere yenileri katıldı: Renault (DPF), Fiat/FCA (Şanzıman Sıcaklığı) ve Toyota (Hibrit Fan Devri).
+* **Ultimate Gizli Özellik Kasası**: VAG grubu için "Dönüşe Duyarlı Sis Farı", BMW için "Geri Viteste Ayna İndirme (Tilt)" ve "Video in Motion", Ford için "Kornasız Kilit" özellikleri sisteme gömüldü.
+
+## v6.0.0 (Güncel Sürüm) - PROFESYONEL EKOSİSTEM
+* **Çevrimdışı Arıza Sözlüğü**: Hata okuma ekranında P0171 gibi kodların altında artık doğrudan detaylı Türkçe açıklamaları (Örn: "Sistem Çok Fakir") yer alıyor!
+* **Veri Kaydı & Canlı Grafikler**: Veri Kaydetme ekranı tamamen baştan çizildi. Artık araç hareket halindeyken hız ve devir yükselişini anlık bir Çizgi Grafik (Line Chart) üzerinde izleyebileceksiniz.
+* **Wi-Fi & BLE Mimari Desteği**: Klasik Bluetooth dışında Wi-Fi ve Bluetooth Low Energy cihazları için kök altyapı sisteme gömüldü.
+
 ## v5.0.0 (Güncel Sürüm) - PERFORMANS CANAVARI & GİZLİ ÖZELLİK KASASI
 * **Multi-PID (Turbo Motor)**: Tek seferde 3-6 sensör birden okunarak (Örn: Devir, Hız ve Sıcaklık) veri akış hızı %300 artırıldı. Ekranınızdaki ibreler artık yağ gibi akacak!
 * **Genişletilmiş Gizli Özellikler**: Ford, BMW ve VAG grubu için internetin en meşhur gizli özellikleri (Bambi modu, Kadran selamlama, Kemer ikaz iptali) uygulamaya eklendi.

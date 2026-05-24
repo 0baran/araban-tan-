@@ -157,6 +157,34 @@ export default function DataLogScreen({onBack}: Props) {
           </Text>
         </View>
 
+        
+        {recording && chartData.length > 1 && (
+          <View style={[styles.card, {backgroundColor: colors.card, borderColor: colors.cardBorder, overflow: 'hidden'}]}>
+             <Text style={[styles.cardLabel, {color: colors.textDim}]}>CANLI HIZ / DEVİR GRAFİĞİ</Text>
+             <LineChart
+                data={{
+                  labels: [],
+                  datasets: [{ data: chartData }]
+                }}
+                width={Dimensions.get('window').width - 72}
+                height={160}
+                withDots={true}
+                withInnerLines={false}
+                chartConfig={{
+                  backgroundColor: colors.card,
+                  backgroundGradientFrom: colors.card,
+                  backgroundGradientTo: colors.card,
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(0, 255, 127, ${opacity})`,
+                  labelColor: (opacity = 1) => colors.textDim,
+                  style: { borderRadius: 16 }
+                }}
+                bezier
+                style={{ marginVertical: 8, borderRadius: 16 }}
+             />
+          </View>
+        )}
+  
         {count > 0 && (
           <View
             style={[

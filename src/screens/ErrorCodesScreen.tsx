@@ -12,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import {useTheme} from '../services/ThemeContext';
+import {getDtcDescription} from '../services/DtcDictionary';
 import {obd2Service, DTC} from '../services/OBD2Service';
 import {
   getDTCCategory,

@@ -502,6 +502,9 @@ class OBD2Service {
   private foregroundServiceActive = false;
 
   private priorityPids: Set<string> = new Set();
+  private bannedPids: Set<string> = new Set();
+  private unsupportedCount: Record<string, number> = {};
+  public compatibilityMode: boolean = false;
   private lastPollTimes: Record<string, number> = {};
 
   private _writeBusy = false;
