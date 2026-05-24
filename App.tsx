@@ -32,7 +32,7 @@ import GaugesContainer from './src/components/GaugesContainer';
 import FeaturesGrid from './src/components/FeaturesGrid';
 import VehicleStatusCard from './src/components/VehicleStatusCard';
 
-const APP_VERSION = '3.1.50';
+const APP_VERSION = '3.1.51';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};

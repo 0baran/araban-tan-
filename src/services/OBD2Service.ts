@@ -3452,46 +3452,33 @@ class OBD2Service {
     ];
   }
 
-  private parseDTCs(response: string): DTC[] {
+    private parseDTCs(response: string): DTC[] {
     const dtcs: DTC[] = [];
-    const lines = response.split(/[\r\n]+/);
+    // Remove all whitespace and multi-frame prefixes (0:, 1:, 2:)
+    const clean = response.replace(/\s/g, '').replace(/[0-9A-Fa-f]:/gi, '');
 
-    let rawBytes: string[] = [];
-    for (let line of lines) {
-      line = line.trim();
-      // Çoklu çerçeve satır numaralarını (ör. "0: ", "1: ") temizle
-      line = line.replace(/^[0-9A-Fa-f]:\s*/, '');
-      const parts = line.split(/\s+/).filter(p => p.length === 2);
-      rawBytes.push(...parts);
-    }
+    // Look for Mode 03 (43), Mode 07 (47), Mode 0A (4A)
+    const match = clean.match(/43([0-9A-Fa-f]+)|47([0-9A-Fa-f]+)|4A([0-9A-Fa-f]+)/i);
+    if (!match) return dtcs;
 
-    const startIndex = rawBytes.findIndex(
-      b => b === '43' || b === '47' || b === '4A',
-    );
-    if (startIndex === -1) {
-      return dtcs;
-    }
+    const payload = match[1] || match[2] || match[3];
+    if (!payload) return dtcs;
 
-    for (let i = startIndex + 1; i < rawBytes.length - 1; i += 2) {
-      const b1 = rawBytes[i];
-      const b2 = rawBytes[i + 1];
-      if (b1 === '00' && b2 === '00') {
-        continue;
-      }
+    for (let i = 0; i < payload.length - 3; i += 4) {
+      const b1 = payload.substring(i, i + 2);
+      const b2 = payload.substring(i + 2, i + 4);
+      if (b1 === '00' && b2 === '00') continue;
 
       const code = this.decodeDTC(b1, b2);
       if (code) {
         dtcs.push({
           code,
-          description:
-            DTC_DESCRIPTIONS[code] || `${code} - Tanımlanmamış hata kodu`,
+          description: DTC_DESCRIPTIONS[code] || `${code} - Tanımlanmamış hata kodu`,
         });
       }
     }
 
-    return dtcs.filter(
-      (d, index, self) => index === self.findIndex(t => t.code === d.code),
-    );
+    return dtcs.filter((d, index, self) => index === self.findIndex(t => t.code === d.code));
   }
 
   private decodeDTC(byte1: string, byte2: string): string | null {

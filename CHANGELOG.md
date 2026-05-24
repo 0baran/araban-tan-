@@ -1,5 +1,10 @@
 # Sürüm Notları (Changelog)
 
+## v9.1.1 (Hotfix) - KUSURSUZ ARIZA OKUMA 🛠️
+* **Boşluk (Space) Bug'ı Giderildi:** Piyasada çokça bulunan bazı klon (v2.1) ELM327 cihazları, ECU'dan gelen arıza kodlarını (DTC) ekrana basarken aralardaki "boşluk" karakterlerini (Space) yutuyordu. Bu durum eski ayrıştırma (parsing) motorumuzun çökmesine ve ekranda hiç arıza yokmuş gibi görünmesine sebep oluyordu. Yeni yazdığım ardışık okuma algoritması sayesinde cihaz boşlukları yutsa bile arıza kodları (P0, C0, B0, U0) saniyesinde taranıp tespit edilebilecek.
+
+
+
 ## v9.1.0 (Güncel Sürüm) - UI MEGA GENİŞLEMESİ 📊
 * **Devasa Ekran Genişlemesi:** Arka planda okunup da ekranda gösterilmeyen (MAP, MAF, O2 Voltajları, Trims vb.) tam 109 farklı sensör verisi "Canlı Veri (Live Data)" ekranına entegre edildi. Artık aracın tüm hücrelerini tek bir ekrandan izleyebilirsiniz!
 * **Dinamik Türkçe Çeviri:** Eklenen tüm yeni veriler otomatik olarak isimlendirildi ve ölçü birimleriyle (kPa, °C, %, V) eşleştirildi.
