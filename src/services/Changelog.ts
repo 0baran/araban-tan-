@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '9.0.0',
+    date: '24 Mayis 2026',
+    items: [
+      'Yapay Zeka Motoru v2.0: Sadece saniyelik degisen hizli veriler (RPM, Hiz) agirlikli okunarak tepkime suresi telemetri akiciligina cikarildi.',
+      'Dinamik Frekans (Smart Polling): Hararet, dis hava sicakligi gibi yavas degisen verilerin guncellenme hizi yavaslatilarak arac yuku azaltildi.',
+      'Uyku Dongusu (Sleep/Wake): Gecici olarak ulasilamayan veya yeni isinan sensorler kara listeye alinmak yerine 10 saniyelik akilli uykuya aliniyor.'
+    ],
+  },
+  {
     version: '8.0.0',
     date: '24 Mayis 2026',
     items: [

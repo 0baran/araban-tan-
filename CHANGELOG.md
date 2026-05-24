@@ -1,5 +1,17 @@
 # Sürüm Notları (Changelog)
 
+## v9.0.0 (Güncel Sürüm) - YAPAY ZEKA MOTORU v2.0 🧠
+* **Telemetri Akıcılığı (Smart Polling):** Motor harareti ve dış hava sıcaklığı gibi yavaş değişen sensörlere saniyede 1 kez, Devir ve Hız gibi hızlı verilere ise maksimum frekansta odaklanılarak anlık veri akışı inanılmaz hızlandırıldı.
+* **Akıllı Uyku (Sleep/Wake Döngüsü):** Sensörler "Hata (NO DATA)" verdiğinde tamamen kapatılmak yerine geçici olarak 10 saniyelik "Derin Uykuya" alınacak ve belirli periyotlarla tekrar uyanıp uyanmadığı yoklanacak.
+* **Agresif Koruma (1-Strike Out):** Uygulamayı veya ELM327'yi dondurma potansiyeli olan bozuk PID'ler 3 şans tanınmadan direkt saniyesinde uyku moduna itildi.
+
+
+
+## v8.0.1 (Hotfix) - HATA DÜZELTMELERİ 🛠️
+* **Hata Kodu Okuma Düzeltildi:** Optimizasyon motorunun, araçta arıza kodu yoksa "Arıza Okuma Sistemini" yanlışlıkla uyku moduna alması sorunu çözüldü.
+* **Canlı Veri Düzeldi:** Turbo okuma sisteminde yaşanan bayt kayması (Hararet ve Hız verilerinin aşırı yüksek veya saçma sapan görünmesi) sorunu çözülerek bayt okuma algoritması sıralı hale getirildi.
+
+
 ## v8.0.0 (Güncel Sürüm) - UYUMLULUK VE OPTİMİZASYON 🛡️
 * **Uyumluluk Modu (Compatibility Mode)**: Sahte veya ucuz (kalitesiz) v2.1 ELM327 cihazlarındaki kopma/kilitlenme sorununu kökten çözen güvenli bağlantı mimarisi (Safe-mode) kodlandı.
 * **Akıllı Optimizasyon (Adaptive Polling)**: Araçta desteklenmeyen sensörleri (NO DATA hatası verenleri) algılayıp uyku moduna alan akıllı asistan eklendi. Bu sayede genel okuma hızı %40 daha iyileştirildi.

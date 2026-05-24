@@ -502,7 +502,8 @@ class OBD2Service {
   private foregroundServiceActive = false;
 
   private priorityPids: Set<string> = new Set();
-  private bannedPids: Set<string> = new Set();
+  private sleepingPids: Record<string, number> = {};
+  private SLOW_PIDS = new Set(['05', '46', '0F', '11']); // Coolant, Ambient, Intake Temp, Throttle Pos
   private unsupportedCount: Record<string, number> = {};
   public compatibilityMode: boolean = false;
   private lastPollTimes: Record<string, number> = {};
@@ -1748,27 +1749,26 @@ class OBD2Service {
 
 
   private parseMultiResponse(hex: string) {
-    // Typical multi response: 41 0C 1A 2B 0D 3C 05 4D
-    // But since spaces are removed by sendCommandFast: 410C1A2B0D3C054D
     if (!hex.startsWith('41')) return;
     
-    // We look for known PID patterns in the string
-    // 0C (RPM - 2 bytes) -> 0Cxxxx
-    const idx0C = hex.indexOf('0C');
-    if (idx0C > 0 && idx0C % 2 === 0 && hex.length >= idx0C + 6) {
-       this.parseRPM(hex.substring(0, 2) + hex.substring(idx0C, idx0C + 6));
-    }
-    
-    // 0D (Speed - 1 byte) -> 0Dxx
-    const idx0D = hex.indexOf('0D');
-    if (idx0D > 0 && idx0D % 2 === 0 && hex.length >= idx0D + 4) {
-       this.parseSpeed(hex.substring(0, 2) + hex.substring(idx0D, idx0D + 4));
-    }
-    
-    // 05 (Coolant - 1 byte) -> 05xx
-    const idx05 = hex.indexOf('05');
-    if (idx05 > 0 && idx05 % 2 === 0 && hex.length >= idx05 + 4) {
-       this.parseCoolantTemp(hex.substring(0, 2) + hex.substring(idx05, idx05 + 4));
+    let offset = 2; // Skip '41'
+    while (offset < hex.length - 2) {
+      const pid = hex.substring(offset, offset + 2);
+      offset += 2;
+      
+      if (pid === '0C' && offset + 4 <= hex.length) {
+         this.parseRPM('41' + pid + hex.substring(offset, offset + 4));
+         offset += 4;
+      } else if (pid === '0D' && offset + 2 <= hex.length) {
+         this.parseSpeed('41' + pid + hex.substring(offset, offset + 2));
+         offset += 2;
+      } else if (pid === '05' && offset + 2 <= hex.length) {
+         this.parseCoolantTemp('41' + pid + hex.substring(offset, offset + 2));
+         offset += 2;
+      } else {
+         // Unknown PID or out of sync, stop parsing to prevent garbage data
+         break;
+      }
     }
   }
 
