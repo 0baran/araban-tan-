@@ -1,5 +1,11 @@
 # Sürüm Notları (Changelog)
 
+## v9.1.0 (Güncel Sürüm) - UI MEGA GENİŞLEMESİ 📊
+* **Devasa Ekran Genişlemesi:** Arka planda okunup da ekranda gösterilmeyen (MAP, MAF, O2 Voltajları, Trims vb.) tam 109 farklı sensör verisi "Canlı Veri (Live Data)" ekranına entegre edildi. Artık aracın tüm hücrelerini tek bir ekrandan izleyebilirsiniz!
+* **Dinamik Türkçe Çeviri:** Eklenen tüm yeni veriler otomatik olarak isimlendirildi ve ölçü birimleriyle (kPa, °C, %, V) eşleştirildi.
+
+
+
 ## v9.0.0 (Güncel Sürüm) - YAPAY ZEKA MOTORU v2.0 🧠
 * **Telemetri Akıcılığı (Smart Polling):** Motor harareti ve dış hava sıcaklığı gibi yavaş değişen sensörlere saniyede 1 kez, Devir ve Hız gibi hızlı verilere ise maksimum frekansta odaklanılarak anlık veri akışı inanılmaz hızlandırıldı.
 * **Akıllı Uyku (Sleep/Wake Döngüsü):** Sensörler "Hata (NO DATA)" verdiğinde tamamen kapatılmak yerine geçici olarak 10 saniyelik "Derin Uykuya" alınacak ve belirli periyotlarla tekrar uyanıp uyanmadığı yoklanacak.
