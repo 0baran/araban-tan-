@@ -99,8 +99,7 @@ export type OBD2Data = {
   chargeAirCoolerTemp: number;
   fuelRailGaugePressure: number;
   engineFuelRate: number;
-  actualEngineTorque: number;
-  engineReferenceTorque: number;
+  
   engineFrictionTorque: number;
   distanceSinceDTCClearHighRes: number;
   throttlePositionG: number;
@@ -642,8 +641,7 @@ class OBD2Service {
       chargeAirCoolerTemp: 0,
       fuelRailGaugePressure: 0,
       engineFuelRate: 0,
-      actualEngineTorque: 0,
-      engineReferenceTorque: 0,
+      
       engineFrictionTorque: 0,
       distanceSinceDTCClearHighRes: 0,
       throttlePositionG: 0,
@@ -1302,8 +1300,21 @@ class OBD2Service {
     this._writeBusy = false;
   }
 
+  
+  private acquireLock(): Promise<() => void> {
+    let release!: () => void;
+    const nextLock = new Promise<void>(resolve => {
+      release = resolve;
+    });
+    const currentLock = this.commandLock;
+    this.commandLock = currentLock.then(() => nextLock);
+    return currentLock.then(() => release);
+  }
+
   private async sendCommand(cmd: string): Promise<string> {
-    const t = this.transport;
+    const release = await this.acquireLock();
+    try {
+      const t = this.transport;
     if (!t || !this._isConnected) {
       return '';
     }
@@ -1356,6 +1367,9 @@ class OBD2Service {
         this.setConnectionState('disconnected', 'Bağlantı koptu');
       }
       return '';
+    }
+    } finally {
+      release();
     }
   }
 
@@ -1418,6 +1432,8 @@ class OBD2Service {
     await this.sendCommand('ATS0');
     await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATH0'); // Headers Off
+    await this.delay(AT_CMD_DELAY);
+    await this.sendCommand('ATST32'); // Timeout to 200ms for responsiveness
     await this.delay(AT_CMD_DELAY);
     await this.sendCommand('ATAT1'); // Adaptive Timing Auto 1
     await this.delay(AT_CMD_DELAY);
@@ -1642,7 +1658,9 @@ class OBD2Service {
   }
 
   private async sendCommandFast(cmd: string, key?: string): Promise<string> {
-    const now = Date.now();
+    const release = await this.acquireLock();
+    try {
+      const now = Date.now();
     // Smart Sleep (Ping after 10s)
     if (this.sleepingPids[cmd]) {
       if (now - this.sleepingPids[cmd] < 10000) {
@@ -1716,25 +1734,30 @@ class OBD2Service {
       }
       return '';
     }
+    } finally {
+      release();
+    }
   }
 
   private async sendCritical(): Promise<boolean> {
-        // Multi-PID Turbo Reading (RPM, Speed, Coolant)
-    let multiCmd = '01';
-    let pids = [];
-    if (this.isPidSupported('010C')) { multiCmd += ' 0C'; pids.push('0C'); }
-    if (this.isPidSupported('010D')) { multiCmd += ' 0D'; pids.push('0D'); }
-    if (this.isPidSupported('0105')) { multiCmd += ' 05'; pids.push('05'); }
-    
-    if (pids.length > 0) {
-      const multiResp = await this.sendCommandFast(multiCmd.replace(/ /g, ''));
-      if (multiResp) {
-        this.parseMultiResponse(multiResp);
-      }
+    // Klon Cihaz Güvenlik Modu (Multi-PID İptal, Tekil Sorgu)
+    if (this.isPidSupported('010C')) {
+      const rpmResp = await this.sendCommandFast('010C', 'rpm');
+      if (rpmResp) this.parseMultiResponse(rpmResp, '0C');
     }
-    if (!this.pollRunning) {
-      return false;
+    if (!this.pollRunning) return false;
+
+    if (this.isPidSupported('010D')) {
+      const speedResp = await this.sendCommandFast('010D', 'speed');
+      if (speedResp) this.parseMultiResponse(speedResp, '0D');
     }
+    if (!this.pollRunning) return false;
+
+    if (this.isPidSupported('0105')) {
+      const coolantResp = await this.sendCommandFast('0105', 'coolantTemp');
+      if (coolantResp) this.parseMultiResponse(coolantResp, '05');
+    }
+    if (!this.pollRunning) return false;
 
     
     // Calculate Fuel Consumption manually if 015E is not providing it

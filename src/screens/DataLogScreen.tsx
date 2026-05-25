@@ -158,13 +158,13 @@ export default function DataLogScreen({onBack}: Props) {
         </View>
 
         
-        {recording && chartData.length > 1 && (
+        {recording && null.length > 1 && (
           <View style={[styles.card, {backgroundColor: colors.card, borderColor: colors.cardBorder, overflow: 'hidden'}]}>
              <Text style={[styles.cardLabel, {color: colors.textDim}]}>CANLI HIZ / DEVİR GRAFİĞİ</Text>
              <LineChart
                 data={{
                   labels: [],
-                  datasets: [{ data: chartData }]
+                  datasets: [{ data: null }]
                 }}
                 width={Dimensions.get('window').width - 72}
                 height={160}

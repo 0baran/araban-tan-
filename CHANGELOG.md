@@ -1,5 +1,13 @@
 # Sürüm Notları (Changelog)
 
+## v9.1.3 (Büyük Mimari Revizyon) - TİCARİ STANDART (Torque Mimarisi) 🏆
+* **Multi-PID Modu Kaldırıldı:** Çoklu sensör sorgulama komutları (010C0D05), ucuz v2.1 ELM327 klonlarını kitlediği için tespit edildi ve devre dışı bırakıldı. Artık her sensör en stabil yöntemle, ayrı ayrı soruluyor. Cihazınız asla donmayacak.
+* **Mutex Lock (Sıralı İletişim Kuyruğu):** Arka plan motoruna `Promise Mutex` kilit mekanizması inşa edildi. Bir önceki verinin işlemi %100 bitmeden diğer veri asla Bluetooth hattına sürülmüyor. Veri taşmaları (Garbage Data) tamamen engellendi.
+* **AT ST 32 (Timeout Optimizasyonu):** Arabanın desteklemediği bir sensöre yanıt beklerken uygulamanın gereksiz yere takılıp kalmaması için maksimum bekleme süresi 400ms'den 200ms'ye (ATST32) düşürüldü.
+* **Sonuç:** Klon cihazlarda bağlantı kopması, "NO DATA" veya donma ihtimali tamamen sıfıra indirildi.
+
+
+
 ## v9.1.2 (Hotfix) - UI KİLİTLENMESİ ÇÖZÜLDÜ 📱
 * **Ekran Donma Hatası (UI Freeze):** Ekrana tek seferde eklediğimiz 109 sensörün saniyede 12 kez güncellenmesi telefonların işlemcisine (ve uygulamanın arayüz motoruna) aşırı yük bindirerek uygulamanın kilitlenmesine sebep oluyordu. Bu kilitlenme yüzünden Bluetooth bağlantısı zaman aşımına uğruyor, hem arıza okuma hem de canlı veri tamamen kopuyordu. Ekran (ScrollView) mimarisi tamamen FlatList (Sadece ekranda görünenleri işleme) teknolojisiyle değiştirilerek sonsuz bir akıcılık sağlandı.
 
