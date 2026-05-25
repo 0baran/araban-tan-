@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.60',
+    date: '25 Mayis 2026',
+    items: [
+      'Multi-PID Veri Otobanı (0 Lag): Saniyede tek tek sensör okuma mantığı terk edildi! Eğer aracınız destekliyorsa (CAN protokolü), Hız, Devir ve Hararet gibi en kritik veriler aynı anda tek bir komutla okunarak %300 hız artışı (Sıfır Lag) sağlandı.',
+      'Sensör Yükü Dağıtımı (Throttle Control): Arka plandaki 30+ sensörün tamamının aynı saniyede okunmaya çalışılıp veri yolunu tıkaması engellendi. Sensör okuma emirleri 12 farklı döngüye dağıtılarak ana verilerin (RPM, Hız) kusursuz akması sağlandı.'
+    ],
+  },
+  {
     version: '3.1.58',
     date: '25 Mayis 2026',
     items: [
