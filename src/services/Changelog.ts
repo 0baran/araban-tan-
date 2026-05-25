@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.62',
+    date: '25 Mayis 2026',
+    items: [
+      'Multi-PID Timeout Lag Çözüldü: Bazi araclarin Multi-PID sorgularinda "Hararet" (05) verisini farklı bir beyinde (ECU) barındırması nedeniyle ELM327 çipinin 400ms bekleme yapıp uygulamayı dondurması (lag) kökünden çözüldü.',
+      'Sadece Hız ve Devir (0C0D) Multi-PID olarak okunduğu için ibrelerde artık anlık ve kesintisiz akıcılık devrede!'
+    ],
+  },
+  {
     version: '3.1.61',
     date: '25 Mayis 2026',
     items: [

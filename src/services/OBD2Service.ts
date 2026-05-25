@@ -1752,14 +1752,14 @@ class OBD2Service {
   private async sendCritical(): Promise<boolean> {
     if (!this.pollRunning) return false;
 
-    // Multi-PID Denemesi (RPM, Speed, Coolant) - Sadece CAN Protokollerinde çalışır
+    // Multi-PID (Sadece RPM ve Hız) - Gecikmeyi Önlemek İçin Küçültüldü
     if (this.multiPidSupported !== false && this.isPidSupported('010C') && this.isPidSupported('010D')) {
-      const multiResp = await this.sendCommandFast('010C0D05', 'multi');
+      const multiResp = await this.sendCommandFast('010C0D', 'multi_fast');
       if (multiResp && multiResp.includes('410C') && multiResp.includes('0D')) {
         this.multiPidSupported = true;
         this.parseMultiResponse(multiResp);
       } else {
-        this.multiPidSupported = false; // K-Line veya Klon cihaz, tekli sorguya dön
+        this.multiPidSupported = false; // Klon veya uyumsuz ECU
       }
     }
 
@@ -1772,11 +1772,6 @@ class OBD2Service {
       if (this.isPidSupported('010D')) {
         const speedResp = await this.sendCommandFast('010D', 'speed');
         if (speedResp) this.parseMultiResponse(speedResp);
-      }
-      if (!this.pollRunning) return false;
-      if (this.isPidSupported('0105')) {
-        const coolantResp = await this.sendCommandFast('0105', 'coolantTemp');
-        if (coolantResp) this.parseMultiResponse(coolantResp);
       }
     }
 
@@ -1917,6 +1912,13 @@ class OBD2Service {
         // Genişletilmiş sensörler - Sensör yükü yayılarak (Throttle/Lag önleme)
         // Her döngüde maksimum 1-2 sensör sorulur
         switch (cycle % 12) {
+          case 0: {
+            if (this.isPidSupported('0105')) {
+              const r0 = await this.sendCommandFast('0105', 'coolantTemp');
+              if (r0) this.parseMultiResponse(r0); // Using parseMultiResponse since it calls parseCoolantTemp directly
+            }
+            break;
+          }
           case 1: {
             if (this.isPidSupported('0110')) {
               const r1 = await this.sendCommandFast('0110', 'maf');
