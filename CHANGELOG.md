@@ -1,5 +1,12 @@
 # Sürüm Notları (Changelog)
 
+## v9.1.4 (Kodlama Mega Arşivi) - FORScan & VCDS & BimmerCode Özellikleri 🧰
+* **Mega Arşiv Entegre Edildi:** FORScan (Ford), VCDS (VAG), BimmerCode (BMW) ve AlfaOBD (FCA) yazılımlarının kullandığı **gerçek As-Built ve Long Coding** komutları eklendi.
+* **Header Yönlendirme (AT SH):** Gizli özellik komutlarının standart ECU yerine Gösterge (720), BCM (726), Eğlence Sistemi (7D0) gibi spesifik beyinlere yönlendirilmesi için protokol seviyesinde altyapı kodlandı.
+* **Güvenlik Koruması:** ELM327 klonlarıyla beyne yazma işlemi yapmanın getireceği "Brick" (kilitlenme) riskine karşı, işlemleri başlatmadan önce kırmızı onaylı "Sorumluluk Kullanıcıya Aittir" güvenlik ekranı eklendi.
+* **Yeni Özellikler:** Kadran Selamlama, Global Cam İndirme, Seyir Halinde Video (VIM), Bambi Mode, Start/Stop İptali ve 20'den fazla üst düzey gizli özellik eklendi.
+
+
 ## v9.1.3 (Büyük Mimari Revizyon) - TİCARİ STANDART (Torque Mimarisi) 🏆
 * **Multi-PID Modu Kaldırıldı:** Çoklu sensör sorgulama komutları (010C0D05), ucuz v2.1 ELM327 klonlarını kitlediği için tespit edildi ve devre dışı bırakıldı. Artık her sensör en stabil yöntemle, ayrı ayrı soruluyor. Cihazınız asla donmayacak.
 * **Mutex Lock (Sıralı İletişim Kuyruğu):** Arka plan motoruna `Promise Mutex` kilit mekanizması inşa edildi. Bir önceki verinin işlemi %100 bitmeden diğer veri asla Bluetooth hattına sürülmüyor. Veri taşmaları (Garbage Data) tamamen engellendi.

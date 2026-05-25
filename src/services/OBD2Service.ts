@@ -487,6 +487,7 @@ const FAST_MAX_POLLS = 8;
 const CONNECT_TIMEOUT = 10000;
 
 class OBD2Service {
+  private commandLock: Promise<void> = Promise.resolve();
   private transport: Transport | null = null;
   private _isConnected = false;
   private dataCallbacks: Set<OBD2Callback> = new Set();
@@ -1598,7 +1599,11 @@ class OBD2Service {
     await this.sendCommand(`ATSH${feature.readHeader}`);
     await this.sendCommand('ATCRA' + this.canRespAddr(feature.readHeader));
     await this.delay(30);
-    return this.sendCommand(feature.readCmd);
+    const result = await this.sendCommand(feature.readCmd);
+    // Reset headers so live data doesn't break
+    await this.sendCommand('ATSH7DF');
+    await this.sendCommand('ATAR');
+    return result;
   }
 
   async writeFeature(feature: HiddenFeature, turnOn: boolean): Promise<string> {
@@ -1615,7 +1620,11 @@ class OBD2Service {
     await this.sendCommand(`ATSH${feature.writeHeader}`);
     await this.sendCommand('ATCRA' + this.canRespAddr(feature.writeHeader));
     await this.delay(30);
-    return this.sendCommand(cmd);
+    const result = await this.sendCommand(cmd);
+    // Reset headers
+    await this.sendCommand('ATSH7DF');
+    await this.sendCommand('ATAR');
+    return result;
   }
 
   public requestPriorityPids(keys: string[]) {
@@ -1743,19 +1752,19 @@ class OBD2Service {
     // Klon Cihaz Güvenlik Modu (Multi-PID İptal, Tekil Sorgu)
     if (this.isPidSupported('010C')) {
       const rpmResp = await this.sendCommandFast('010C', 'rpm');
-      if (rpmResp) this.parseMultiResponse(rpmResp, '0C');
+      if (rpmResp) this.parseMultiResponse(rpmResp);
     }
     if (!this.pollRunning) return false;
 
     if (this.isPidSupported('010D')) {
       const speedResp = await this.sendCommandFast('010D', 'speed');
-      if (speedResp) this.parseMultiResponse(speedResp, '0D');
+      if (speedResp) this.parseMultiResponse(speedResp);
     }
     if (!this.pollRunning) return false;
 
     if (this.isPidSupported('0105')) {
       const coolantResp = await this.sendCommandFast('0105', 'coolantTemp');
-      if (coolantResp) this.parseMultiResponse(coolantResp, '05');
+      if (coolantResp) this.parseMultiResponse(coolantResp);
     }
     if (!this.pollRunning) return false;
 
@@ -1974,7 +1983,7 @@ class OBD2Service {
              
             if (this.isPidSupported('015E')) {
               const r = await this.sendCommandFast('015E', 'engineFuelRate');
-              this.parseEngineFuelRate(r);
+              this.parseFuelRate(r);
             }
             if (this.isPidSupported('0162')) {
               const r = await this.sendCommandFast('0162', 'actualEngineTorque');
