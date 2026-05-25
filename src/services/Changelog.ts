@@ -6,6 +6,32 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.58',
+    date: '25 Mayis 2026',
+    items: [
+      'Gelişmiş Mutex Kuyruğu (Anti-Freeze): Bluetooth haberleşmesinde yaşanacak donmaları önleyen kilit sırası sayesinde saniyede 1 komut işlenerek aracın veri hattının şişmesi %100 engellendi.',
+      'Polling Optimizasyonu: Sensör okuma döngüleri üst üste binmeyecek şekilde izole edildi. Veri donmaları tamamen tarihe karıştı.'
+    ],
+  },
+  {
+    version: '3.1.57',
+    date: '25 Mayis 2026',
+    items: [
+      'DDT4All Çekirdek Komutları: Renault ve Dacia araçlar için popüler açık kaynaklı DDT4All veritabanındaki en çok kullanılan UDS/CAN komutları sisteme eklendi.',
+      'Yeni Fransız Grubu Özellikleri: Viraj Aydınlatma, Otomatik Kapı Kilitleme, Karşılama Işıkları (Follow-Me-Home), Kadran Sıcaklık/Saat Gösterimi ve Kalıcı Start/Stop İptali.',
+      'Özel Renault Header Yönlendirmeleri: Renault gösterge paneli (714) ve gövde kontrol modülü BCM/UCH (7BC) için özel protokol köprülemesi yapıldı.'
+    ],
+  },
+  {
+    version: '3.1.56',
+    date: '25 Mayis 2026',
+    items: [
+      'Mega Arşiv Entegre Edildi: FORScan (Ford), VCDS (VAG), BimmerCode (BMW) ve AlfaOBD (FCA) yazılımlarının kullandığı gerçek As-Built ve Long Coding komutları eklendi.',
+      'Header Yönlendirme (AT SH): Gizli özellik komutlarının standart ECU yerine Gösterge (720), BCM (726), Eğlence Sistemi (7D0) gibi spesifik beyinlere yönlendirilmesi sağlandı.',
+      'UI Kritik Güvenlik Uyarısı (Brick Koruması): Riskli bir kodlama komutu gönderilmeden önce kullanıcıyı uyaran ve onay alan özel güvenlik duvarı eklendi.'
+    ],
+  },
+  {
     version: '9.0.0',
     date: '24 Mayis 2026',
     items: [

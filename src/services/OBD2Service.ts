@@ -482,7 +482,7 @@ const READ_POLL_INTERVAL = 80;
 const READ_MAX_POLLS = 25;
 const READ_EMPTY_LIMIT = 5;
 const FAST_WRITE_DELAY = 5;
-const FAST_POLL_INTERVAL = 15;
+const FAST_POLL_INTERVAL = 50;
 const FAST_MAX_POLLS = 8;
 const CONNECT_TIMEOUT = 10000;
 
@@ -1840,6 +1840,10 @@ class OBD2Service {
   }
 
   private startPolling() {
+    if (this.pollRunning || this.pollTimer) {
+      console.log('Polling is already running, ignoring startPolling request.');
+      return;
+    }
     this.pollRunning = true;
     this.pollCycle = 0;
     this.pollErrorCount = 0;
@@ -2432,7 +2436,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 500 : 15);
+        this.pollTimer = setTimeout(poll, isIdle ? 500 : 50);
         if (this.dataCallbacks.size > 0 && Date.now() - this.lastCallbackTime > 80) {
           if (this._validKeysDirty) {
             this.validKeysArray = Array.from(this.validKeys);
