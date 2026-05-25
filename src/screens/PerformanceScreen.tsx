@@ -32,6 +32,8 @@ export default function PerformanceScreen({onBack}: Props) {
   stateRef.current = timerState;
 
   useEffect(() => {
+    obd2Service.requestPriorityPids(['speed', 'rpm', 'maf']);
+    
     loadSettings().then(() => {
       fuelPriceRef.current = getSettings().fuelPricePerLiter;
     });
@@ -67,6 +69,7 @@ export default function PerformanceScreen({onBack}: Props) {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      obd2Service.requestPriorityPids([]);
     };
   }, []);
 

@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.66',
+    date: '25 Mayis 2026',
+    items: [
+      'GÖRÜNÜME DAYALI TARAMA v2.0 (Gerçek Sıfır Gecikme): Önceki sürümde keşfedilen büyük bir liste tarama mantığı hatası (Tüm listeyi tarama) düzeltildi.',
+      'Uygulama artık o an EKRANINIZIN PİKSELLERİ İÇİNDE GÖRÜNMEYEN (Aşağıda veya yukarıda kalan) hiçbir sensörü TARAMIYOR!',
+      'Yalnızca gözünüzle gördüğünüz 4-5 sensör araca sorulur. Aşağı kaydırdıkça okunan sensörler dinamik olarak milisaniye içinde değişir.',
+      'Performans Testi (0-100) ekranına Maksimum Hız Tarama (Sadece Hız ve Devir) yeteneği eklendi. Testler artık laboratuvar hassasiyetinde!'
+    ],
+  },
+  {
     version: '3.1.65',
     date: '25 Mayis 2026',
     items: [

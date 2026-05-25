@@ -893,11 +893,22 @@ export default function LiveDataScreen({onBack}: Props) {
     });
   }, [search, category, data._validKeys]);
 
+  const [visibleKeys, setVisibleKeys] = useState<string[]>([]);
+
+  const onViewableItemsChanged = useRef(({viewableItems}: any) => {
+    setVisibleKeys(viewableItems.map((v: any) => v.item.key));
+  }).current;
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 10,
+  }).current;
+
   useEffect(() => {
-    const toPrioritize = new Set([...pinned, ...filtered.map(p => p.key)]);
+    const cyberBarKeys = ['rpm', 'speed', 'coolantTemp', 'engineLoad', 'batteryVoltage'];
+    const toPrioritize = new Set([...cyberBarKeys, ...pinned, ...visibleKeys]);
     obd2Service.requestPriorityPids(Array.from(toPrioritize));
     return () => obd2Service.requestPriorityPids(pinned);
-  }, [pinned, filtered]);
+  }, [visibleKeys, pinned]);
 
   const pinnedMeta = useMemo(
     () =>
@@ -1114,6 +1125,8 @@ export default function LiveDataScreen({onBack}: Props) {
           maxToRenderPerBatch={5}
           windowSize={5}
           removeClippedSubviews={true}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
           renderItem={({item: p}) => (
             <SensorCard
               p={p}
