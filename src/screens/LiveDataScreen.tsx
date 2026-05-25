@@ -1110,9 +1110,9 @@ export default function LiveDataScreen({onBack}: Props) {
           key={listView ? 'list' : 'grid'}
           numColumns={listView ? 1 : 2}
           keyExtractor={p => p.key}
-          initialNumToRender={8}
-          maxToRenderPerBatch={4}
-          windowSize={3}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
           removeClippedSubviews={true}
           renderItem={({item: p}) => (
             <SensorCard

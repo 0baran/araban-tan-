@@ -11,7 +11,7 @@ interface CyberBarProps {
   valueFormatter?: (val: number) => string;
 }
 
-export default function CyberBar({
+export default React.memo(function CyberBar({
   label,
   value,
   max,
@@ -69,7 +69,7 @@ export default function CyberBar({
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

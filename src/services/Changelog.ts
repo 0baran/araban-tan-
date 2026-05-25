@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.64',
+    date: '25 Mayis 2026',
+    items: [
+      'UI FPS Performans Güncellemesi: Saniyede 10 kere güncellenen Hız ve Devir gibi ibrelerin (CyberBar), React Native arayüzünde yarattığı gereksiz yeniden çizim (re-render) yükü sıfırlandı.',
+      'Sistem "React.memo" algoritmasıyla koruma altına alındı. Artık telefonun ekranı daha az ısınıyor, pil tüketimi düştü ve sayfalar arası geçişlerde yaşanan kasılmalar tamamen ortadan kalktı!'
+    ],
+  },
+  {
     version: '3.1.63',
     date: '25 Mayis 2026',
     items: [
