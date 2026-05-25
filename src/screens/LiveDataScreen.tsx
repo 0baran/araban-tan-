@@ -796,8 +796,7 @@ export default function LiveDataScreen({onBack}: Props) {
     distanceSinceDTCClearHighRes: 0,
     throttlePositionG: 0,
     engineFuelRate: 0,
-    actualEngineTorque: 0,
-    engineReferenceTorque: 0,
+
     secondaryAirStatus: '',
     obdStandard: '',
     evapVaporPressureAbsolute: 0,

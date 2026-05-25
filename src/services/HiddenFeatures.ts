@@ -287,9 +287,80 @@ export const HIDDEN_FEATURES: HiddenFeature[] = [
     writeOff: '2E 01 01 00',
     readHeader: '7A0', // R-Link / MFD
     writeHeader: '7A0'
-  }
-];
+  },
 
+  // ============================================
+  // RENAULT / DACIA (DDT4All) UDS FEATURES
+  // Header: 7BC (UCH/BCM) or 714 (Cluster)
+  // ============================================
+  {
+    id: 'ren_cornering',
+    manufacturer: ['renault', 'universal'],
+    name: 'Viraj Aydınlatma (Cornering Lights)',
+    description: 'Direksiyonu çevirdiğiniz yöndeki sis farı yanar. (DDT4All Modu)',
+    category: 'lighting',
+    compatibility: ['Megane 3/4', 'Clio 4/5', 'Duster'],
+    // Example UDS read: 22 01 0B (Read config) -> 62 01 0B ...
+    readCmd: '22010B',
+    writeOn: '2E010B01',
+    writeOff: '2E010B00',
+    readHeader: '7BC',
+    writeHeader: '7BC',
+  },
+  {
+    id: 'ren_antihijack',
+    manufacturer: ['renault', 'universal'],
+    name: 'Hareket Halinde Otomatik Kilit',
+    description: 'Araç 10km/s hızı geçtiğinde kapılar otomatik kilitlenir.',
+    category: 'safety',
+    compatibility: ['Clio 4', 'Captur', 'Sandero'],
+    readCmd: '22011A',
+    writeOn: '2E011A01',
+    writeOff: '2E011A00',
+    readHeader: '7BC',
+    writeHeader: '7BC',
+  },
+  {
+    id: 'ren_followme',
+    manufacturer: ['renault', 'universal'],
+    name: 'Follow-Me-Home (Karşılama Işıkları)',
+    description: 'Aracı kilitledikten sonra farlar 30 saniye açık kalır.',
+    category: 'lighting',
+    compatibility: ['Megane 4', 'Kadjar', 'Talisman'],
+    readCmd: '22012C',
+    writeOn: '2E012C01',
+    writeOff: '2E012C00',
+    readHeader: '7BC',
+    writeHeader: '7BC',
+  },
+  {
+    id: 'ren_dashboard_temp',
+    manufacturer: ['renault', 'universal'],
+    name: 'Kadran Sıcaklık ve Saat Gösterimi',
+    description: 'Gösterge panelinde dış sıcaklık ve saat bilgisini aktifleştirir.',
+    category: 'dashboard',
+    compatibility: ['Clio 4', 'Dacia Duster'],
+    readCmd: '22013F',
+    writeOn: '2E013F01',
+    writeOff: '2E013F00',
+    readHeader: '714',
+    writeHeader: '714',
+  },
+  {
+    id: 'ren_startstop',
+    manufacturer: ['renault', 'universal'],
+    name: 'Start/Stop İptali',
+    description: 'Aracın otomatik Start/Stop özelliğini kalıcı olarak devre dışı bırakır.',
+    category: 'performance',
+    compatibility: ['Megane 4', 'Clio 5', 'Captur 2'],
+    readCmd: '22014D',
+    writeOn: '2E014D00', // 00 means disabled for Start/Stop
+    writeOff: '2E014D01',
+    readHeader: '7BC',
+    writeHeader: '7BC',
+  },
+
+];
 export const MANUFACTURER_NAMES: Record<Manufacturer, string> = {
   ford: 'Ford', volkswagen: 'Volkswagen', audi: 'Audi', seat: 'Seat', skoda: 'Skoda',
   bmw: 'BMW', fca: 'FCA (Fiat/Jeep/Dodge)', renault: 'Renault', toyota: 'Toyota', peugeot: 'Peugeot', psa: 'PSA',

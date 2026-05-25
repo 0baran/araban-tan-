@@ -1,5 +1,16 @@
 # Sürüm Notları (Changelog)
 
+## v9.1.5 (DDT4All Renault/Dacia Paket Entegrasyonu) 🏎️
+* **DDT4All Çekirdek Komutları:** Renault ve Dacia araçlar için popüler açık kaynaklı DDT4All veritabanındaki en çok kullanılan UDS/CAN komutları sisteme eklendi.
+* **Yeni Fransız Grubu Gizli Özellikleri:**
+  - Viraj Aydınlatma (Cornering Lights)
+  - Otomatik Kapı Kilitleme (Hareket Halinde Kilit / Anti-Hijack)
+  - Karşılama Işıkları (Follow-Me-Home Headlights)
+  - Kadran Sıcaklık ve Saat Gösterimi
+  - Kalıcı Start/Stop İptali (Megane 4, Clio 5, Captur vb. için)
+* **Özel Renault Header Yönlendirmeleri:** Renault gösterge paneli (714) ve gövde kontrol modülü BCM/UCH (7BC) için özel protokol köprülemesi yapıldı.
+
+
 ## v9.1.4 (Kodlama Mega Arşivi) - FORScan & VCDS & BimmerCode Özellikleri 🧰
 * **Mega Arşiv Entegre Edildi:** FORScan (Ford), VCDS (VAG), BimmerCode (BMW) ve AlfaOBD (FCA) yazılımlarının kullandığı **gerçek As-Built ve Long Coding** komutları eklendi.
 * **Header Yönlendirme (AT SH):** Gizli özellik komutlarının standart ECU yerine Gösterge (720), BCM (726), Eğlence Sistemi (7D0) gibi spesifik beyinlere yönlendirilmesi için protokol seviyesinde altyapı kodlandı.
