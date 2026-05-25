@@ -479,12 +479,12 @@ const ATZ_RESET_DELAY = 2000;
 const AT_CMD_DELAY = 300;
 const ATSP_DELAY = 800;
 const WRITE_DELAY = 150;
-const READ_POLL_INTERVAL = 20;
-const READ_MAX_POLLS = 100;
+const READ_POLL_INTERVAL = 40; // Bridge overload önlemek için 20 -> 40
+const READ_MAX_POLLS = 50; // 2000ms timeout
 const READ_EMPTY_LIMIT = 5;
-const FAST_WRITE_DELAY = 5;
-const FAST_POLL_INTERVAL = 10;
-const FAST_MAX_POLLS = 40;
+const FAST_WRITE_DELAY = 15; // ELM327'ye nefes alma süresi (5 -> 15)
+const FAST_POLL_INTERVAL = 25; // RN Bridge donmalarını önlemek için 10 -> 25
+const FAST_MAX_POLLS = 20; // 500ms timeout
 const CONNECT_TIMEOUT = 10000;
 
 class OBD2Service {
@@ -2507,7 +2507,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 500 : 10);
+        this.pollTimer = setTimeout(poll, isIdle ? 500 : 25); // 10ms CPU'yu boğduğu için 25ms yapıldı
         if (this.dataCallbacks.size > 0 && Date.now() - this.lastCallbackTime > 80) {
           if (this._validKeysDirty) {
             this.validKeysArray = Array.from(this.validKeys);

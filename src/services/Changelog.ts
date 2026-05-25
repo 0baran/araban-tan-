@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.68',
+    date: '25 Mayis 2026',
+    items: [
+      'GÖRÜNÜME DAYALI TARAMA v2.1 (Stabilite Güncellemesi): 10 milisaniyelik aşırı agresif tarama hızı, telefonun Bluetooth işlemcisini boğduğu için (veri eksikliği/donma) 25 milisaniyeye (Optimum değer) çekildi.',
+      'Cihazın araca komut gönderdikten sonra dinlemeye geçmesi için gereken süre (Write Delay) 3 katına çıkarılarak eksik veri okuma sorunu çözüldü.',
+      'Uygulama artık donmadan, eksiksiz ve hala eskisinden 3 kat daha hızlı bir şekilde saniyede 40 FPS hızında veri okuyor.'
+    ],
+  },
+  {
     version: '3.1.67',
     date: '25 Mayis 2026',
     items: [
