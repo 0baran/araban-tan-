@@ -105,6 +105,18 @@ export default function SettingsScreen({onBack}: Props) {
     }
   };
 
+  const handleConnectUSB = async () => {
+    setSettingProto(true);
+    const ok = await obd2Service.connectUSB();
+    setSettingProto(false);
+    setProtocolLabel(obd2Service.protocolLabel);
+    if (!ok) {
+      Alert.alert('Hata', 'USB ELM327 cihazına bağlanılamadı. OTG kablosunu taktığınızdan ve uygulamanın USB iznine sahip olduğundan emin olun.');
+    } else {
+      Alert.alert('Başarılı', 'USB üzerinden ELM327 bağlantısı kuruldu!');
+    }
+  };
+
   const startScan = async () => {
     if (!obd2Service.isConnected) {
       Alert.alert('Uyarı', 'Önce araca bağlanın.');
@@ -273,6 +285,13 @@ export default function SettingsScreen({onBack}: Props) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>BAĞLANTI</Text>
+          <TouchableOpacity style={styles.row} onPress={handleConnectUSB}>
+            <Text style={styles.rowIcon}>🔌</Text>
+            <View style={styles.rowContent}>
+              <Text style={styles.rowLabel}>USB (OTG) ile Bağlan</Text>
+              <Text style={styles.rowDesc}>Kablolu ELM327 cihazına bağlan</Text>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.row} onPress={handleSimulation}>
             <Text style={styles.rowIcon}>🎮</Text>
             <View style={styles.rowContent}>

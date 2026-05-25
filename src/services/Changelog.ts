@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.69',
+    date: '26 Mayis 2026',
+    items: [
+      'USB (OTG) Kablolu Bağlantı Desteği Eklendi!',
+      'Ayarlar > Bağlantı menüsüne "USB (OTG) ile Bağlan" butonu eklendi.',
+      'Bluetooth kullanılamayan durumlar için fiziksel kablolu ELM327 cihazları ile doğrudan, kesintisiz iletişim altyapısı sağlandı.'
+    ],
+  },
+  {
     version: '3.1.68',
     date: '25 Mayis 2026',
     items: [
