@@ -8,6 +8,7 @@ import RNBluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getSettings } from './AppSettings';
 import notifee, { AndroidImportance, AndroidForegroundServiceType, EventType } from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
 import { OemSensorDef, OEM_SENSORS, detectBrandFromVIN } from './OemSensors';
@@ -1442,6 +1443,30 @@ class OBD2Service {
     await this.delay(AT_CMD_DELAY);
 
     this.supportedPids.clear();
+    
+    if (getSettings().rangeRoverLegacyMode) {
+      console.log('initializeELM327: Eski Range Rover Modu aktif. Özel AT komutları gönderiliyor...');
+      await this.sendCommand('ATSP5'); // KWP Fast Init
+      await this.delay(ATSP_DELAY);
+      await this.sendCommand('ATIIA14'); // Init Address 14
+      await this.delay(AT_CMD_DELAY);
+      await this.sendCommand('ATWM8114F3'); // Wakeup Message
+      await this.delay(AT_CMD_DELAY);
+      await this.sendCommand('ATSH8114F3'); // Header
+      await this.delay(AT_CMD_DELAY);
+      await this.sendCommand('ATFI'); // Fast Init
+      await this.delay(ATSP_DELAY);
+      const rrResp = await this.sendCommand('0100');
+      if (rrResp && !rrResp.includes('UNABLE') && !rrResp.includes('NO DATA')) {
+        this.currentProtocolLabel = 'Range Rover EAS / ISO 14230-4 KWP';
+        this.parseSupportedPids(rrResp, '00');
+        await this.readMorePidRanges(this.sendCommand.bind(this));
+        return true;
+      } else {
+        console.log('initializeELM327: Range Rover ATSP5 başarisiz, normal denemelere dönülüyor...');
+      }
+    }
+
     await this.sendCommand('ATSP0');
     await this.delay(ATSP_DELAY);
     // Smart Timeout Logic (AT ST)
@@ -3329,7 +3354,15 @@ class OBD2Service {
     }
     try {
       const response = await this.sendCommand('03');
-      return this.parseDTCs(response);
+      let dtcs = this.parseDTCs(response);
+      
+      if (getSettings().rangeRoverLegacyMode) {
+        const kwpResp = await this.sendCommand('18000000');
+        const kwpDtcs = this.parseDTCs(kwpResp);
+        dtcs = [...dtcs, ...kwpDtcs];
+      }
+      
+      return dtcs.filter((d, index, self) => index === self.findIndex(t => t.code === d.code));
     } catch {
       return [];
     }
@@ -3539,14 +3572,21 @@ class OBD2Service {
     // Remove all whitespace and multi-frame prefixes (0:, 1:, 2:)
     const clean = response.replace(/\s/g, '').replace(/[0-9A-Fa-f]:/gi, '');
 
-    // Look for Mode 03 (43), Mode 07 (47), Mode 0A (4A)
-    const match = clean.match(/43([0-9A-Fa-f]+)|47([0-9A-Fa-f]+)|4A([0-9A-Fa-f]+)/i);
+    // Look for Mode 03 (43), Mode 07 (47), Mode 0A (4A), Mode 18 KWP (58)
+    const match = clean.match(/43([0-9A-Fa-f]+)|47([0-9A-Fa-f]+)|4A([0-9A-Fa-f]+)|58([0-9A-Fa-f]+)/i);
     if (!match) return dtcs;
 
-    const payload = match[1] || match[2] || match[3];
+    let payload = match[1] || match[2] || match[3] || match[4];
     if (!payload) return dtcs;
+    
+    // Mode 18 (58) returns Number of DTCs as first byte, ignore it
+    let step = 4; // Standard OBD Mode 03 is 2 bytes per DTC (4 hex chars)
+    if (match[4]) {
+      payload = payload.substring(2);
+      step = 6; // KWP Mode 18 is 3 bytes per DTC (High, Low, Status) -> 6 hex chars
+    }
 
-    for (let i = 0; i < payload.length - 3; i += 4) {
+    for (let i = 0; i < payload.length - 3; i += step) {
       const b1 = payload.substring(i, i + 2);
       const b2 = payload.substring(i + 2, i + 4);
       if (b1 === '00' && b2 === '00') continue;

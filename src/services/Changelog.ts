@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.67',
+    date: '25 Mayis 2026',
+    items: [
+      'Eski Range Rover L322 / P38 (EAS) Air Süspansiyon Modülü Özel Bağlantı Protokolü eklendi.',
+      'Ayarlar menüsüne "Eski Range Rover (EAS)" şalteri eklendi. Açıldığında cihaz standart motor beyni yerine Özel Air Süspansiyon (KWP ECU 14) beynine bağlanır.',
+      'Air Süspansiyon modülü hata kodlarını (DTC) okuma desteği eklendi. (Mode 18 KWP - 58 Hex Response Parser)',
+    ],
+  },
+  {
     version: '3.1.66',
     date: '25 Mayis 2026',
     items: [

@@ -37,6 +37,7 @@ export default function SettingsScreen({onBack}: Props) {
     {protocol: string; label: string; success: boolean}[] | null
   >(null);
   const [settingProto, setSettingProto] = useState(false);
+  const [rangeRoverLegacyMode, setRangeRoverLegacyMode] = useState(false);
 
   useEffect(() => {
     setProtocolLabel(obd2Service.protocolLabel);
@@ -47,6 +48,7 @@ export default function SettingsScreen({onBack}: Props) {
       setCoolantWarnVal(String(s.coolantWarningThreshold));
       setFuelPrice(String(s.fuelPricePerLiter || 0));
       setAutoRecord(s.autoRecord || false);
+      setRangeRoverLegacyMode(s.rangeRoverLegacyMode || false);
     });
   }, []);
 
@@ -79,6 +81,11 @@ export default function SettingsScreen({onBack}: Props) {
   const toggleAutoRecord = (v: boolean) => {
     setAutoRecord(v);
     saveSettings({autoRecord: v});
+  };
+
+  const toggleRangeRoverLegacy = (v: boolean) => {
+    setRangeRoverLegacyMode(v);
+    saveSettings({rangeRoverLegacyMode: v});
   };
 
   const setFuelPriceVal = (t: string) => {
@@ -280,6 +287,22 @@ export default function SettingsScreen({onBack}: Props) {
               <Text style={styles.rowDesc}>{protocolLabel}</Text>
             </View>
             {settingProto && <ActivityIndicator size="small" color="#00bfff" />}
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.rowIcon}>🏔️</Text>
+            <View style={styles.rowContent}>
+              <Text style={styles.rowLabel}>Eski Range Rover (EAS)</Text>
+              <Text style={styles.rowDesc}>L322/P38 Air Süspansiyon KWP uyandırması (AT IIA 14)</Text>
+            </View>
+            <Switch
+              value={rangeRoverLegacyMode}
+              onValueChange={toggleRangeRoverLegacy}
+              trackColor={{
+                false: 'rgba(255,255,255,0.1)',
+                true: 'rgba(0,191,255,0.4)',
+              }}
+              thumbColor={rangeRoverLegacyMode ? '#00bfff' : '#666'}
+            />
           </View>
         </View>
 

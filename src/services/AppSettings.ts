@@ -7,6 +7,7 @@ const KEYS = {
   coolantWarningThreshold: '@arabanitani/coolant_warning_threshold',
   pinnedSensors: '@arabanitani/pinned_sensors',
   fuelPricePerLiter: '@arabanitani/fuel_price_per_liter',
+  rangeRoverLegacyMode: '@arabanitani/range_rover_legacy_mode',
 };
 
 export type AppSettings = {
@@ -18,6 +19,7 @@ export type AppSettings = {
   fuelPricePerLiter: number;
   darkMode: boolean;
   autoRecord: boolean;
+  rangeRoverLegacyMode: boolean;
 };
 
 const DEFAULTS: AppSettings = {
@@ -29,6 +31,7 @@ const DEFAULTS: AppSettings = {
   fuelPricePerLiter: 0,
   darkMode: true,
   autoRecord: false,
+  rangeRoverLegacyMode: false,
 };
 
 let cached: AppSettings = {...DEFAULTS};
