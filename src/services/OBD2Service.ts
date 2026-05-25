@@ -1444,6 +1444,10 @@ class OBD2Service {
     this.supportedPids.clear();
     await this.sendCommand('ATSP0');
     await this.delay(ATSP_DELAY);
+    // Smart Timeout Logic (AT ST)
+    // We will set this dynamically after protocol detection, but for now ATSP0 will auto-detect
+    await this.sendCommand('ATST19'); // Default 100ms for FAST CAN responses
+    await this.delay(AT_CMD_DELAY);
     const testResp = await this.sendCommand('0100');
     if (
       testResp &&
@@ -1628,6 +1632,8 @@ class OBD2Service {
   }
 
   public requestPriorityPids(keys: string[]) {
+    this.isViewBasedPollingActive = keys.length > 0;
+
     this.priorityPids = new Set(keys);
   }
 
@@ -1666,9 +1672,23 @@ class OBD2Service {
     return this.supportedPids.size <= 1 || this.supportedPids.has(pid);
   }
 
+  // View-Based Polling aktif mi? (Eğer priorityPids doluysa aktif)
+  private isViewBasedPollingActive = false;
+
   private async sendCommandFast(cmd: string, key?: string): Promise<string> {
     const release = await this.acquireLock();
     try {
+      // ---------------- PROFESSIONAL VIEW-BASED POLLING ----------------
+      // Kritik sensörler (010C, 010D, AT komutları) her zaman geçer.
+      // Diğer sensörler sadece priorityPids (ekranda görünenler) listesinde ise geçer!
+      if (this.isViewBasedPollingActive && cmd.startsWith('01') && cmd !== '010C0D' && cmd !== '010C' && cmd !== '010D') {
+         if (!key || !this.priorityPids.has(key)) {
+            // Ekranda görünmüyor, bant genişliğini meşgul etme!
+            release();
+            return '';
+         }
+      }
+
       const now = Date.now();
     // Smart Sleep (Ping after 10s)
     if (this.sleepingPids[cmd]) {

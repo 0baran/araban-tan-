@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.63',
+    date: '25 Mayis 2026',
+    items: [
+      'Görünüme Dayalı Profesyonel Veri Okuma (View-Based Polling): Tıpkı endüstri lideri OBD cihazları gibi, araba artık sadece EKRANDA GÖRDÜĞÜNÜZ sensörleri tarıyor.',
+      'Ekranda Hız, Devir, Turbo açıkken arka planda 30 tane görünmeyen sensörün veri akışını meşgul etmesi engellendi. Veri akış hızı (Refresh Rate) %500 oranında arttı!',
+      'Gecikmeyi Sıfıra İndiren "Akıllı Interceptor" ve "AT ST 19" (100ms Timeout) teknolojisi çekirdeğe dahil edildi.'
+    ],
+  },
+  {
     version: '3.1.62',
     date: '25 Mayis 2026',
     items: [
