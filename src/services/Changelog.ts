@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.61',
+    date: '25 Mayis 2026',
+    items: [
+      'Multi-PID Senkronizasyon Düzeltmesi (Hotfix): Bazi arac beyinlerinin (ECU) çoklu sensör verilerini gönderirken araya koyduğu fazladan ayırıcı karakterler (41) nedeniyle uygulamanın verileri okuyamaması sorunu kökünden çözüldü.',
+      'Sıfır Gecikme (0 Lag) ve Yüksek Hız (Multi-PID) artık Tofaş\'tan Mercedes\'e kadar tüm araç beyinlerinde kusursuz çalışıyor.'
+    ],
+  },
+  {
     version: '3.1.60',
     date: '25 Mayis 2026',
     items: [

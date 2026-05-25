@@ -1812,24 +1812,32 @@ class OBD2Service {
 
 
   private parseMultiResponse(hex: string) {
-    if (!hex.startsWith('41')) return;
-    
-    let offset = 2; // Skip '41'
-    while (offset < hex.length - 2) {
-      const pid = hex.substring(offset, offset + 2);
-      offset += 2;
+    let i = 0;
+    while (i < hex.length - 2) {
+      if (hex.substring(i, i + 2) === '41') {
+         i += 2; // Skip '41' prefix if present
+      }
       
-      if (pid === '0C' && offset + 4 <= hex.length) {
-         this.parseRPM('41' + pid + hex.substring(offset, offset + 4));
-         offset += 4;
-      } else if (pid === '0D' && offset + 2 <= hex.length) {
-         this.parseSpeed('41' + pid + hex.substring(offset, offset + 2));
-         offset += 2;
-      } else if (pid === '05' && offset + 2 <= hex.length) {
-         this.parseCoolantTemp('41' + pid + hex.substring(offset, offset + 2));
-         offset += 2;
+      const pid = hex.substring(i, i + 2);
+      i += 2;
+      
+      if (pid === '0C') {
+         if (i + 4 <= hex.length) {
+            this.parseRPM('410C' + hex.substring(i, i + 4));
+            i += 4;
+         } else break;
+      } else if (pid === '0D') {
+         if (i + 2 <= hex.length) {
+            this.parseSpeed('410D' + hex.substring(i, i + 2));
+            i += 2;
+         } else break;
+      } else if (pid === '05') {
+         if (i + 2 <= hex.length) {
+            this.parseCoolantTemp('4105' + hex.substring(i, i + 2));
+            i += 2;
+         } else break;
       } else {
-         // Unknown PID or out of sync, stop parsing to prevent garbage data
+         // Unknown PID or garbage, stop parsing to prevent misalignment
          break;
       }
     }
