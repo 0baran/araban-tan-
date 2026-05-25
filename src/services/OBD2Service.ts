@@ -478,12 +478,12 @@ const ATZ_RESET_DELAY = 2000;
 const AT_CMD_DELAY = 300;
 const ATSP_DELAY = 800;
 const WRITE_DELAY = 150;
-const READ_POLL_INTERVAL = 80;
-const READ_MAX_POLLS = 25;
+const READ_POLL_INTERVAL = 20;
+const READ_MAX_POLLS = 100;
 const READ_EMPTY_LIMIT = 5;
 const FAST_WRITE_DELAY = 5;
-const FAST_POLL_INTERVAL = 50;
-const FAST_MAX_POLLS = 8;
+const FAST_POLL_INTERVAL = 10;
+const FAST_MAX_POLLS = 40;
 const CONNECT_TIMEOUT = 10000;
 
 class OBD2Service {
@@ -2482,7 +2482,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 500 : 50);
+        this.pollTimer = setTimeout(poll, isIdle ? 500 : 10);
         if (this.dataCallbacks.size > 0 && Date.now() - this.lastCallbackTime > 80) {
           if (this._validKeysDirty) {
             this.validKeysArray = Array.from(this.validKeys);

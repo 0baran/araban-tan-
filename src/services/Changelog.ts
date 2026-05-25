@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.65',
+    date: '25 Mayis 2026',
+    items: [
+      'Gecikme (Lag) Kökten Çözüldü: Veri okuma döngüsünün içine gömülü olan "Yapay Bekleme (Artificial Sleep)" süreleri tespit edilip tamamen silindi.',
+      'Bluetooth tampon (buffer) okuma aralığı 50 milisaniyeden 10 milisaniyeye düşürüldü. Artık araçtan gelen cevap, milisaniyesinde ekrana yansıyacak!',
+      'Torque Pro ve Car Scanner hızının da ötesine, donanımın izin verdiği mutlak fiziksel sınıra (Zero Latency) ulaşıldı.'
+    ],
+  },
+  {
     version: '3.1.64',
     date: '25 Mayis 2026',
     items: [
