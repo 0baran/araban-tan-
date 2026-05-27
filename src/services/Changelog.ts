@@ -6,6 +6,14 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.72',
+    date: '27 Mayis 2026',
+    items: [
+      'HATA KODLARI (DTC) VERİTABANI GENİŞLETİLDİ: Özellikle P0 (Güç Aktarma), C0 (Şasi), B0 (Gövde) ve U0 (İletişim) ağından gelen spesifik arıza kodları (toplam 70+ yeni kritik kod) sisteme eklendi.',
+      'Böylelikle tarama yapıldığında "Bilinmeyen Kod" olarak dönen birçok gelişmiş sensör, valf ve haberleşme arızası artık Türkçe açıklamalarıyla görünecek.'
+    ],
+  },
+  {
     version: '3.1.71',
     date: '27 Mayis 2026',
     items: [
