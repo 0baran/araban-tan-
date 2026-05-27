@@ -1131,6 +1131,12 @@ class OBD2Service {
             if (parsed !== null) {
               this.supportedOemPids.push(sensor);
               this.oemData[sensor.id] = parsed;
+              
+              if (!this.validKeys.has(sensor.id)) {
+                this.validKeys.add(sensor.id);
+                this._validKeysDirty = true;
+              }
+              
               console.log('OEM Sensor Discovered:', sensor.name, parsed);
             }
           }

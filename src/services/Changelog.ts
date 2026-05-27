@@ -6,6 +6,26 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.74',
+    date: '27 Mayis 2026',
+    items: [
+      'EKSTRA LÜKS VE PERFORMANS SENSÖR PAKETLERİ: VAG (Volkswagen/Audi/Skoda/Seat) grubu için DSG Kavrama Basıncı, Haldex Yağ Sıcaklığı ve Silindir 1 Tekleme Sayacı eklendi.',
+      'Alfa Romeo (FCA) DNA Sürüş Modu durumu sensörü sisteme dahil edildi.',
+      'Volvo DPF Fark Basıncı, Land Rover AdBlue (DEF) Seviyesi eklendi.',
+      'Nissan/Infiniti ATTESA E-TS Dört Çeker Tork Dağılımı ve BMW Akü Şarj Durumu (SOC) eklendi.',
+      'Genel Lastik Basınç (TPMS) Sensör okuma altyapısı kuruldu (Destekleyen araçlarda Şasi kategorisinde görünecektir).'
+    ],
+  },
+  {
+    version: '3.1.73',
+    date: '27 Mayis 2026',
+    items: [
+      'PREMIUM (LÜKS) ARAÇ SENSÖR PAKETİ EKLENDİ: Standart OBD2 verilerinin ötesine geçerek marka spesifik "Gelişmiş OEM" sensörleri sisteme dahil edildi.',
+      'Eklentiler: Range Rover Air Süspansiyon Basıncı ve Sürüş Yüksekliği, BMW xDrive Tork Dağılımı ve Valvetronic Açısı, Mercedes Airmatic Basıncı ve DPF Rejenerasyon Durumu, Porsche PDK Şanzıman Yağ Sıcaklığı ve Yağ Seviyesi, Ferrari F1 Debriyaj Aşınma Oranı.',
+      'Bu sensörleri Canlı Veri ekranındaki yeni "Şasi" ve "Şanzıman" kategorilerinde bulabilirsiniz (Aracınızın desteklemesine bağlıdır).'
+    ],
+  },
+  {
     version: '3.1.72',
     date: '27 Mayis 2026',
     items: [

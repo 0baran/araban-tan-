@@ -657,12 +657,96 @@ const PARAM_META: {
     color: '#16a085',
     category: 'egzoz',
   },
+  {
+    key: 'oem_vag_dsg_pres',
+    label: 'DSG Kavrama Basıncı (VAG)',
+    unit: 'Bar',
+    color: '#eb4d4b',
+    category: 'şanzıman'
+  },
+  {
+    key: 'oem_vag_haldex',
+    label: 'Haldex Yağ Sıcaklığı (VAG)',
+    unit: '°C',
+    color: '#686de0',
+    category: 'şasi'
+  },
+  {
+    key: 'oem_alfa_dna',
+    label: 'DNA Mod Durumu (Alfa)',
+    unit: '',
+    color: '#e056fd',
+    category: 'sürüş'
+  },
+  {
+    key: 'oem_volvo_dpf_diff',
+    label: 'DPF Fark Basıncı (Volvo)',
+    unit: 'hPa',
+    color: '#4834d4',
+    category: 'egzoz'
+  },
+  {
+    key: 'oem_nissan_attesa',
+    label: 'ATTESA AWD (Nissan)',
+    unit: '% (Ön)',
+    color: '#be2edd',
+    category: 'şasi'
+  },
+  {
+    key: 'oem_generic_tpms1',
+    label: 'TPMS Sol Ön (Genel)',
+    unit: 'PSI',
+    color: '#22a6b3',
+    category: 'şasi'
+  },
+  {
+    key: 'oem_bmw_battery_soc',
+    label: 'Akü Şarj Durumu (BMW)',
+    unit: '%',
+    color: '#f9ca24',
+    category: 'elektrik'
+  },
+  {
+    key: 'oem_mb_oil_temp',
+    label: 'AMG Motor Yağı',
+    unit: '°C',
+    color: '#eb4d4b',
+    category: 'motor'
+  },
+  {
+    key: 'oem_vag_misfire_1',
+    label: 'Silindir 1 Tekleme (VAG)',
+    unit: 'Kez',
+    color: '#ff7979',
+    category: 'motor'
+  },
+  {
+    key: 'oem_lr_def_level',
+    label: 'AdBlue Seviyesi (LR)',
+    unit: '%',
+    color: '#c7ecee',
+    category: 'egzoz'
+  }
+
 ];
+
+OEM_SENSORS.forEach(sensor => {
+  PARAM_META.push({
+    key: sensor.id as any,
+    label: sensor.name,
+    unit: sensor.unit,
+    color: sensor.color || '#ffffff',
+    category: sensor.category || 'diğer'
+  });
+});
+
 
 const CATEGORIES = [
   {key: '', label: 'TÜMÜ'},
   {key: 'motor', label: 'Motor'},
   {key: 'sürüş', label: 'Sürüş'},
+  {key: 'şasi', label: 'Şasi'},
+  {key: 'şanzıman', label: 'Şanzıman'},
   {key: 'hava', label: 'Hava'},
   {key: 'yakıt', label: 'Yakıt'},
   {key: 'egzoz', label: 'Egzoz'},
