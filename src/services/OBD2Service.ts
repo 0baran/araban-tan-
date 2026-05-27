@@ -985,6 +985,8 @@ class OBD2Service {
   }
 
   async connectUSB(): Promise<boolean> {
+    if (this._connecting) return false;
+    this._connecting = true;
     try {
       this._connectionType = 'usb';
       this.setConnectionState('connecting', 'USB OBD2 bağlanıyor...');
@@ -1010,6 +1012,8 @@ class OBD2Service {
       await this.disconnectTransport();
       this.setConnectionState('error', 'USB bağlantı hatası');
       return false;
+    } finally {
+      this._connecting = false;
     }
   }
 
@@ -1956,11 +1960,11 @@ class OBD2Service {
 
         // Genişletilmiş sensörler - Sensör yükü yayılarak (Throttle/Lag önleme)
         // Her döngüde maksimum 1-2 sensör sorulur
-        switch (cycle % 12) {
+        switch (cycle % 8) {
           case 0: {
             if (this.isPidSupported('0105')) {
               const r0 = await this.sendCommandFast('0105', 'coolantTemp');
-              if (r0) this.parseMultiResponse(r0); // Using parseMultiResponse since it calls parseCoolantTemp directly
+              if (r0) this.parseMultiResponse(r0);
             }
             break;
           }
@@ -1986,7 +1990,8 @@ class OBD2Service {
             }
             break;
           }
-          case 2: {
+          case 3: {
+            // Batarya Voltajı (ATRV veya PID 0142)
             const rv = await this.sendCommandFast('ATRV');
             if (rv && rv.includes('V')) {
               const v = parseFloat(rv.replace('V', ''));
@@ -1995,9 +2000,9 @@ class OBD2Service {
               }
             } else {
               if (this.isPidSupported('0142')) {
-              const r1 = await this.sendCommandFast('0142', 'batteryVoltage');
+                const r1 = await this.sendCommandFast('0142', 'batteryVoltage');
                 this.parseBatteryVoltage(r1);
-            }
+              }
             }
             if (this.isPidSupported('0101')) {
               const r2 = await this.sendCommandFast('0101', 'dtcCount');
@@ -2013,7 +2018,7 @@ class OBD2Service {
             }
             break;
           }
-          case 3: {
+          case 4: {
             if (this.isPidSupported('010E')) {
               const r1 = await this.sendCommandFast('010E', 'timingAdvance');
               this.parseTimingAdvance(r1);
@@ -2032,7 +2037,7 @@ class OBD2Service {
             }
             break;
           }
-          case 4: {
+          case 5: {
             if (this.isPidSupported('015C')) {
               const r1 = await this.sendCommandFast('015C', 'engineOilTemp');
               this.parseEngineOilTemp(r1);
@@ -2051,24 +2056,11 @@ class OBD2Service {
             }
             break;
           }
-          case 5: { 
+          case 6: {
             if (this.isPidSupported('0107')) {
               const r1 = await this.sendCommandFast('0107', 'shortTermFuelTrim');
               this.parseShortTermFuelTrim(r1);
-             
-            if (this.isPidSupported('015E')) {
-              const r = await this.sendCommandFast('015E', 'engineFuelRate');
-              this.parseFuelRate(r);
             }
-            if (this.isPidSupported('0162')) {
-              const r = await this.sendCommandFast('0162', 'actualEngineTorque');
-              this.parseActualEngineTorque(r);
-            }
-            if (this.isPidSupported('0163')) {
-              const r = await this.sendCommandFast('0163', 'engineReferenceTorque');
-              this.parseEngineReferenceTorque(r);
-            }
- }
             if (this.isPidSupported('0108')) {
               const r2 = await this.sendCommandFast('0108', 'longTermFuelTrim');
               this.parseLongTermFuelTrim(r2);
@@ -2077,9 +2069,17 @@ class OBD2Service {
               const r3 = await this.sendCommandFast('0123', 'fuelPressure');
               this.parseFuelPressure(r3);
             }
+            if (this.isPidSupported('0162')) {
+              const r4 = await this.sendCommandFast('0162', 'actualEngineTorque');
+              this.parseActualEngineTorque(r4);
+            }
+            if (this.isPidSupported('0163')) {
+              const r5 = await this.sendCommandFast('0163', 'engineReferenceTorque');
+              this.parseEngineReferenceTorque(r5);
+            }
             break;
           }
-          case 0: {
+          case 7: {
             if (this.isPidSupported('0147')) {
               const r1 = await this.sendCommandFast('0147', 'absoluteThrottleB');
               this.parseAbsoluteThrottleB(r1);
@@ -2088,11 +2088,10 @@ class OBD2Service {
               const r2 = await this.sendCommandFast('0148', 'absoluteThrottleC');
               this.parseAbsoluteThrottleC(r2);
             }
-            const r3 = await this.sendCommandFast(
-              '014C',
-              'commandedThrottleActuator',
-            );
-            this.parseCommandedThrottleActuator(r3);
+            if (this.isPidSupported('014C')) {
+              const r3 = await this.sendCommandFast('014C', 'commandedThrottleActuator');
+              this.parseCommandedThrottleActuator(r3);
+            }
             if (this.isPidSupported('0149')) {
               const r4 = await this.sendCommandFast('0149', 'acceleratorPosD');
               this.parseAcceleratorPosD(r4);

@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.70',
+    date: '27 Mayis 2026',
+    items: [
+      'KRİTİK HATA DÜZELTİLDİ: Tarama döngüsünde tekrarlanan (duplicate) case etiketleri nedeniyle batarya voltajı, gaz kelebek pozisyonu, yakıt seviyesi, hata sayısı, mutlak kelebek B/C, torque sensörleri ve ivme pedalı hiçbir zaman güncelleNMİYORDU! Tüm sensörler yeniden canlandı.',
+      'Parantez yuvalama hatası düzeltildi: Motor torque sensörleri (0162/0163) yanlışlıkla "PID 0107 destekleniyor mu?" kontrolüne bağlıydı, artık bağımsız çalışıyor.',
+      'USB bağlantısına çift tıklama koruması (_connecting guard) eklendi.',
+      'Tarama döngüsü 12\'den 8 kademeye optimize edildi — aynı sensörler %50 daha sık güncelleniyor.'
+    ],
+  },
+  {
     version: '3.1.69',
     date: '26 Mayis 2026',
     items: [
