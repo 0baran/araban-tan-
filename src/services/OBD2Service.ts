@@ -1671,11 +1671,11 @@ class OBD2Service {
     const last = this.lastPollTimes[key] || 0;
     const isPriority = this.priorityPids.has(key);
 
-    // Priority: Her döngüde sor ( ELM327 bant genişliği elverdikçe ) -> 1000ms
-    // Arkaplan: 10 saniyede bir sor (yavaş keşif)
-    const interval = isPriority ? 1000 : 10000;
+    // Öncelikli sensörler (Ekranda görünenler) olabildiğince hızlı (0ms) güncellenir.
+    // Ekranda görünmeyen arkaplan sensörleri 5 saniyede bir sorulur.
+    const interval = isPriority ? 0 : 5000;
 
-    if (now - last > interval) {
+    if (now - last >= interval) {
       this.lastPollTimes[key] = now;
       return true;
     }
@@ -1735,13 +1735,6 @@ class OBD2Service {
     if (cmd.startsWith('01') && cmd.length === 4) {
       if (!this.canPoll(cmd)) {
         return '';
-      }
-      // AI v2.0 FAST_PIDS Logic (Maximize Speed for UI Expansion)
-      const isFast = ['0C', '0D', '0B', '10', '11', '22', '23', '14', '15', '16', '17', '18', '19', '1A', '1B'].includes(cmd.substring(2));
-      if (!isFast) {
-        if (this.lastPollTimes[cmd] && now - this.lastPollTimes[cmd] < 2000) {
-          return ''; // Yavas degisen sensorleri 2 saniyede bir guncelle
-        }
       }
       this.lastPollTimes[cmd] = now;
     }

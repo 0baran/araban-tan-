@@ -6,6 +6,15 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.71',
+    date: '27 Mayis 2026',
+    items: [
+      'VERİ AKIŞI DONMA SORUNU ÇÖZÜLDÜ: Ekranda görünen sensörlerin 1 saniye, arkaplandaki veya özel sensörlerin ise 2 saniye zorunlu beklemeye tabi tutulması (throttle) sebebiyle oluşan değer donmaları (lag/freezing) tamamen kaldırıldı.',
+      'Öncelikli sensörler (ekranda baktığınız sensörler) artık 0ms bekleme ile ELM327 çipi ne kadar hızlı veri yollayabiliyorsa o hızda güncelleniyor. Ekranda görünmeyen sensörler bant genişliğini korumak için 5 saniyede bir taranıyor.',
+      'Sonuç: Araçtan gelen veriler artık "kare kare" değil, son derece akıcı ve anlık (real-time) akacak.'
+    ],
+  },
+  {
     version: '3.1.70',
     date: '27 Mayis 2026',
     items: [
