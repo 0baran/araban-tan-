@@ -1,400 +1,332 @@
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
-import {obd2Service, OBD2Data} from '../services/OBD2Service';
-import {loadSettings, getSettings} from '../services/AppSettings';
+import {accelerometer, setUpdateIntervalForType, SensorTypes} from 'react-native-sensors';
+import {obd2Service} from '../services/OBD2Service';
+import CyberBar from '../components/CyberBar';
 import {useTheme} from '../services/ThemeContext';
+
+const {width} = Dimensions.get('window');
 
 interface Props {
   onBack: () => void;
 }
 
-type TimerState = 'idle' | 'ready' | 'running' | 'done';
-
 export default function PerformanceScreen({onBack}: Props) {
-  const {colors} = useTheme();
-  const [data, setData] = useState<OBD2Data | null>(null);
-  const [timerState, setTimerState] = useState<TimerState>('idle');
-  const [elapsed, setElapsed] = useState(0);
-  const [peakSpeed, setPeakSpeed] = useState(0);
-  const [bestTime, setBestTime] = useState<number | null>(null);
-  const [hp, setHp] = useState({whp: 0, bhp: 0});
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef(0);
-  const stateRef = useRef(timerState);
-  const peakSpeedRef = useRef(0);
-  const [fuelCost, setFuelCost] = useState(0);
-  const [fuelUsed, setFuelUsed] = useState(0);
-  const fuelPriceRef = useRef(0);
-  const fuelConsumedRef = useRef(0);
-  const fuelLastUpdateRef = useRef(0);
+  const {theme} = useTheme();
+  
+  const [speed, setSpeed] = useState(0);
+  const [rpm, setRpm] = useState(0);
+  const [hp, setHp] = useState(0);
+  const [torque, setTorque] = useState(0);
 
-  stateRef.current = timerState;
+  // 0-100 Logic
+  const [timerState, setTimerState] = useState<'IDLE' | 'READY' | 'RUNNING' | 'DONE'>('IDLE');
+  const [timerMs, setTimerMs] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+
+  // G-Force
+  const [gForce, setGForce] = useState({x: 0, y: 0, z: 0});
+  const [maxG, setMaxG] = useState(0);
 
   useEffect(() => {
-    obd2Service.requestPriorityPids(['speed', 'rpm', 'maf']);
-    
-    loadSettings().then(() => {
-      fuelPriceRef.current = getSettings().fuelPricePerLiter;
+    // Accelerometer setup
+    setUpdateIntervalForType(SensorTypes.accelerometer, 100);
+    const sub = accelerometer.subscribe(({x, y, z}) => {
+      // 1 G = 9.81 m/s^2
+      const gx = x / 9.81;
+      const gy = y / 9.81;
+      const gz = z / 9.81;
+      setGForce({x: gx, y: gy, z: gz});
+      const currentG = Math.sqrt(gx*gx + gy*gy);
+      if (currentG > maxG) {
+        setMaxG(currentG);
+      }
     });
 
-    obd2Service.onDataUpdate(d => {
-      setData({...d});
-      const now = Date.now();
-      if (fuelLastUpdateRef.current > 0 && d.fuelRate > 0) {
-        const dt = (now - fuelLastUpdateRef.current) / 1000;
-        const l = (d.fuelRate * dt) / 3600;
-        fuelConsumedRef.current += l;
-        setFuelUsed(fuelConsumedRef.current);
-        setFuelCost(fuelConsumedRef.current * fuelPriceRef.current);
-      }
-      fuelLastUpdateRef.current = now;
-      const s = d.speed;
-      if (s > peakSpeedRef.current) {
-        peakSpeedRef.current = s;
-        setPeakSpeed(s);
-      }
-      const st = stateRef.current;
-      if (st === 'idle' && s < 5) {
-        setTimerState('ready');
-      }
-      if (st === 'ready' && s >= 5) {
-        startTimer();
-      }
-      if (st === 'running' && s >= 100) {
-        stopTimer();
-      }
-    });
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      obd2Service.requestPriorityPids([]);
+      sub.unsubscribe();
     };
-  }, []);
+  }, [maxG]);
 
   useEffect(() => {
-    if (data && data.maf > 0) {
-      setHp(obd2Service.calculateHP(data.maf));
+    let interval: NodeJS.Timeout;
+    
+    const obdSub = obd2Service.subscribe((data) => {
+      const currentSpeed = typeof data.speed === 'number' ? data.speed : 0;
+      const currentRpm = typeof data.rpm === 'number' ? data.rpm : 0;
+      const maf = typeof data.maf === 'number' ? data.maf : 0;
+
+      setSpeed(currentSpeed);
+      setRpm(currentRpm);
+
+      // Virtual Dyno (Rough estimation: HP ≈ MAF * 1.25)
+      const estHp = maf > 0 ? maf * 1.25 : 0;
+      setHp(Math.round(estHp));
+      
+      if (currentRpm > 0 && estHp > 0) {
+        const estTorque = (estHp * 7120) / currentRpm; // 7120 instead of 5252 for metric Nm? Actually (HP * 7120) / RPM = Nm
+        setTorque(Math.round(estTorque));
+      } else {
+        setTorque(0);
+      }
+
+      // 0-100 State Machine
+      setTimerState(prev => {
+        if (prev === 'IDLE' && currentSpeed === 0) {
+          return 'READY';
+        }
+        if (prev === 'READY' && currentSpeed > 0) {
+          setStartTime(Date.now());
+          return 'RUNNING';
+        }
+        if (prev === 'RUNNING' && currentSpeed >= 100) {
+          return 'DONE';
+        }
+        if (prev === 'DONE' && currentSpeed === 0) {
+          return 'READY'; // reset
+        }
+        return prev;
+      });
+    });
+
+    if (timerState === 'RUNNING') {
+      interval = setInterval(() => {
+        setTimerMs(Date.now() - startTime);
+      }, 50);
     }
-  }, [data?.maf]);
 
-  const startTimer = () => {
-    startTimeRef.current = Date.now();
-    setTimerState('running');
-    timerRef.current = setInterval(() => {
-      setElapsed((Date.now() - startTimeRef.current) / 1000);
-    }, 50);
-  };
+    return () => {
+      obd2Service.unsubscribe(obdSub);
+      if (interval) clearInterval(interval);
+    };
+  }, [timerState, startTime]);
 
-  const stopTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    const finalTime = (Date.now() - startTimeRef.current) / 1000;
-    setElapsed(finalTime);
-    setTimerState('done');
-    setBestTime(prev => (prev === null || finalTime < prev ? finalTime : prev));
-  };
-
+  const resetMaxG = () => setMaxG(0);
   const resetTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    setElapsed(0);
-    setTimerState('idle');
-    setPeakSpeed(0);
-    peakSpeedRef.current = 0;
+    setTimerState('IDLE');
+    setTimerMs(0);
   };
 
-  const formatTime = (t: number) => {
-    const min = Math.floor(t / 60);
-    const sec = t % 60;
-    return min > 0
-      ? `${min}:${sec.toFixed(1).padStart(4, '0')}`
-      : `${sec.toFixed(1)}s`;
-  };
+  const timerText = (timerMs / 1000).toFixed(2) + ' sn';
 
   return (
-    <SafeAreaView
-      edges={['top', 'bottom', 'left', 'right']}
-      style={[styles.container, {backgroundColor: colors.bg}]}>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.background}]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
-          <Text style={[styles.backText, {color: colors.accent}]}>← GERİ</Text>
+        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+          <Text style={styles.backText}>{'< GERİ'}</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, {color: colors.text}]}>PERFORMANS</Text>
-        <View style={{width: 60}} />
+        <Text style={[styles.title, {color: theme.text}]}>PERFORMANS</Text>
       </View>
 
-      {/* 0-100 TIMER */}
-      <View style={styles.glassCard}>
-        <Text style={styles.cardLabel}>0-100 KM/H SÜRE</Text>
-
-        <View style={styles.timerRow}>
-          <Text
-            style={[
-              styles.timerValue,
-              timerState === 'running' && styles.timerRunning,
-            ]}>
-            {timerState === 'idle' ? '—' : formatTime(elapsed)}
-          </Text>
-        </View>
-
-        <View style={styles.statusRow}>
-          <View style={[styles.statusBadge, statusStyle(timerState)]}>
-            <Text style={styles.statusText}>
-              {timerState === 'idle'
-                ? 'DURAKLAMA'
-                : timerState === 'ready'
-                ? 'HAZIR'
-                : timerState === 'running'
-                ? 'ÖLÇÜM AKTİF'
-                : 'TAMAMLANDI'}
+      <ScrollView contentContainerStyle={styles.scroll}>
+        
+        {/* 0-100 TIMER */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>0-100 km/h TESTİ</Text>
+          <View style={styles.timerDisplay}>
+            <Text style={[styles.timerValue, {color: timerState === 'DONE' ? '#00E676' : '#FFD700'}]}>
+              {timerState === 'IDLE' ? 'DURUN' : timerState === 'READY' ? 'HAZIR' : timerText}
             </Text>
           </View>
-          {bestTime !== null && (
-            <Text style={styles.bestTime}>En iyi: {formatTime(bestTime)}</Text>
-          )}
+          <Text style={styles.timerSub}>Durum: {timerState}</Text>
+          <Text style={styles.timerSub}>Hız: {speed} km/h</Text>
+          <TouchableOpacity style={styles.btn} onPress={resetTimer}>
+            <Text style={styles.btnText}>Sıfırla</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={{flexDirection: 'row', gap: 8, marginTop: 14}}>
-          {timerState === 'done' && (
-            <TouchableOpacity style={styles.resetBtn} onPress={resetTimer}>
-              <Text style={styles.resetBtnText}>TEKRAR</Text>
-            </TouchableOpacity>
-          )}
-          {timerState === 'done' || timerState === 'ready' ? (
-            <TouchableOpacity style={styles.resetBtn} onPress={resetTimer}>
-              <Text style={styles.resetBtnText}>SIFIRLA</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-
-        <Text style={styles.helpText}>
-          {timerState === 'idle'
-            ? '💡 5 km/s altına düşünce otomatik hazır olur.'
-            : timerState === 'ready'
-            ? '⚡ Gaza basınca süre başlar!'
-            : timerState === 'running'
-            ? '⏱️ 100 km/h görülünce durur...'
-            : '✅ Süre kaydedildi. Tekrar dene!'}
-        </Text>
-      </View>
-
-      {/* HP CARD */}
-      <View
-        style={[
-          styles.glassCard,
-          {flexDirection: 'row', justifyContent: 'space-around'},
-        ]}>
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.hpLabel}>Tekerlek BG</Text>
-          <Text style={[styles.hpValue, {color: '#00bfff'}]}>{hp.whp}</Text>
-          <Text style={styles.hpUnit}>WHP</Text>
-        </View>
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.hpLabel}>Motor BG</Text>
-          <Text style={[styles.hpValue, {color: '#00ff7f'}]}>{hp.bhp}</Text>
-          <Text style={styles.hpUnit}>BHP</Text>
-        </View>
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.hpLabel}>MAF</Text>
-          <Text style={[styles.hpValue, {color: '#feca57'}]}>
-            {data?.maf.toFixed(1) || '0.0'}
-          </Text>
-          <Text style={styles.hpUnit}>g/s</Text>
-        </View>
-      </View>
-
-      {/* SPEED + RPM */}
-      <View style={styles.gaugesRow}>
-        <View style={[styles.glassCard, styles.gaugeCardSmall]}>
-          <Text style={styles.gaugeLabelSmall}>HIZ</Text>
-          <Text style={[styles.gaugeVal, {color: '#00ff7f'}]}>
-            {data?.speed || 0}
-          </Text>
-          <Text style={styles.gaugeUnitSmall}>KM/H</Text>
-        </View>
-        <View style={[styles.glassCard, styles.gaugeCardSmall]}>
-          <Text style={styles.gaugeLabelSmall}>MAKS HIZ</Text>
-          <Text style={[styles.gaugeVal, {color: '#ff9ff3'}]}>{peakSpeed}</Text>
-          <Text style={styles.gaugeUnitSmall}>KM/H</Text>
-        </View>
-        <View style={[styles.glassCard, styles.gaugeCardSmall]}>
-          <Text style={styles.gaugeLabelSmall}>DEVİR</Text>
-          <Text style={[styles.gaugeVal, {color: '#00bfff'}]}>
-            {data?.rpm || 0}
-          </Text>
-          <Text style={styles.gaugeUnitSmall}>RPM</Text>
-        </View>
-      </View>
-
-      {/* FUEL COST */}
-      {fuelPriceRef.current > 0 && fuelUsed > 0 && (
-        <View
-          style={[
-            styles.glassCard,
-            {flexDirection: 'row', justifyContent: 'space-around'},
-          ]}>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.hpLabel}>⛽ Yakıt</Text>
-            <Text style={[styles.hpValue, {color: '#e9c46a'}]}>
-              {fuelUsed.toFixed(2)}
-            </Text>
-            <Text style={styles.hpUnit}>L</Text>
+        {/* G-FORCE */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>G-KUVVETİ (G-FORCE)</Text>
+          <View style={styles.gForceContainer}>
+            <View style={styles.gForceCircle}>
+              {/* Ball */}
+              <View style={[styles.gForceBall, {
+                transform: [
+                  { translateX: gForce.x * 50 },
+                  { translateY: -gForce.y * 50 } // invert Y
+                ]
+              }]} />
+              <View style={styles.crosshairH} />
+              <View style={styles.crosshairV} />
+            </View>
           </View>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.hpLabel}>💰 Maliyet</Text>
-            <Text style={[styles.hpValue, {color: '#ffa502'}]}>
-              ₺{fuelCost.toFixed(1)}
-            </Text>
-            <Text style={styles.hpUnit}>TL</Text>
+          <View style={styles.gForceRow}>
+            <Text style={styles.gForceText}>Anlık: {Math.sqrt(gForce.x**2 + gForce.y**2).toFixed(2)} G</Text>
+            <Text style={styles.gForceText}>Maks: {maxG.toFixed(2)} G</Text>
           </View>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.hpLabel}>₺/L</Text>
-            <Text style={[styles.hpValue, {color: '#fff'}]}>
-              {fuelPriceRef.current}
-            </Text>
-            <Text style={styles.hpUnit}>TL</Text>
-          </View>
+          <TouchableOpacity style={styles.btn} onPress={resetMaxG}>
+            <Text style={styles.btnText}>Maks Sıfırla</Text>
+          </TouchableOpacity>
         </View>
-      )}
+
+        {/* VIRTUAL DYNO */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>SANAL DYNO</Text>
+          <View style={styles.dynoRow}>
+            <View style={styles.dynoBox}>
+              <Text style={styles.dynoValue}>{hp}</Text>
+              <Text style={styles.dynoLabel}>HP</Text>
+            </View>
+            <View style={styles.dynoBox}>
+              <Text style={styles.dynoValue}>{torque}</Text>
+              <Text style={styles.dynoLabel}>Nm</Text>
+            </View>
+          </View>
+          <CyberBar value={rpm} max={8000} color="#FF3366" label="RPM" />
+          <Text style={styles.dynoDisclaimer}>*Sadece MAF tabanlı tahmini veridir.</Text>
+        </View>
+
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-const statusStyle = (s: TimerState) => {
-  switch (s) {
-    case 'ready':
-      return {
-        backgroundColor: 'rgba(0, 255, 127, 0.15)',
-        borderColor: '#00ff7f',
-      };
-    case 'running':
-      return {
-        backgroundColor: 'rgba(0, 191, 255, 0.15)',
-        borderColor: '#00bfff',
-      };
-    case 'done':
-      return {
-        backgroundColor: 'rgba(255, 165, 0, 0.15)',
-        borderColor: '#ffa502',
-      };
-    default:
-      return {
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        borderColor: 'rgba(255,255,255,0.1)',
-      };
-  }
-};
-
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#0a0b10'},
+  container: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 16,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
   },
-  backButton: {padding: 8},
-  backText: {color: '#00bfff', fontSize: 16, fontWeight: '700'},
-  title: {color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 1},
-  glassCard: {
-    backgroundColor: 'rgba(30,33,40,0.7)',
-    borderRadius: 24,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
-    marginHorizontal: 16,
-    marginBottom: 16,
+  backButton: {
+    paddingRight: 16,
   },
-  cardLabel: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-    marginBottom: 10,
-  },
-  timerRow: {alignItems: 'center', marginVertical: 10},
-  timerValue: {
-    color: '#fff',
-    fontSize: 52,
-    fontWeight: '900',
-    fontFamily: 'monospace',
-    textShadowColor: 'rgba(0,191,255,0.5)',
-    textShadowOffset: {width: 0, height: 0},
-    textShadowRadius: 15,
-  },
-  timerRunning: {
+  backText: {
     color: '#00bfff',
-    textShadowColor: 'rgba(0,191,255,0.5)',
-    textShadowOffset: {width: 0, height: 0},
-    textShadowRadius: 20,
+    fontSize: 16,
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
   },
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  title: {
+    fontSize: 20,
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
+    letterSpacing: 2,
   },
-  statusBadge: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 10,
+  scroll: {
+    padding: 16,
+  },
+  card: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
     borderWidth: 1,
+    borderColor: '#16213e',
   },
-  statusText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1,
+  cardTitle: {
+    color: '#00d2d3',
+    fontSize: 16,
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
+    marginBottom: 12,
   },
-  bestTime: {color: '#ffa502', fontSize: 13, fontWeight: '700'},
-  resetBtn: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 14,
-    padding: 12,
+  timerDisplay: {
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    backgroundColor: '#0f3460',
+    borderRadius: 8,
+    marginBottom: 8,
   },
-  resetBtnText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 13,
-    letterSpacing: 1,
+  timerValue: {
+    fontSize: 48,
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
   },
-  helpText: {
-    color: 'rgba(255,255,255,0.35)',
-    fontSize: 12,
-    marginTop: 16,
+  timerSub: {
+    color: '#ccc',
+    fontFamily: 'Courier',
+    fontSize: 14,
+    marginBottom: 4,
     textAlign: 'center',
   },
-  hpLabel: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 8,
-  },
-  hpValue: {fontSize: 32, fontWeight: '900'},
-  hpUnit: {color: 'rgba(255,255,255,0.3)', fontSize: 11, marginTop: 2},
-  gaugesRow: {flexDirection: 'row', marginHorizontal: 12},
-  gaugeCardSmall: {
-    flex: 1,
-    marginHorizontal: 4,
+  btn: {
+    backgroundColor: '#e94560',
+    padding: 10,
+    borderRadius: 4,
     alignItems: 'center',
-    paddingVertical: 20,
+    marginTop: 8,
   },
-  gaugeLabelSmall: {
-    color: 'rgba(255,255,255,0.4)',
+  btnText: {
+    color: '#fff',
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
+  },
+  gForceContainer: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  gForceCircle: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 2,
+    borderColor: '#4cd137',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  crosshairH: {
+    position: 'absolute',
+    width: 150,
+    height: 1,
+    backgroundColor: 'rgba(76, 209, 55, 0.3)',
+  },
+  crosshairV: {
+    position: 'absolute',
+    width: 1,
+    height: 150,
+    backgroundColor: 'rgba(76, 209, 55, 0.3)',
+  },
+  gForceBall: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#e84118',
+    position: 'absolute',
+    zIndex: 10,
+  },
+  gForceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  gForceText: {
+    color: '#fbc531',
+    fontFamily: 'Courier',
+    fontSize: 14,
+  },
+  dynoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 16,
+  },
+  dynoBox: {
+    alignItems: 'center',
+  },
+  dynoValue: {
+    color: '#00a8ff',
+    fontSize: 40,
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
+  },
+  dynoLabel: {
+    color: '#7f8fa6',
+    fontSize: 16,
+    fontFamily: 'Courier',
+  },
+  dynoDisclaimer: {
+    color: '#7f8fa6',
     fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 8,
-  },
-  gaugeVal: {fontSize: 28, fontWeight: '900'},
-  gaugeUnitSmall: {color: 'rgba(255,255,255,0.3)', fontSize: 10, marginTop: 2},
+    fontFamily: 'Courier',
+    marginTop: 10,
+    textAlign: 'center',
+  }
 });

@@ -6,6 +6,16 @@ export type VersionEntry = {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: '3.1.75',
+    date: '27 Mayis 2026',
+    items: [
+      'DEV GÜNCELLEME - PERFORMANS TESTİ: Artık 0-100 km/h testi yapabilir, telefon ivmeölçeri ile aracın virajlardaki G-Kuvvetini (G-Force) görebilirsiniz.',
+      'SANAL DYNO EKLENDİ: Hız, devir ve emilen hava miktarı (MAF) hesaplanarak tahmini Beygir (HP) ve Tork anlık olarak çizilir.',
+      'DATALOGGING (TELEMETRİ KAYDI): Yol Bilgisayarı ekranından sürüşünüzü saniye saniye kaydedip, telefona CSV/Excel dosyası olarak dışa aktarabilirsiniz.',
+      'AKTİF SERVİS MODU: Yeni sekme ile, EPB (Elektronik Park Freni) çektirme, DPF Zorla Rejenerasyon başlatma ve Gaz Kelebeği adaptasyonu gibi çift yönlü teşhis komutları eklendi.'
+    ],
+  },
+  {
     version: '3.1.74',
     date: '27 Mayis 2026',
     items: [

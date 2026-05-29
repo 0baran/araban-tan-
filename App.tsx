@@ -24,6 +24,8 @@ import LogScreen from './src/screens/LogScreen';
 import ChangelogScreen from './src/screens/ChangelogScreen';
 import VehiclesScreen from './src/screens/VehiclesScreen';
 import TripSummaryScreen from './src/screens/TripSummaryScreen';
+import TripScreen from './src/screens/TripScreen';
+import ServiceScreen from './src/screens/ServiceScreen';
 import {ThemeProvider, useTheme} from './src/services/ThemeContext';
 import {checkForUpdate, promptUpdate, downloadActive, downloadProgress, onDownloadProgress} from './src/services/UpdateService';
 import {setupUpdateChannel, handleNotificationPress} from './src/services/UpdateNotifications';
@@ -32,7 +34,7 @@ import GaugesContainer from './src/components/GaugesContainer';
 import FeaturesGrid from './src/components/FeaturesGrid';
 import VehicleStatusCard from './src/components/VehicleStatusCard';
 
-const APP_VERSION = '3.1.74';
+const APP_VERSION = '3.1.78';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
   state = {hasError: false, errorMsg: ''};
@@ -327,6 +329,8 @@ function MainScreen() {
       {currentScreen === 'changelog' && <ChangelogScreen {...screenProps} />}
       {currentScreen === 'vehicles' && <VehiclesScreen {...screenProps} />}
       {currentScreen === 'tripsummary' && <TripSummaryScreen {...screenProps} />}
+      {currentScreen === 'trip' && <TripScreen {...screenProps} />}
+      {currentScreen === 'service' && <ServiceScreen {...screenProps} />}
 
       {!currentScreen && (
         <SafeAreaView edges={['top', 'bottom']} style={[styles.container, {backgroundColor: colors.bg}]}>

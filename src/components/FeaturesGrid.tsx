@@ -74,10 +74,10 @@ export default function FeaturesGrid({onNavigate}: FeaturesGridProps) {
         <Text style={[styles.featureLabel, {color: colors.textDim}]}>DONMA NOKTASI</Text>
         <Text style={[styles.featureHint, {color: colors.textMuted}]}>Hata Anı Sensörler</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => onNavigate('datalog')}>
+      <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => onNavigate('trip')}>
         <Text style={styles.featureIcon}>📊</Text>
         <Text style={[styles.featureLabel, {color: colors.textDim}]}>YOL BİLGİSAYARI</Text>
-        <Text style={[styles.featureHint, {color: colors.textMuted}]}>Veri Kaydı & Tüketim</Text>
+        <Text style={[styles.featureHint, {color: colors.textMuted}]}>Telemetri & Log</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => onNavigate('hiddenfeature')}>
         <Text style={styles.featureIcon}>🔧</Text>
@@ -88,6 +88,11 @@ export default function FeaturesGrid({onNavigate}: FeaturesGridProps) {
         <Text style={styles.featureIcon}>⚙️</Text>
         <Text style={styles.featureLabel}>AYARLAR</Text>
         <Text style={styles.featureHint}>Tercihler</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.glassCard, styles.featureCard, {backgroundColor: colors.card}]} onPress={() => onNavigate('service')}>
+        <Text style={styles.featureIcon}>🛠️</Text>
+        <Text style={[styles.featureLabel, {color: '#e74c3c'}]}>AKTİF SERVİS</Text>
+        <Text style={styles.featureHint}>EPB & DPF Kodlama</Text>
       </TouchableOpacity>
     </View>
   );
