@@ -140,6 +140,24 @@ export default function FeaturesGrid({onNavigate}: FeaturesGridProps) {
         style={[
           styles.glassCard,
           styles.featureCard,
+          {backgroundColor: colors.card, borderColor: '#00ff88', borderWidth: 1},
+        ]}
+        onPress={() => onNavigate('aidiagnostic')}>
+        <Text style={styles.featureIcon}>🧠</Text>
+        <Text style={[styles.featureValue, {fontSize: 20, color: '#00ff88'}]}>
+          AI TEST
+        </Text>
+        <Text style={[styles.featureLabel, {color: colors.textDim}]}>
+          YAPAY ZEKA
+        </Text>
+        <Text style={[styles.featureHint, {color: colors.textMuted}]}>
+          Erken Uyarı
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.glassCard,
+          styles.featureCard,
           {backgroundColor: colors.card},
         ]}
         onPress={() => onNavigate('freezeframe')}>

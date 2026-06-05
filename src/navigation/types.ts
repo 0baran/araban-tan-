@@ -14,8 +14,9 @@ export type RootStackParamList = {
   Changelog: undefined;
   Vehicles: undefined;
   TripSummary: undefined;
-  Trip: undefined;
+  Trip: { tripId: string };
   Service: undefined;
+  AIDiagnostic: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

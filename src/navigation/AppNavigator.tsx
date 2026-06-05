@@ -19,6 +19,7 @@ import VehiclesScreen from '../screens/VehiclesScreen';
 import TripSummaryScreen from '../screens/TripSummaryScreen';
 import TripScreen from '../screens/TripScreen';
 import ServiceScreen from '../screens/ServiceScreen';
+import { AIDiagnosticScreen } from '../screens/AIDiagnosticScreen';
 
 function withNavProps(Component: React.ComponentType<any>) {
   return function ScreenWithNav(props: any) {
@@ -80,8 +81,9 @@ export default function AppNavigator() {
         name="TripSummary"
         component={withNavProps(TripSummaryScreen)}
       />
-      <Stack.Screen name="Trip" component={withNavProps(TripScreen)} />
-      <Stack.Screen name="Service" component={withNavProps(ServiceScreen)} />
+      <Stack.Screen name="Trip" component={TripScreen} />
+      <Stack.Screen name="Service" component={ServiceScreen} />
+      <Stack.Screen name="AIDiagnostic" component={AIDiagnosticScreen} />
     </Stack.Navigator>
   );
 }

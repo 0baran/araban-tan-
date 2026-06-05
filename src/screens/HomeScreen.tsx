@@ -427,6 +427,7 @@ export default function HomeScreen() {
     tripsummary: 'TripSummary',
     trip: 'Trip',
     service: 'Service',
+    aidiagnostic: 'AIDiagnostic',
   };
 
   const navigate = async (screen: string | null) => {
