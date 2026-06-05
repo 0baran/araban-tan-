@@ -1,5 +1,5 @@
 {
-  "version": "3.2.0",
-  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.0/ArabaniTani-release-v3.2.0.apk",
-  "notes": "v3.2.0: Performans Modu (0-100, G-Kuvveti, Dyno), Yeni Sensör Paketleri ve Hata Gidermeleri!"
+  "version": "3.2.1",
+  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.1/ArabaniTani-release-v3.2.1.apk",
+  "notes": "Test Güncellemesi: GitHub Actions otomatik APK derleme sistemi eklendi!"
 }
