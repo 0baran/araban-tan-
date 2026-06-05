@@ -1,5 +1,5 @@
 {
-  "version": "3.2.3",
-  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.3/ArabaniTani-release-v3.2.3.apk",
-  "notes": "Hata Düzeltmesi: Sürekli güncelleme uyarısı veren sonsuz döngü hatası (Infinite Update Loop) giderildi!"
+  "version": "3.2.4",
+  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.4/ArabaniTani-release-v3.2.4.apk",
+  "notes": "Hata Düzeltmesi: Otomatik kurulum penceresinin açılmaması ve bildirim sorunu giderildi! (Eski çalışan sisteme geri dönüldü)"
 }
