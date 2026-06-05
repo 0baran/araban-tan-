@@ -12,480 +12,20 @@ import { getSettings } from './AppSettings';
 import notifee, { AndroidImportance, AndroidForegroundServiceType, EventType } from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
 import { OemSensorDef, OEM_SENSORS, detectBrandFromVIN } from './OemSensors';
+import {
+  OBD2Data, MonitorStatus, TripData, DTC, FreezeFrameData,
+  ConnectionState, ConnectionType, ConnectionConfig,
+  OBD2Callback, ConnectionCallback, Transport,
+  OBD2_PROTOCOLS, PROTOCOL_LABELS, ELM_CONSTANTS,
+} from '../types/OBD2Types';
+import {BluetoothTransport} from './transport/BluetoothTransport';
+import {UsbTransport} from './transport/UsbTransport';
+import {WiFiTransport} from './transport/WiFiTransport';
 
 const STORAGE_LAST_DEVICE = '@arabanitani/last_device';
 const STORAGE_LAST_TYPE = '@arabanitani/connection_type';
 
-export type ConnectionType = 'bluetooth' | 'wifi' | 'usb' | 'simulation';
-
-export type ConnectionConfig = {
-  type: ConnectionType;
-  address?: string;
-  name?: string;
-  ip?: string;
-  port?: number;
-};
-
-export type OBD2Data = {
-  rpm: number;
-  speed: number;
-  coolantTemp: number;
-  engineLoad: number;
-  intakeTemp: number;
-  maf: number;
-  throttlePos: number;
-  fuelLevel: number;
-  fuelPressure: number;
-  timingAdvance: number;
-  map: number;
-  batteryVoltage: number;
-  ambientTemp: number;
-  shortTermFuelTrim: number;
-  longTermFuelTrim: number;
-  commandedAFR: number;
-  barometricPressure: number;
-  absoluteLoad: number;
-  relativeThrottlePos: number;
-  ethanolPercent: number;
-  fuelSystemStatus: string;
-  o2Sensor1Voltage: number;
-  o2Sensor2Voltage: number;
-  catalystTempBank1: number;
-  shortTermFuelTrim2: number;
-  longTermFuelTrim2: number;
-  distanceSinceDTCClear: number;
-  fuelRailPressureRelative: number;
-  runTime: number;
-  engineOilTemp: number;
-  fuelRate: number;
-  fuelConsumption: number;
-  distanceWithMIL: number;
-  timeSinceDTCClear: number;
-  absoluteThrottleB: number;
-  absoluteThrottleC: number;
-  commandedThrottleActuator: number;
-  acceleratorPosD: number;
-  warmUpsSinceDTCClear: number;
-  fuelType: string;
-  timeWithMIL: number;
-  injectionTiming: number;
-  catalystTempBank2: number;
-  wideRangeO2B1S1: number;
-  acceleratorPosE: number;
-  acceleratorPosF: number;
-  fuelRailPressureAbsolute: number;
-  egtBank1: number;
-  evapVaporPressure: number;
-  relativePedalPos: number;
-  commandedEgr: number;
-  egrError: number;
-  commandedEvapPurge: number;
-  o2B1S1EquivRatio: number;
-  o2B1S2EquivRatio: number;
-  actualEgr: number;
-  egrErrorDuty: number;
-  commandedEvapPurgeFlow: number;
-  milOn: boolean;
-  dtcCount: number;
-  actualEngineTorque: number;
-  driverDemandTorque: number;
-  engineReferenceTorque: number;
-  turboBoostPressure: number;
-  odometer: number;
-  hybridBatteryLife: number;
-  dpfDifferentialPressure: number;
-  dpfTemp: number;
-  exhaustPressure: number;
-  turboRpm: number;
-  chargeAirCoolerTemp: number;
-  fuelRailGaugePressure: number;
-  engineFuelRate: number;
-  
-  engineFrictionTorque: number;
-  distanceSinceDTCClearHighRes: number;
-  throttlePositionG: number;
-  secondaryAirStatus: string;
-  obdStandard: string;
-  evapVaporPressureAbsolute: number;
-  egtBank2: number;
-  turboCompressorInletPressure: number;
-  vgtControl: number;
-  wastegateControl: number;
-  turboTemp: number;
-  fuelPressureControl: number;
-  injectionPressureControl: number;
-  catalystTempBank1Sensor2: number;
-  catalystTempBank2Sensor2: number;
-  boostPressureControl: number;
-  dpfBypassPressure: number;
-  noxNTEControlStatus: number;
-  pmNTEControlStatus: number;
-  engineAuxiliarySupported: string;
-  o2Sensor3Voltage: number;
-  o2Sensor4Voltage: number;
-  o2Sensor5Voltage: number;
-  o2Sensor6Voltage: number;
-  o2Sensor7Voltage: number;
-  o2Sensor8Voltage: number;
-  shortTermO2TrimB1: number;
-  longTermO2TrimB1: number;
-  mafSensorA: number;
-  mafSensorB: number;
-  engineCoolantTemp2: number;
-  intakeAirTemp2: number;
-  engineRunTime: number;
-  widebandO2S1: number;
-  widebandO2S2: number;
-  widebandO2S3: number;
-  _validKeys?: string[];
-};
-
-export type MonitorStatus = {
-  milOn: boolean;
-  dtcCount: number;
-  tests: {name: string; available: boolean; completed: boolean}[];
-};
-
-export type TripData = {
-  startTime: number;
-  distanceKm: number;
-  fuelUsedL: number;
-  avgSpeed: number;
-  maxSpeed: number;
-  avgConsumption: number;
-};
-
-export type DTC = {
-  code: string;
-  description: string;
-};
-
-export type FreezeFrameData = {
-  dtc: DTC | null;
-  rpm: number;
-  speed: number;
-  coolantTemp: number;
-  engineLoad: number;
-  intakeTemp: number;
-  maf: number;
-  throttlePos: number;
-  fuelLevel: number;
-  map: number;
-  timingAdvance: number;
-  shortTermFuelTrim: number;
-  longTermFuelTrim: number;
-  commandedAFR: number;
-};
-
-export type ConnectionState =
-  | 'disconnected'
-  | 'connecting'
-  | 'connected'
-  | 'background'
-  | 'error';
-
-export const OBD2_PROTOCOLS: {value: string; label: string}[] = [
-  {value: '0', label: 'Otomatik (Tüm Protokoller)'},
-  {value: '1', label: 'SAE J1850 PWM (Eski Ford / Mazda)'},
-  {value: '2', label: 'SAE J1850 VPW (Eski GM / Chevrolet)'},
-  {value: '3', label: 'ISO 9141-2 (Eski Avrupa / Asya / Chrysler)'},
-  {value: '4', label: 'ISO 14230-4 KWP (VAG / Avrupa 5 baud)'},
-  {value: '5', label: 'ISO 14230-4 KWP (VAG / Avrupa fast init)'},
-  {value: '6', label: 'ISO 15765-4 CAN (Standart Modern Araçlar)'},
-  {value: '7', label: 'ISO 15765-4 CAN (Asya / HD 29 bit)'},
-  {value: '8', label: 'ISO 15765-4 CAN (11 bit, 250 kbaud)'},
-  {value: '9', label: 'ISO 15765-4 CAN (29 bit, 250 kbaud)'},
-  {value: 'A', label: 'SAE J1939 CAN (Ağır Vasıta / Kamyon)'},
-  {value: 'B', label: 'USER1 CAN (Ford MS-CAN / 125 kbaud)'},
-  {value: 'C', label: 'USER2 CAN (GM/Fiat SW-CAN / 50 kbaud)'},
-];
-
-const PROTOCOL_LABELS: Record<string, string> = {
-  '1': 'SAE J1850 PWM',
-  '2': 'SAE J1850 VPW',
-  '3': 'ISO 9141-2',
-  '4': 'ISO 14230-4 KWP (5 baud)',
-  '5': 'ISO 14230-4 KWP (fast)',
-  '6': 'ISO 15765-4 CAN (11b 500k)',
-  '7': 'ISO 15765-4 CAN (29b 500k)',
-  '8': 'ISO 15765-4 CAN (11b 250k)',
-  '9': 'ISO 15765-4 CAN (29b 250k)',
-  A: 'SAE J1939 CAN',
-  B: 'USER1 CAN (125k)',
-  C: 'USER2 CAN (50k)',
-};
-
-type OBD2Callback = (data: OBD2Data) => void;
-type ConnectionCallback = (state: ConnectionState, message?: string) => void;
-
-type Transport = {
-  connect(onProgress?: (msg: string) => void): Promise<boolean>;
-  disconnect(): Promise<void>;
-  write(data: string): Promise<void>;
-  readAll(): Promise<string>;
-  isAvailable(): Promise<number>;
-};
-
-class BluetoothTransport implements Transport {
-  private device: BluetoothDevice | null = null;
-  address: string;
-
-  constructor(address: string) {
-    this.address = address;
-  }
-
-  async connect(onProgress?: (msg: string) => void): Promise<boolean> {
-    onProgress?.('Önceki bağlantılar temizleniyor...');
-    try {
-      await RNBluetoothClassic.disconnectFromDevice(this.address);
-    } catch (_) {}
-    await new Promise(r => setTimeout(r, 200));
-
-    const attempts: {opts: any; label: string}[] = [
-      {
-        opts: {
-          CONNECTOR_TYPE: 'rfcomm',
-          DELIMITER: '\r',
-          SECURE_SOCKET: false,
-        } as any,
-        label: 'Normal bağlantı',
-      },
-      {
-        opts: {SECURE_SOCKET: true, DELIMITER: '\r'} as any,
-        label: 'Güvenli bağlantı',
-      },
-    ];
-    for (let i = 0; i < attempts.length; i++) {
-      const label = `${i + 1}/${attempts.length} - ${attempts[i].label}`;
-      onProgress?.(`${label} (en fazla ${CONNECT_TIMEOUT / 1000}sn)...`);
-      try {
-        this.device = await Promise.race([
-          RNBluetoothClassic.connectToDevice(this.address, attempts[i].opts),
-          new Promise<any>((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), CONNECT_TIMEOUT),
-          ),
-        ]);
-        onProgress?.('Bağlantı başarılı');
-        return !!this.device;
-      } catch (e: any) {
-        const reason = e?.message?.includes('Timeout') ? 'süre aşımı' : 'hata';
-        console.log(`BT connect try ${i + 1} failed:`, e);
-        onProgress?.(`${label} başarısız (${reason})`);
-        try {
-          await RNBluetoothClassic.disconnectFromDevice(this.address);
-        } catch (_) {}
-        await new Promise(r => setTimeout(r, 500));
-      }
-    }
-    onProgress?.('Bağlantı denemeleri başarısız');
-    return false;
-  }
-
-  async disconnect(): Promise<void> {
-    if (this.device) {
-      try {
-        await this.device.disconnect();
-      } catch (_) {}
-      this.device = null;
-    }
-  }
-
-  async write(data: string): Promise<void> {
-    if (!this.device) {
-      throw new Error('Device not connected');
-    }
-    await this.device.write(data);
-  }
-
-  async readAll(): Promise<string> {
-    if (!this.device) {
-      return '';
-    }
-    let data = '';
-    try {
-      while ((await this.device.available()) > 0) {
-        const chunk = await this.device.read();
-        if (chunk) {
-          data += chunk;
-        }
-      }
-    } catch (_) {}
-    return data;
-  }
-
-  async isAvailable(): Promise<number> {
-    if (!this.device) {
-      return 0;
-    }
-    try {
-      return await this.device.available();
-    } catch {
-      return 0;
-    }
-  }
-}
-
-class UsbTransport implements Transport {
-  private RNSerialport: any = null;
-  private buffer = '';
-  private _subscription: any = null;
-
-  async connect(_onProgress?: (msg: string) => void): Promise<boolean> {
-    const mod = require('react-native-usb-serialport');
-    this.RNSerialport = mod.RNSerialport;
-    if (!this.RNSerialport) {
-      throw new Error('react-native-usb-serialport modülü bulunamadı');
-    }
-    const devices = await this.RNSerialport.listDevices();
-    if (!devices || devices.length === 0) {
-      throw new Error('USB ELM327 cihazı bulunamadı');
-    }
-    const dev = devices[0];
-    const devId = dev.deviceId || dev.path || dev.name || dev.vendorId;
-    if (!devId) {
-      throw new Error('USB cihaz ID alınamadı');
-    }
-    await this.RNSerialport.openDevice(devId);
-    await this.RNSerialport.setParams(38400, 8, 1, 0, 0);
-    if (this.RNSerialport.onReceived) {
-      this._subscription = this.RNSerialport.onReceived((data: string) => {
-        this.buffer += data;
-      });
-    }
-    return true;
-  }
-
-  async disconnect(): Promise<void> {
-    if (this._subscription) {
-      try {
-        this._subscription.remove();
-      } catch {}
-      this._subscription = null;
-    }
-    if (this.RNSerialport) {
-      try {
-        await this.RNSerialport.closeDevice();
-      } catch {}
-      this.RNSerialport = null;
-    }
-    this.buffer = '';
-  }
-
-  async write(data: string): Promise<void> {
-    if (!this.RNSerialport) {
-      throw new Error('USB not connected');
-    }
-    await this.RNSerialport.sendData(data);
-  }
-
-  async readAll(): Promise<string> {
-    const d = this.buffer;
-    this.buffer = '';
-    return d;
-  }
-
-  async isAvailable(): Promise<number> {
-    return this.buffer.length;
-  }
-}
-
-class WiFiTransport implements Transport {
-  private socket: any = null;
-  private ip: string;
-  private port: number;
-  private buffer = '';
-  private TcpSocket: any = null;
-
-  constructor(ip: string, port: number = 35000) {
-    this.ip = ip;
-    this.port = port;
-  }
-
-  async connect(_onProgress?: (msg: string) => void): Promise<boolean> {
-    try {
-      this.TcpSocket = require('react-native-tcp-socket');
-    } catch {
-      throw new Error('react-native-tcp-socket modülü bulunamadı');
-    }
-    return new Promise((resolve, reject) => {
-      try {
-        const client = this.TcpSocket.createConnection(
-          {
-            host: this.ip,
-            port: this.port,
-            timeout: 10000,
-          },
-          () => {
-            this.socket = client;
-            resolve(true);
-          },
-        );
-        client.on('error', (err: any) => {
-          reject(err);
-        });
-        client.on('timeout', () => {
-          client.destroy();
-          reject(new Error('Timeout'));
-        });
-        client.on('data', (data: any) => {
-          this.buffer += data.toString();
-        });
-      } catch (err) {
-        reject(err);
-      }
-    });
-  }
-
-  async disconnect(): Promise<void> {
-    if (this.socket) {
-      try {
-        this.socket.destroy();
-      } catch (_) {}
-      this.socket = null;
-    }
-    this.buffer = '';
-  }
-
-  async write(data: string): Promise<void> {
-    if (!this.socket) {
-      throw new Error('Socket not connected');
-    }
-    return new Promise((resolve, reject) => {
-      this.socket.write(data, (err: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  async readAll(): Promise<string> {
-    const data = this.buffer;
-    this.buffer = '';
-    return data;
-  }
-
-  async isAvailable(): Promise<number> {
-    return this.buffer.length;
-  }
-}
-
 import {DTC_DESCRIPTIONS} from './DTCDatabase';
-
-// Zamanlama sabitleri
-const ATZ_RESET_DELAY = 2000;
-const AT_CMD_DELAY = 300;
-const ATSP_DELAY = 800;
-const WRITE_DELAY = 150;
-const READ_POLL_INTERVAL = 40; // Bridge overload önlemek için 20 -> 40
-const READ_MAX_POLLS = 50; // 2000ms timeout
-const READ_EMPTY_LIMIT = 5;
-const FAST_WRITE_DELAY = 15; // ELM327'ye nefes alma süresi (5 -> 15)
-const FAST_POLL_INTERVAL = 25; // RN Bridge donmalarını önlemek için 10 -> 25
-const FAST_MAX_POLLS = 20; // 500ms timeout
-const CONNECT_TIMEOUT = 10000;
 
 class OBD2Service {
   private commandLock: Promise<void> = Promise.resolve();
@@ -1333,18 +873,18 @@ class OBD2Service {
     try {
       await t.readAll();
       await this.enqueueWrite(() => t.write(cmd + '\r'));
-      await this.delay(WRITE_DELAY);
+      await this.delay(ELM_CONSTANTS.WRITE_DELAY);
       let response = '';
       let emptyCount = 0;
-      for (let i = 0; i < READ_MAX_POLLS; i++) {
-        await this.delay(READ_POLL_INTERVAL);
+      for (let i = 0; i < ELM_CONSTANTS.READ_MAX_POLLS; i++) {
+        await this.delay(ELM_CONSTANTS.READ_POLL_INTERVAL);
         const chunk = await t.readAll();
         if (chunk) {
           response += chunk;
           emptyCount = 0;
         } else {
           emptyCount++;
-          if (emptyCount > READ_EMPTY_LIMIT && response.length > 0) {
+          if (emptyCount > ELM_CONSTANTS.READ_EMPTY_LIMIT && response.length > 0) {
             break;
           }
         }
@@ -1436,36 +976,36 @@ class OBD2Service {
   private async initializeELM327(): Promise<boolean> {
     // Ultimate Init Sequence (AndrOBD / Python-OBD Standards)
     await this.sendCommand('ATZ');
-    await this.delay(ATZ_RESET_DELAY);
+    await this.delay(ELM_CONSTANTS.ATZ_RESET_DELAY);
     await this.sendCommand('ATE0');
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     await this.sendCommand('ATL0');
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     await this.sendCommand('ATS0');
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     await this.sendCommand('ATH0'); // Headers Off
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     await this.sendCommand('ATST32'); // Timeout to 200ms for responsiveness
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     await this.sendCommand('ATAT1'); // Adaptive Timing Auto 1
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     await this.sendCommand('ATST62'); // Set Timeout (faster recovery)
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
 
     this.supportedPids.clear();
     
     if (getSettings().rangeRoverLegacyMode) {
       console.log('initializeELM327: Eski Range Rover Modu aktif. Özel AT komutları gönderiliyor...');
       await this.sendCommand('ATSP5'); // KWP Fast Init
-      await this.delay(ATSP_DELAY);
+      await this.delay(ELM_CONSTANTS.ATSP_DELAY);
       await this.sendCommand('ATIIA14'); // Init Address 14
-      await this.delay(AT_CMD_DELAY);
+      await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
       await this.sendCommand('ATWM8114F3'); // Wakeup Message
-      await this.delay(AT_CMD_DELAY);
+      await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
       await this.sendCommand('ATSH8114F3'); // Header
-      await this.delay(AT_CMD_DELAY);
+      await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
       await this.sendCommand('ATFI'); // Fast Init
-      await this.delay(ATSP_DELAY);
+      await this.delay(ELM_CONSTANTS.ATSP_DELAY);
       const rrResp = await this.sendCommand('0100');
       if (rrResp && !rrResp.includes('UNABLE') && !rrResp.includes('NO DATA')) {
         this.currentProtocolLabel = 'Range Rover EAS / ISO 14230-4 KWP';
@@ -1478,11 +1018,11 @@ class OBD2Service {
     }
 
     await this.sendCommand('ATSP0');
-    await this.delay(ATSP_DELAY);
+    await this.delay(ELM_CONSTANTS.ATSP_DELAY);
     // Smart Timeout Logic (AT ST)
     // We will set this dynamically after protocol detection, but for now ATSP0 will auto-detect
     await this.sendCommand('ATST19'); // Default 100ms for FAST CAN responses
-    await this.delay(AT_CMD_DELAY);
+    await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
     const testResp = await this.sendCommand('0100');
     if (
       testResp &&
@@ -1501,7 +1041,7 @@ class OBD2Service {
     const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
     for (const proto of tryProtocols) {
       await this.sendCommand(`ATSP${proto}`);
-      await this.delay(AT_CMD_DELAY);
+      await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
       const resp = await this.sendCommand('0100');
       if (
         resp &&
@@ -1751,10 +1291,10 @@ class OBD2Service {
     try {
       await t.readAll();
       await this.enqueueWrite(() => t.write(cmd + '\r'));
-      await this.delay(FAST_WRITE_DELAY);
+      await this.delay(ELM_CONSTANTS.FAST_WRITE_DELAY);
       let response = '';
-      for (let i = 0; i < FAST_MAX_POLLS; i++) {
-        await this.delay(FAST_POLL_INTERVAL);
+      for (let i = 0; i < ELM_CONSTANTS.FAST_MAX_POLLS; i++) {
+        await this.delay(ELM_CONSTANTS.FAST_POLL_INTERVAL);
         const chunk = await t.readAll();
         if (chunk) {
           response += chunk;
@@ -3492,6 +3032,23 @@ class OBD2Service {
     }
   }
 
+  async readPermanentDTCs(): Promise<DTC[]> {
+    if (this.isSimulating) {
+      return [
+        {code: 'P0600', description: 'Seri İletişim Bağlantı Hatası - Kalıcı'},
+      ];
+    }
+    if (!this._isConnected || !this.transport) {
+      return [];
+    }
+    try {
+      const response = await this.sendCommand('0A');
+      return this.parseDTCs(response);
+    } catch {
+      return [];
+    }
+  }
+
   private parseFreezeFrameRPM(response: string): number {
     const clean = response.replace(/\s/g, '');
     if (clean.startsWith('420C') && clean.length >= 8) {
@@ -4152,3 +3709,9 @@ class OBD2Service {
 }
 
 export const obd2Service = new OBD2Service();
+
+export type {
+  OBD2Data, MonitorStatus, TripData, DTC, FreezeFrameData,
+  ConnectionState, ConnectionType, ConnectionConfig,
+} from '../types/OBD2Types';
+export { OBD2_PROTOCOLS } from '../types/OBD2Types';
