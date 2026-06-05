@@ -1,6 +1,6 @@
 {
     "name": "ProCarScanner",
-    "version": "3.2.5",
+    "version": "3.2.6",
     "private": true,
     "scripts": {
         "android": "react-native run-android",
@@ -25,9 +25,7 @@
         "react-native-safe-area-context": "^5.8.0",
         "react-native-screens": "^3.37.0",
         "react-native-sensors": "^7.3.6",
-        "react-native-tcp-socket": "^6.4.1",
-        "react-native-tts": "^4.1.1",
-        "react-native-usb-serialport": "^3.0.0"
+        "react-native-tcp-socket": "^6.4.1"
     },
     "devDependencies": {
         "@babel/core": "^7.20.0",

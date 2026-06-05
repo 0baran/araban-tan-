@@ -6,8 +6,8 @@ export class UsbTransport implements Transport {
   private _subscription: any = null;
 
   async connect(_onProgress?: (msg: string) => void): Promise<boolean> {
-    const mod = require('react-native-usb-serialport');
-    this.RNSerialport = mod.RNSerialport;
+    // const mod = require('react-native-usb-serialport');
+    // this.RNSerialport = mod.RNSerialport;
     if (!this.RNSerialport) {
       throw new Error('react-native-usb-serialport modülü bulunamadı');
     }

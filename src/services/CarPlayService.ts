@@ -7,18 +7,24 @@ class CarPlayService {
   private isConnected = false;
 
   constructor() {
-    CarPlay.registerOnConnect(() => {
-      this.isConnected = true;
-      this.initTemplate();
-    });
+    try {
+      if (CarPlay) {
+        CarPlay.registerOnConnect(() => {
+          this.isConnected = true;
+          this.initTemplate();
+        });
 
-    CarPlay.registerOnDisconnect(() => {
-      this.isConnected = false;
-      if (this.unsubscribe) {
-        this.unsubscribe();
-        this.unsubscribe = null;
+        CarPlay.registerOnDisconnect(() => {
+          this.isConnected = false;
+          if (this.unsubscribe) {
+            this.unsubscribe();
+            this.unsubscribe = null;
+          }
+        });
       }
-    });
+    } catch (e) {
+      console.warn('CarPlay not supported', e);
+    }
   }
 
   private initTemplate() {
@@ -43,7 +49,11 @@ class CarPlayService {
       }
     });
 
-    CarPlay.setRootTemplate(this.template);
+    try {
+      if (CarPlay) {
+        CarPlay.setRootTemplate(this.template);
+      }
+    } catch (e) {}
 
     this.startListening();
   }
