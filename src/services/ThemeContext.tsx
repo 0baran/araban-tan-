@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
+import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {loadSettings, saveSettings} from './AppSettings';
 

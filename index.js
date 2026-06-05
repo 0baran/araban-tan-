@@ -16,7 +16,10 @@ notifee.registerForegroundService(() => {
 import {obd2Service} from './src/services/OBD2Service';
 
 notifee.onBackgroundEvent(async ({type, detail}) => {
-  if (type === EventType.ACTION_PRESS && detail.pressAction?.id === 'disconnect_obd') {
+  if (
+    type === EventType.ACTION_PRESS &&
+    detail.pressAction?.id === 'disconnect_obd'
+  ) {
     await obd2Service.disconnectTransport();
   }
 });

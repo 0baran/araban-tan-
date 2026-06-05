@@ -714,7 +714,8 @@ export const DTC_DESCRIPTIONS: Record<string, string> = {
   P0424: 'Katalitik Konvertör Sıcaklığı Eşik Altı (Banka 1)',
   P0446: 'Buhar Emisyon Kontrol Sistemi Havalandırma Kontrol Devresi',
   P0447: 'Buhar Emisyon Kontrol Sistemi Havalandırma Kontrol Devresi Açık',
-  P0448: 'Buhar Emisyon Kontrol Sistemi Havalandırma Kontrol Devresi Kısa Devre',
+  P0448:
+    'Buhar Emisyon Kontrol Sistemi Havalandırma Kontrol Devresi Kısa Devre',
   P0449: 'Buhar Emisyon Kontrol Sistemi Havalandırma Valfi/Solenoid Devresi',
   P0450: 'Buhar Emisyon Sistemi Basınç Sensörü Arızası',
   P0457: 'Buhar Emisyon Sistemi Sızıntı Tespiti (Yakıt Kapağı Gevşek/Eksik)',
@@ -2886,7 +2887,6 @@ export const DTC_DESCRIPTIONS: Record<string, string> = {
   C0985: 'Teker Hız Sensörü Rulman Boşluğu',
   C0986: 'Teker Hız Sensörü Değişim Zamanı',
   C1000: 'Araç Dinamik Kontrol Sistemi Arızalı',
-
 };
 
 export function getDTCCategory(code: string): string {
@@ -2996,17 +2996,20 @@ export const DTC_AI_ADVICE: Record<string, AimechanicAdvice> = {
       '1. Benzin kapağının gevşek veya contasının yırtık olup olmadığına bakın (En yaygın sebep!). 2. Karbon kanister hortumlarını kontrol edin.',
   },
   P0299: {
-    cause: 'Turbo besleme basıncı normalden düşük. Turbo yetersiz basınç üretiyor.',
+    cause:
+      'Turbo besleme basıncı normalden düşük. Turbo yetersiz basınç üretiyor.',
     advice:
       '1. Turbo hortumlarında kaçak veya çatlak olup olmadığını kontrol edin. 2. Atık kapısı (wastegate) sıkışmış olabilir. 3. Hava filtresini ve emme sistemini kontrol edin. 4. VGT/vane aktüatörü arızalı olabilir.',
   },
   P0128: {
-    cause: 'Motor soğutma sıvısı sıcaklığı normal çalışma sıcaklığına ulaşamıyor.',
+    cause:
+      'Motor soğutma sıvısı sıcaklığı normal çalışma sıcaklığına ulaşamıyor.',
     advice:
       '1. Termostat sürekli açık kalmış olabilir (en yaygın sebep). 2. Soğutma sıvısı seviyesini kontrol edin. 3. Soğutma sıvısı sıcaklık sensörü arızalı olabilir.',
   },
   P0A80: {
-    cause: 'Hibrit batarya paketi değiştirilmelidir. Batarya performansı kritik seviyenin altına düştü.',
+    cause:
+      'Hibrit batarya paketi değiştirilmelidir. Batarya performansı kritik seviyenin altına düştü.',
     advice:
       '1. Profesyonel hibrit batarya testi yaptırın. 2. Batarya modül voltajlarını ve iç dirençlerini ölçtürün. 3. Soğutma fanlarının çalıştığından emin olun. 4. Genellikle batarya paketi değişimi veya rekonstrüksiyon gerekir.',
   },
@@ -3021,327 +3024,443 @@ export const DTC_AI_ADVICE: Record<string, AimechanicAdvice> = {
       '1. Motor yağı seviyesini kontrol edin (düşük yağ bu hataya yol açar). 2. Silindir devre dışı bırakma solenoidlerini kontrol edin. 3. ECM yazılım güncellemesi gerekebilir.',
   },
   P0401: {
-    cause: 'EGR (Egzoz Gazı Devridaim) akışı yetersiz. Sistem egzoz gazını yeterince geri döndürmüyor.',
-    advice: '1. EGR valfini temizleyin veya değiştirin (kurum en yaygın sebep). 2. EGR vakum hortumlarını kontrol edin. 3. EGR soğutucu tıkalı olabilir. 4. DPF rejenerasyon sıklığını kontrol edin.',
+    cause:
+      'EGR (Egzoz Gazı Devridaim) akışı yetersiz. Sistem egzoz gazını yeterince geri döndürmüyor.',
+    advice:
+      '1. EGR valfini temizleyin veya değiştirin (kurum en yaygın sebep). 2. EGR vakum hortumlarını kontrol edin. 3. EGR soğutucu tıkalı olabilir. 4. DPF rejenerasyon sıklığını kontrol edin.',
   },
   P0402: {
-    cause: 'EGR akışı aşırı fazla. Sistem gereğinden çok egzoz gazı döndürüyor.',
-    advice: '1. EGR valfi sıkışmış açık pozisyonda olabilir. 2. EGR valfini temizleyin veya değiştirin. 3. Vakum hortumlarında çatlak kontrolü yapın.',
+    cause:
+      'EGR akışı aşırı fazla. Sistem gereğinden çok egzoz gazı döndürüyor.',
+    advice:
+      '1. EGR valfi sıkışmış açık pozisyonda olabilir. 2. EGR valfini temizleyin veya değiştirin. 3. Vakum hortumlarında çatlak kontrolü yapın.',
   },
   P0505: {
-    cause: 'Rölanti kontrol sistemi arızası. Motor rölantide dengesiz çalışıyor veya stop ediyor.',
-    advice: '1. Rölanti hava kontrol valfini (IAC) temizleyin. 2. Gaz kelebeği gövdesinde kurum birikimi kontrolü yapın. 3. Vakum kaçağı olup olmadığını inceleyin. 4. Akü bağlantılarını kontrol edin.',
+    cause:
+      'Rölanti kontrol sistemi arızası. Motor rölantide dengesiz çalışıyor veya stop ediyor.',
+    advice:
+      '1. Rölanti hava kontrol valfini (IAC) temizleyin. 2. Gaz kelebeği gövdesinde kurum birikimi kontrolü yapın. 3. Vakum kaçağı olup olmadığını inceleyin. 4. Akü bağlantılarını kontrol edin.',
   },
   P0500: {
     cause: 'Araç hız sensörü (VSS) arızası. Hız göstergesi çalışmayabilir.',
-    advice: '1. VSS sensörü fişini ve kablolarını kontrol edin. 2. Sensör dişlisinde hasar olup olmadığını kontrol edin. 3. Şanzıman çıkış mili sensörü arızalı olabilir.',
+    advice:
+      '1. VSS sensörü fişini ve kablolarını kontrol edin. 2. Sensör dişlisinde hasar olup olmadığını kontrol edin. 3. Şanzıman çıkış mili sensörü arızalı olabilir.',
   },
   P0606: {
-    cause: 'ECM/PCM işlemci arızası. Motor kontrol modülü dahili hata tespit etti.',
-    advice: '1. Akü şarj durumunu ve voltajını kontrol edin. 2. ECM güç ve toprak bağlantılarını kontrol edin. 3. ECM yazılım güncellemesi gerekebilir. 4. Son çare olarak ECM değişimi gerekebilir.',
+    cause:
+      'ECM/PCM işlemci arızası. Motor kontrol modülü dahili hata tespit etti.',
+    advice:
+      '1. Akü şarj durumunu ve voltajını kontrol edin. 2. ECM güç ve toprak bağlantılarını kontrol edin. 3. ECM yazılım güncellemesi gerekebilir. 4. Son çare olarak ECM değişimi gerekebilir.',
   },
   P0685: {
-    cause: 'ECM/PCM güç rölesi kontrol devresi. Motor kontrol modülü rölesinde sorun.',
-    advice: '1. Motor kontrol rölesini ve sigortasını kontrol edin. 2. Röle soketinde gevşeklik veya korozyon kontrolü. 3. Akü voltajı düşük olabilir, aküyü test edin.',
+    cause:
+      'ECM/PCM güç rölesi kontrol devresi. Motor kontrol modülü rölesinde sorun.',
+    advice:
+      '1. Motor kontrol rölesini ve sigortasını kontrol edin. 2. Röle soketinde gevşeklik veya korozyon kontrolü. 3. Akü voltajı düşük olabilir, aküyü test edin.',
   },
   P0700: {
-    cause: 'Şanzıman kontrol sistemi arızası. Şanzıman kontrol modülü (TCM) arıza tespit etti.',
-    advice: '1. Şanzıman yağ seviyesini ve durumunu kontrol edin. 2. TCM iletişim hattını kontrol edin. 3. Detaylı şanzıman taraması için yetkili servise gidin.',
+    cause:
+      'Şanzıman kontrol sistemi arızası. Şanzıman kontrol modülü (TCM) arıza tespit etti.',
+    advice:
+      '1. Şanzıman yağ seviyesini ve durumunu kontrol edin. 2. TCM iletişim hattını kontrol edin. 3. Detaylı şanzıman taraması için yetkili servise gidin.',
   },
   P0730: {
     cause: 'Vites oranı yanlış. Şanzıman doğru vites oranını yakalayamıyor.',
-    advice: '1. Şanzıman yağ seviyesini ve durumunu kontrol edin. 2. Şanzıman yağı basınç sensörlerini kontrol edin. 3. İç valf gövdesi tıkalı olabilir. 4. Şanzıman revizyonu gerekebilir.',
+    advice:
+      '1. Şanzıman yağ seviyesini ve durumunu kontrol edin. 2. Şanzıman yağı basınç sensörlerini kontrol edin. 3. İç valf gövdesi tıkalı olabilir. 4. Şanzıman revizyonu gerekebilir.',
   },
   P0740: {
     cause: 'Tork konvertörü kavrama (TCC) solenoid devresi arızası.',
-    advice: '1. TCC solenoid fişini ve kablolarını kontrol edin. 2. Şanzıman yağı seviyesini kontrol edin. 3. Solenoid direncini ölçün. 4. Şanzıman valf gövdesi sorunu olabilir.',
+    advice:
+      '1. TCC solenoid fişini ve kablolarını kontrol edin. 2. Şanzıman yağı seviyesini kontrol edin. 3. Solenoid direncini ölçün. 4. Şanzıman valf gövdesi sorunu olabilir.',
   },
   P0750: {
     cause: 'Vites değiştirme solenoid A arızası (1-2 vites geçişi).',
-    advice: '1. Solenoid fişini ve kablolarını kontrol edin. 2. Şanzıman yağ seviyesini ve kirliliğini kontrol edin. 3. Solenoid direnç ölçümü yapın. 4. Valf gövdesi tıkalı olabilir.',
+    advice:
+      '1. Solenoid fişini ve kablolarını kontrol edin. 2. Şanzıman yağ seviyesini ve kirliliğini kontrol edin. 3. Solenoid direnç ölçümü yapın. 4. Valf gövdesi tıkalı olabilir.',
   },
   P0801: {
-    cause: 'Geri vites yasaklama devresi arızası. Geri vites lambaları çalışmayabilir.',
-    advice: '1. Geri vites anahtarını/kontaklarını kontrol edin. 2. Sigorta ve röle kontrolü yapın. 3. Vites kolu bağlantılarını kontrol edin.',
+    cause:
+      'Geri vites yasaklama devresi arızası. Geri vites lambaları çalışmayabilir.',
+    advice:
+      '1. Geri vites anahtarını/kontaklarını kontrol edin. 2. Sigorta ve röle kontrolü yapın. 3. Vites kolu bağlantılarını kontrol edin.',
   },
   P0850: {
     cause: 'Park/Nötr anahtarı devresi arızası. Araç marş basmayabilir.',
-    advice: '1. Vites kolu pozisyon sensörünü kontrol edin. 2. Park/Nötr anahtarı bağlantılarını kontrol edin. 3. Vites kolu kablosu ayarını kontrol edin.',
+    advice:
+      '1. Vites kolu pozisyon sensörünü kontrol edin. 2. Park/Nötr anahtarı bağlantılarını kontrol edin. 3. Vites kolu kablosu ayarını kontrol edin.',
   },
   P2002: {
-    cause: 'Dizel partikül filtresi kurum birikimi eşik değerin altında. DPF verimsiz.',
-    advice: '1. DPF rejenerasyonu başlatın (araç sıcakken otoyol sürüşü). 2. DPF basınç sensörünü kontrol edin. 3. Egzoz sızıntısı olup olmadığını kontrol edin. 4. DPF temizliği veya değişimi gerekebilir.',
+    cause:
+      'Dizel partikül filtresi kurum birikimi eşik değerin altında. DPF verimsiz.',
+    advice:
+      '1. DPF rejenerasyonu başlatın (araç sıcakken otoyol sürüşü). 2. DPF basınç sensörünü kontrol edin. 3. Egzoz sızıntısı olup olmadığını kontrol edin. 4. DPF temizliği veya değişimi gerekebilir.',
   },
   P2263: {
-    cause: 'Turbo şarj sistemi performans sorunu. Basınç sensörü ile gerçek basınç uyuşmuyor.',
-    advice: '1. Turbo hortumlarını ve bağlantılarını kaçak kontrolü yapın. 2. Emme havası kaçağı kontrol edin. 3. Turbo aktüatörü/vana kontrolü. 4. DPF tıkalı olabilir.',
+    cause:
+      'Turbo şarj sistemi performans sorunu. Basınç sensörü ile gerçek basınç uyuşmuyor.',
+    advice:
+      '1. Turbo hortumlarını ve bağlantılarını kaçak kontrolü yapın. 2. Emme havası kaçağı kontrol edin. 3. Turbo aktüatörü/vana kontrolü. 4. DPF tıkalı olabilir.',
   },
   P2453: {
-    cause: 'Dizel partikül filtresi basınç sensörü devre aralığı/performans sorunu.',
-    advice: '1. DPF basınç sensörü hortumlarını tıkanıklık/çatlak kontrolü yapın. 2. Sensör fişini kontrol edin. 3. DPF basınç sensörü sıfırlama/kalibrasyon yapın.',
+    cause:
+      'Dizel partikül filtresi basınç sensörü devre aralığı/performans sorunu.',
+    advice:
+      '1. DPF basınç sensörü hortumlarını tıkanıklık/çatlak kontrolü yapın. 2. Sensör fişini kontrol edin. 3. DPF basınç sensörü sıfırlama/kalibrasyon yapın.',
   },
   P2459: {
-    cause: 'DPF rejenerasyon sıklığı normal dışı. Çok sık rejenerasyon yapılıyor.',
-    advice: '1. Kısa mesafe kullanımı azaltmaya çalışın. 2. Motor yağı ve yakıt kalitesini kontrol edin. 3. EGR sistemi tıkalı olabilir. 4. DPF kurum yükünü kontrol ettirin.',
+    cause:
+      'DPF rejenerasyon sıklığı normal dışı. Çok sık rejenerasyon yapılıyor.',
+    advice:
+      '1. Kısa mesafe kullanımı azaltmaya çalışın. 2. Motor yağı ve yakıt kalitesini kontrol edin. 3. EGR sistemi tıkalı olabilir. 4. DPF kurum yükünü kontrol ettirin.',
   },
   P2500: {
-    cause: 'Alternatör/generator L terminal devresi düşük. Şarj uyarı ışığı yanabilir.',
-    advice: '1. Alternatör kablolarını ve fişini kontrol edin. 2. Akü bağlantılarını temizleyin ve sıkın. 3. Alternatör çıkış voltajını ölçün (13.5-14.5V olmalı). 4. Sigorta kontrolü yapın.',
+    cause:
+      'Alternatör/generator L terminal devresi düşük. Şarj uyarı ışığı yanabilir.',
+    advice:
+      '1. Alternatör kablolarını ve fişini kontrol edin. 2. Akü bağlantılarını temizleyin ve sıkın. 3. Alternatör çıkış voltajını ölçün (13.5-14.5V olmalı). 4. Sigorta kontrolü yapın.',
   },
   P2510: {
     cause: 'Alternatör L terminali/sarj sistemi performans sorunu.',
-    advice: '1. Alternatör kayışı gerginliğini kontrol edin. 2. Akü voltajını ölçün. 3. Alternatör çıkışını yük altında test edin. 4. Şarj sistemi kablo bağlantılarını kontrol edin.',
+    advice:
+      '1. Alternatör kayışı gerginliğini kontrol edin. 2. Akü voltajını ölçün. 3. Alternatör çıkışını yük altında test edin. 4. Şarj sistemi kablo bağlantılarını kontrol edin.',
   },
   P2610: {
     cause: 'ECM iç zamanlayıcı/gerçek zaman saati arızası.',
-    advice: '1. Akü voltajını kontrol edin. 2. ECM güç beslemesini kontrol edin (sürekli 12V hattı). 3. ECM yazılım güncellemesi gerekebilir. 4. Akü değişiminden sonra oluştuysa silip tekrar tarayın.',
+    advice:
+      '1. Akü voltajını kontrol edin. 2. ECM güç beslemesini kontrol edin (sürekli 12V hattı). 3. ECM yazılım güncellemesi gerekebilir. 4. Akü değişiminden sonra oluştuysa silip tekrar tarayın.',
   },
   P2626: {
     cause: 'O2 sensörü pompalama akımı düzeltme/Banka 1 Sensör 1 arızası.',
-    advice: '1. O2 sensörü kablolarını kontrol edin. 2. Egzoz sızıntısı kontrolü yapın. 3. Sensör kirlenmiş veya eskimiş olabilir, değiştirin.',
+    advice:
+      '1. O2 sensörü kablolarını kontrol edin. 2. Egzoz sızıntısı kontrolü yapın. 3. Sensör kirlenmiş veya eskimiş olabilir, değiştirin.',
   },
   P0301: {
-    cause: 'Silindir 1 tekleme tespiti. Silindir 1 ateşleme yapmıyor veya zayıf ateşliyor.',
-    advice: '1. Silindir 1 bujisini ve bobinini kontrol edin. 2. Silindir 1 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın. 4. Buji kablosu değişimi gerekebilir.',
+    cause:
+      'Silindir 1 tekleme tespiti. Silindir 1 ateşleme yapmıyor veya zayıf ateşliyor.',
+    advice:
+      '1. Silindir 1 bujisini ve bobinini kontrol edin. 2. Silindir 1 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın. 4. Buji kablosu değişimi gerekebilir.',
   },
   P0302: {
     cause: 'Silindir 2 tekleme tespiti.',
-    advice: '1. Silindir 2 bujisini ve bobinini kontrol edin. 2. Silindir 2 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın.',
+    advice:
+      '1. Silindir 2 bujisini ve bobinini kontrol edin. 2. Silindir 2 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın.',
   },
   P0303: {
     cause: 'Silindir 3 tekleme tespiti.',
-    advice: '1. Silindir 3 bujisini ve bobinini kontrol edin. 2. Silindir 3 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın.',
+    advice:
+      '1. Silindir 3 bujisini ve bobinini kontrol edin. 2. Silindir 3 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın.',
   },
   P0304: {
     cause: 'Silindir 4 tekleme tespiti.',
-    advice: '1. Silindir 4 bujisini ve bobinini kontrol edin. 2. Silindir 4 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın.',
+    advice:
+      '1. Silindir 4 bujisini ve bobinini kontrol edin. 2. Silindir 4 enjektörünü kontrol edin. 3. Silindir sıkıştırma testi yapın.',
   },
   P0403: {
-    cause: 'EGR kontrol devresi arızası. EGR valfi elektrik beslemesinde sorun.',
-    advice: '1. EGR valfi fişini ve kablolarını kontrol edin. 2. EGR valfi direncini ölçün. 3. Sigorta kontrolü yapın. 4. EGR valfini söküp temizleyin.',
+    cause:
+      'EGR kontrol devresi arızası. EGR valfi elektrik beslemesinde sorun.',
+    advice:
+      '1. EGR valfi fişini ve kablolarını kontrol edin. 2. EGR valfi direncini ölçün. 3. Sigorta kontrolü yapın. 4. EGR valfini söküp temizleyin.',
   },
   P0411: {
     cause: 'İkincil hava enjeksiyon sistemi yanlış akış tespiti.',
-    advice: '1. Hava pompası hortumlarını ve valflerini kontrol edin. 2. İkincil hava enjeksiyon rölesini kontrol edin. 3. Pompa filtresini temizleyin. 4. Egzoz manifolduna hava giriş noktasını kontrol edin.',
+    advice:
+      '1. Hava pompası hortumlarını ve valflerini kontrol edin. 2. İkincil hava enjeksiyon rölesini kontrol edin. 3. Pompa filtresini temizleyin. 4. Egzoz manifolduna hava giriş noktasını kontrol edin.',
   },
   P0442: {
     cause: 'Evap sisteminde küçük kaçak tespiti. Buhar kaçağı çok küçük.',
-    advice: '1. Benzin kapağını sıkın ve contasını kontrol edin. 2. Evap hortumlarını görsel kontrol edin. 3. Karbon kanisteri kontrol edin. 4. Duman testi ile kaçak tespiti yaptırın.',
+    advice:
+      '1. Benzin kapağını sıkın ve contasını kontrol edin. 2. Evap hortumlarını görsel kontrol edin. 3. Karbon kanisteri kontrol edin. 4. Duman testi ile kaçak tespiti yaptırın.',
   },
   P0446: {
     cause: 'Evap sistem valf kontrol devresi arızası (vent valfi).',
-    advice: '1. Vent valfi fişini ve kablolarını kontrol edin. 2. Valf direncini ölçün. 3. Karbon kanister bağlantılarını kontrol edin. 4. Sigorta kontrolü yapın.',
+    advice:
+      '1. Vent valfi fişini ve kablolarını kontrol edin. 2. Valf direncini ölçün. 3. Karbon kanister bağlantılarını kontrol edin. 4. Sigorta kontrolü yapın.',
   },
   P0456: {
     cause: 'Evap sisteminde çok küçük kaçak tespiti.',
-    advice: '1. Benzin kapağını sıkın. 2. Yakıt sistemi enjeksiyon hortumlarını kontrol edin. 3. Duman testi yapılması gerekebilir. 4. Tamir genellikle basit bir conta değişimi ile çözülür.',
+    advice:
+      '1. Benzin kapağını sıkın. 2. Yakıt sistemi enjeksiyon hortumlarını kontrol edin. 3. Duman testi yapılması gerekebilir. 4. Tamir genellikle basit bir conta değişimi ile çözülür.',
   },
   P0460: {
-    cause: 'Yakıt seviye sensörü devre arızası. Yakıt göstergesi çalışmayabilir.',
-    advice: '1. Yakıt deposu ünitesi fişini kontrol edin. 2. Gösterge paneli bağlantılarını kontrol edin. 3. Yakıt seviye sensörü silecekleri aşınmış olabilir. 4. Depo ünitesi değişimi gerekebilir.',
+    cause:
+      'Yakıt seviye sensörü devre arızası. Yakıt göstergesi çalışmayabilir.',
+    advice:
+      '1. Yakıt deposu ünitesi fişini kontrol edin. 2. Gösterge paneli bağlantılarını kontrol edin. 3. Yakıt seviye sensörü silecekleri aşınmış olabilir. 4. Depo ünitesi değişimi gerekebilir.',
   },
   P0480: {
     cause: 'Motor soğutma fanı 1 kontrol devresi arızası.',
-    advice: '1. Fan rölesini ve sigortasını kontrol edin. 2. Fan motoru kablolarını ve fişini kontrol edin. 3. Fan motoru sıkışmış veya yanmış olabilir. 4. Soğutma sıvısı sıcaklık sensörünü kontrol edin.',
+    advice:
+      '1. Fan rölesini ve sigortasını kontrol edin. 2. Fan motoru kablolarını ve fişini kontrol edin. 3. Fan motoru sıkışmış veya yanmış olabilir. 4. Soğutma sıvısı sıcaklık sensörünü kontrol edin.',
   },
   P0483: {
     cause: 'Motor soğutma fanı kontrol modülü arızası (doğrulama hatası).',
-    advice: '1. Fan kontrol modülü güç ve toprak bağlantılarını kontrol edin. 2. İletişim hattını kontrol edin. 3. Fan modülü değişimi gerekebilir. 4. Soğutma sistemi hava yapmış olabilir.',
+    advice:
+      '1. Fan kontrol modülü güç ve toprak bağlantılarını kontrol edin. 2. İletişim hattını kontrol edin. 3. Fan modülü değişimi gerekebilir. 4. Soğutma sistemi hava yapmış olabilir.',
   },
   P0496: {
     cause: 'Evap sistemi yüksek akış/purge akışı normal dışı.',
-    advice: '1. Purge valfi sıkışmış açık olabilir. 2. Valfi söküp temizleyin. 3. Valf direncini kontrol edin. 4. Karbon kanister doymuş olabilir.',
+    advice:
+      '1. Purge valfi sıkışmış açık olabilir. 2. Valfi söküp temizleyin. 3. Valf direncini kontrol edin. 4. Karbon kanister doymuş olabilir.',
   },
   P0507: {
-    cause: 'Rölanti hava kontrol sistemi devri çok yüksek (beklenenden yüksek).',
-    advice: '1. Gaz kelebeği gövdesini temizleyin. 2. Vakum kaçağı kontrolü yapın. 3. IAC valfini temizleyin veya değiştirin. 4. Gaz pedalı potansiyometresi kalibrasyonu gerekebilir.',
+    cause:
+      'Rölanti hava kontrol sistemi devri çok yüksek (beklenenden yüksek).',
+    advice:
+      '1. Gaz kelebeği gövdesini temizleyin. 2. Vakum kaçağı kontrolü yapın. 3. IAC valfini temizleyin veya değiştirin. 4. Gaz pedalı potansiyometresi kalibrasyonu gerekebilir.',
   },
   P0562: {
     cause: 'Sistem voltajı düşük. Akü veya şarj sistemi yetersiz.',
-    advice: '1. Akü voltajını ölçün (12.5V altında ise şarj edin). 2. Alternatör çıkışını kontrol edin. 3. Akü bağlantılarını temizleyin. 4. Motor çalışırken voltaj 13.5-14.5V arası olmalıdır.',
+    advice:
+      '1. Akü voltajını ölçün (12.5V altında ise şarj edin). 2. Alternatör çıkışını kontrol edin. 3. Akü bağlantılarını temizleyin. 4. Motor çalışırken voltaj 13.5-14.5V arası olmalıdır.',
   },
   P0563: {
     cause: 'Sistem voltajı yüksek. Akü aşırı şarj oluyor olabilir.',
-    advice: '1. Alternatör regülatörünü kontrol edin (genelde alternatörle bütünleşik). 2. Akü voltajını ölçün (14.5V üstü tehlikeli). 3. Akü bağlantılarını kontrol edin. 4. Hemen yetkili servise gidin.',
+    advice:
+      '1. Alternatör regülatörünü kontrol edin (genelde alternatörle bütünleşik). 2. Akü voltajını ölçün (14.5V üstü tehlikeli). 3. Akü bağlantılarını kontrol edin. 4. Hemen yetkili servise gidin.',
   },
   P0571: {
-    cause: 'Fren pedal anahtarı A devre arızası. Stop lambaları çalışmayabilir.',
-    advice: '1. Fren pedal anahtarını kontrol edin. 2. Stop lambası sigortasını kontrol edin. 3. Fren pedalı ayarını kontrol edin. 4. Anahtar kontaklarında aşınma olabilir.',
+    cause:
+      'Fren pedal anahtarı A devre arızası. Stop lambaları çalışmayabilir.',
+    advice:
+      '1. Fren pedal anahtarını kontrol edin. 2. Stop lambası sigortasını kontrol edin. 3. Fren pedalı ayarını kontrol edin. 4. Anahtar kontaklarında aşınma olabilir.',
   },
   P0600: {
-    cause: 'ECM iletişim bağlantısı arızası. Kontrol modülü seri iletişim hattında sorun.',
-    advice: '1. ECM güç ve toprak bağlantılarını kontrol edin. 2. CAN bus hattını kontrol edin. 3. Akü voltajını kontrol edin. 4. ECM yazılım güncellemesi gerekebilir.',
+    cause:
+      'ECM iletişim bağlantısı arızası. Kontrol modülü seri iletişim hattında sorun.',
+    advice:
+      '1. ECM güç ve toprak bağlantılarını kontrol edin. 2. CAN bus hattını kontrol edin. 3. Akü voltajını kontrol edin. 4. ECM yazılım güncellemesi gerekebilir.',
   },
   P0601: {
-    cause: 'ECM iç hafıza (ROM) sağlama hatası. Motor kontrol ünitesi hafıza sorunu.',
-    advice: '1. Akü bağlantılarını kesip 5 dk bekleyin, tekrar takın. 2. ECM yazılım güncellemesi yapın. 3. Akü voltajını kontrol edin. 4. ECM değişimi gerekebilir (servis).',
+    cause:
+      'ECM iç hafıza (ROM) sağlama hatası. Motor kontrol ünitesi hafıza sorunu.',
+    advice:
+      '1. Akü bağlantılarını kesip 5 dk bekleyin, tekrar takın. 2. ECM yazılım güncellemesi yapın. 3. Akü voltajını kontrol edin. 4. ECM değişimi gerekebilir (servis).',
   },
   P0603: {
-    cause: 'ECM iç hafıza (RAM) hatası. Motor kontrol ünitesi geçici hafıza sorunu.',
-    advice: '1. Akü bağlantılarını kontrol edin. 2. Kodu silip test sürüşü yapın. 3. ECM yazılımı güncelleyin. 4. Akü değişim zamanı gelmiş olabilir.',
+    cause:
+      'ECM iç hafıza (RAM) hatası. Motor kontrol ünitesi geçici hafıza sorunu.',
+    advice:
+      '1. Akü bağlantılarını kontrol edin. 2. Kodu silip test sürüşü yapın. 3. ECM yazılımı güncelleyin. 4. Akü değişim zamanı gelmiş olabilir.',
   },
   P0627: {
-    cause: 'Yakıt pompası röle kontrol devresi arızası. Yakıt pompası çalışmayabilir.',
-    advice: '1. Yakıt pompası rölesini ve sigortasını kontrol edin. 2. Pompa kablolarını kontrol edin. 3. Pompa motoru direncini ölçün (genelde 0.5-3 ohm). 4. Güvenlik kesici (inertia switch) kontrol edin.',
+    cause:
+      'Yakıt pompası röle kontrol devresi arızası. Yakıt pompası çalışmayabilir.',
+    advice:
+      '1. Yakıt pompası rölesini ve sigortasını kontrol edin. 2. Pompa kablolarını kontrol edin. 3. Pompa motoru direncini ölçün (genelde 0.5-3 ohm). 4. Güvenlik kesici (inertia switch) kontrol edin.',
   },
   P0628: {
-    cause: 'Yakıt pompası röle kontrol devresi düşük. Pompa çalışmayabilir veya zayıf çalışır.',
-    advice: '1. Yakıt pompası sigortasını kontrol edin. 2. Pompa rölesini kontrol edin. 3. Pompa motoru sıkışmış veya aşınmış olabilir. 4. Yakıt filtresi tıkalı olabilir.',
+    cause:
+      'Yakıt pompası röle kontrol devresi düşük. Pompa çalışmayabilir veya zayıf çalışır.',
+    advice:
+      '1. Yakıt pompası sigortasını kontrol edin. 2. Pompa rölesini kontrol edin. 3. Pompa motoru sıkışmış veya aşınmış olabilir. 4. Yakıt filtresi tıkalı olabilir.',
   },
   P0638: {
-    cause: 'Gaz kelebeği aktüatörü kontrol devresi/Banka 1. Gaz tepkisi yavaş olabilir.',
-    advice: '1. Gaz kelebeği gövdesini temizleyin. 2. Gaz kelebeği motoru sürücüsünü kontrol edin. 3. Gaz pedalı sensörü ile kelebek sensörü uyumunu kontrol edin. 4. Throttle body öğrenme/adaptasyon yapın.',
+    cause:
+      'Gaz kelebeği aktüatörü kontrol devresi/Banka 1. Gaz tepkisi yavaş olabilir.',
+    advice:
+      '1. Gaz kelebeği gövdesini temizleyin. 2. Gaz kelebeği motoru sürücüsünü kontrol edin. 3. Gaz pedalı sensörü ile kelebek sensörü uyumunu kontrol edin. 4. Throttle body öğrenme/adaptasyon yapın.',
   },
   P0641: {
-    cause: 'Sensör referans gerilimi A devresi (5V referans). Birden çok sensör etkilenebilir.',
-    advice: '1. 5V referans hattındaki sensörleri tek tek ayırarak kısa devre yapanı bulun. 2. Kablajda kısa devre kontrolü yapın. 3. ECM arızalı olabilir.',
+    cause:
+      'Sensör referans gerilimi A devresi (5V referans). Birden çok sensör etkilenebilir.',
+    advice:
+      '1. 5V referans hattındaki sensörleri tek tek ayırarak kısa devre yapanı bulun. 2. Kablajda kısa devre kontrolü yapın. 3. ECM arızalı olabilir.',
   },
   P0642: {
-    cause: 'Sensör referans gerilimi A devresi düşük. 5V referans voltaj 4.5V altına düştü.',
-    advice: '1. 5V referans hattına bağlı sensörleri kontrol edin. 2. Kablajda kısa devre kontrolü. 3. Hatalı sensörü bulmak için her sensörü tek tek ayırın.',
+    cause:
+      'Sensör referans gerilimi A devresi düşük. 5V referans voltaj 4.5V altına düştü.',
+    advice:
+      '1. 5V referans hattına bağlı sensörleri kontrol edin. 2. Kablajda kısa devre kontrolü. 3. Hatalı sensörü bulmak için her sensörü tek tek ayırın.',
   },
   P0643: {
-    cause: 'Sensör referans gerilimi A devresi yüksek. 5V referans voltajı 5.5V üstü.',
-    advice: '1. ECM referans regülatörü arızalı olabilir. 2. 5V hattına bağlı sensörleri kontrol edin. 3. ECM güç beslemesini kontrol edin.',
+    cause:
+      'Sensör referans gerilimi A devresi yüksek. 5V referans voltajı 5.5V üstü.',
+    advice:
+      '1. ECM referans regülatörü arızalı olabilir. 2. 5V hattına bağlı sensörleri kontrol edin. 3. ECM güç beslemesini kontrol edin.',
   },
   P0650: {
-    cause: 'Arıza gösterge lambası (MIL) kontrol devresi arızası. Arıza lambası yanmayabilir.',
-    advice: '1. Gösterge paneli bağlantılarını kontrol edin. 2. Arıza lambası LED/ampul kontrolü. 3. Gösterge paneli arızalı olabilir. 4. İletişim hattını kontrol edin.',
+    cause:
+      'Arıza gösterge lambası (MIL) kontrol devresi arızası. Arıza lambası yanmayabilir.',
+    advice:
+      '1. Gösterge paneli bağlantılarını kontrol edin. 2. Arıza lambası LED/ampul kontrolü. 3. Gösterge paneli arızalı olabilir. 4. İletişim hattını kontrol edin.',
   },
   P0688: {
-    cause: 'ECM/PCM güç rölesi algılama devresi - sürekli 12V besleme kesintisi.',
-    advice: '1. ECM ana rölesini ve sigortasını kontrol edin. 2. Aküden ECMye giden sürekli besleme hattını kontrol edin. 3. Röle soket korozyonunu kontrol edin.',
+    cause:
+      'ECM/PCM güç rölesi algılama devresi - sürekli 12V besleme kesintisi.',
+    advice:
+      '1. ECM ana rölesini ve sigortasını kontrol edin. 2. Aküden ECMye giden sürekli besleme hattını kontrol edin. 3. Röle soket korozyonunu kontrol edin.',
   },
   P0691: {
-    cause: 'Motor soğutma fanı 1 kontrol devresi düşük. Fan düşük devirde çalışıyor olabilir.',
-    advice: '1. Fan rölesi ve sigortasını kontrol edin. 2. Fan motoru direncini ölçün. 3. Fan kablajını sürtme/kopma kontrolü yapın. 4. Fan motoru yatakları sıkışmış olabilir.',
+    cause:
+      'Motor soğutma fanı 1 kontrol devresi düşük. Fan düşük devirde çalışıyor olabilir.',
+    advice:
+      '1. Fan rölesi ve sigortasını kontrol edin. 2. Fan motoru direncini ölçün. 3. Fan kablajını sürtme/kopma kontrolü yapın. 4. Fan motoru yatakları sıkışmış olabilir.',
   },
   P0692: {
-    cause: 'Motor soğutma fanı 1 kontrol devresi yüksek. Fan sürekli yüksek devirde çalışabilir.',
-    advice: '1. Fan rölesi sıkışmış olabilir. 2. Fan kontrol modülü arızası. 3. Soğutma sıvısı sıcaklık sensörü hatalı olabilir. 4. Klima basınç sensörü hatalı olabilir.',
+    cause:
+      'Motor soğutma fanı 1 kontrol devresi yüksek. Fan sürekli yüksek devirde çalışabilir.',
+    advice:
+      '1. Fan rölesi sıkışmış olabilir. 2. Fan kontrol modülü arızası. 3. Soğutma sıvısı sıcaklık sensörü hatalı olabilir. 4. Klima basınç sensörü hatalı olabilir.',
   },
   P2096: {
     cause: 'Katalizör sonrası yakıt düzeltmesi çok fakir (Banka 1).',
-    advice: '1. Egzoz sızıntısı kontrol edin (özellikle manifold çatlağı). 2. O2 sensörlerini kontrol edin. 3. Katalitik konvertör verimini kontrol edin. 4. Yakıt enjeksiyon basıncını kontrol edin.',
+    advice:
+      '1. Egzoz sızıntısı kontrol edin (özellikle manifold çatlağı). 2. O2 sensörlerini kontrol edin. 3. Katalitik konvertör verimini kontrol edin. 4. Yakıt enjeksiyon basıncını kontrol edin.',
   },
   P2098: {
     cause: 'Katalizör sonrası yakıt düzeltmesi çok fakir (Banka 2).',
-    advice: '1. Egzoz sızıntısı kontrol edin. 2. O2 sensörlerini kontrol edin. 3. Katalitik konvertör verimini kontrol edin.',
+    advice:
+      '1. Egzoz sızıntısı kontrol edin. 2. O2 sensörlerini kontrol edin. 3. Katalitik konvertör verimini kontrol edin.',
   },
   P2100: {
     cause: 'Gaz kelebeği aktüatörü motor devresi (TAC modülü) - kesinti.',
-    advice: '1. Gaz kelebeği gövdesi fişini kontrol edin. 2. Kelebek motoru direncini ölçün. 3. TAC modülü beslemesini kontrol edin. 4. Gaz pedalı sensörü ile uyum kontrolü.',
+    advice:
+      '1. Gaz kelebeği gövdesi fişini kontrol edin. 2. Kelebek motoru direncini ölçün. 3. TAC modülü beslemesini kontrol edin. 4. Gaz pedalı sensörü ile uyum kontrolü.',
   },
   P2101: {
     cause: 'Gaz kelebeği aktüatörü motor devresi performans sorunu.',
-    advice: '1. Gaz kelebeği gövdesini temizleyin. 2. Kelebek motoru çalışma kontrolü. 3. Gaz kelebeği sıkışmış olabilir. 4. Adaptasyon/öğrenme yapın.',
+    advice:
+      '1. Gaz kelebeği gövdesini temizleyin. 2. Kelebek motoru çalışma kontrolü. 3. Gaz kelebeği sıkışmış olabilir. 4. Adaptasyon/öğrenme yapın.',
   },
   P2105: {
-    cause: 'Gaz kelebeği aktüatörü motor devresi - sistem zorlamalı motor durdurma tespiti.',
-    advice: '1. Gaz kelebeği gövdesi mekanik sıkışma kontrolü. 2. Kelebek motoru kısa devre kontrolü. 3. TAC modülü değişimi gerekebilir.',
+    cause:
+      'Gaz kelebeği aktüatörü motor devresi - sistem zorlamalı motor durdurma tespiti.',
+    advice:
+      '1. Gaz kelebeği gövdesi mekanik sıkışma kontrolü. 2. Kelebek motoru kısa devre kontrolü. 3. TAC modülü değişimi gerekebilir.',
   },
   P2106: {
     cause: 'Gaz kelebeği aktüatörü güç yönetimi - performans sınırlaması.',
-    advice: '1. Kodu silip test sürüşü yapın. 2. Gaz kelebeği adaptasyonu yapın. 3. ECM yazılım güncellemesi kontrol edin. 4. Akü voltajını kontrol edin.',
+    advice:
+      '1. Kodu silip test sürüşü yapın. 2. Gaz kelebeği adaptasyonu yapın. 3. ECM yazılım güncellemesi kontrol edin. 4. Akü voltajını kontrol edin.',
   },
   P2119: {
     cause: 'Gaz kelebeği kapağı açıklık aralığı/performans sorunu.',
-    advice: '1. Gaz kelebeği gövdesini temizleyin. 2. Kelebek ekseninde aşınma kontrolü. 3. Kelebek geri dönüş yayı kontrolü. 4. TPS sensörü kalibrasyonu yapın.',
+    advice:
+      '1. Gaz kelebeği gövdesini temizleyin. 2. Kelebek ekseninde aşınma kontrolü. 3. Kelebek geri dönüş yayı kontrolü. 4. TPS sensörü kalibrasyonu yapın.',
   },
   P2121: {
     cause: 'Gaz pedalı pozisyon sensörü (APP) D/E devre aralığı/performans.',
-    advice: '1. Gaz pedalı sensörü fişini kontrol edin. 2. Pedal sensörü sinyal voltajlarını ölçün. 3. Pedal mekanik bağlantı kontrolü. 4. Pedal ünitesi değişimi gerekebilir.',
+    advice:
+      '1. Gaz pedalı sensörü fişini kontrol edin. 2. Pedal sensörü sinyal voltajlarını ölçün. 3. Pedal mekanik bağlantı kontrolü. 4. Pedal ünitesi değişimi gerekebilir.',
   },
   P2122: {
     cause: 'Gaz pedalı pozisyon sensörü D devresi düşük giriş.',
-    advice: '1. Gaz pedalı sensörü kablolarını kontrol edin. 2. 5V referans voltajını kontrol edin. 3. Sensör topraklamasını kontrol edin. 4. Pedal ünitesini değiştirin.',
+    advice:
+      '1. Gaz pedalı sensörü kablolarını kontrol edin. 2. 5V referans voltajını kontrol edin. 3. Sensör topraklamasını kontrol edin. 4. Pedal ünitesini değiştirin.',
   },
   P2127: {
     cause: 'Gaz pedalı pozisyon sensörü E devresi düşük giriş.',
-    advice: '1. Gaz pedalı sensörü kablolarını kontrol edin. 2. 5V referansı kontrol edin. 3. Pedal ünitesi değişimi gerekebilir.',
+    advice:
+      '1. Gaz pedalı sensörü kablolarını kontrol edin. 2. 5V referansı kontrol edin. 3. Pedal ünitesi değişimi gerekebilir.',
   },
   P2135: {
     cause: 'Gaz kelebeği pozisyon sensörü A/B voltaj uyumsuzluğu.',
-    advice: '1. Gaz kelebeği sensörü fişini kontrol edin. 2. Kablaj kontrolü yapın. 3. Gaz kelebeği gövdesi değişimi gerekebilir. 4. Adaptasyon/öğrenme yapın.',
+    advice:
+      '1. Gaz kelebeği sensörü fişini kontrol edin. 2. Kablaj kontrolü yapın. 3. Gaz kelebeği gövdesi değişimi gerekebilir. 4. Adaptasyon/öğrenme yapın.',
   },
   P2138: {
     cause: 'Gaz pedalı pozisyon sensörü D/E voltaj uyumsuzluğu.',
-    advice: '1. Gaz pedalı ünitesi fişini kontrol edin. 2. Kablaj kontrolü. 3. Gaz pedalı değişimi gerekebilir. 4. Adaptasyon yapın.',
+    advice:
+      '1. Gaz pedalı ünitesi fişini kontrol edin. 2. Kablaj kontrolü. 3. Gaz pedalı değişimi gerekebilir. 4. Adaptasyon yapın.',
   },
   P2187: {
     cause: 'Rölanti devrinde sistem çok fakir (Banka 1).',
-    advice: '1. Vakum kaçağı kontrolü yapın (en yaygın sebep). 2. MAF sensörünü temizleyin. 3. Yakıt basıncını kontrol edin. 4. PCV valfini kontrol edin.',
+    advice:
+      '1. Vakum kaçağı kontrolü yapın (en yaygın sebep). 2. MAF sensörünü temizleyin. 3. Yakıt basıncını kontrol edin. 4. PCV valfini kontrol edin.',
   },
   P2188: {
     cause: 'Rölanti devrinde sistem çok zengin (Banka 1).',
-    advice: '1. Yakıt enjektörlerinde sızıntı kontrolü. 2. MAF sensörü kirlenmiş olabilir. 3. Yakıt basınç regülatörünü kontrol edin. 4. Hava filtresini kontrol edin.',
+    advice:
+      '1. Yakıt enjektörlerinde sızıntı kontrolü. 2. MAF sensörü kirlenmiş olabilir. 3. Yakıt basınç regülatörünü kontrol edin. 4. Hava filtresini kontrol edin.',
   },
   P2195: {
     cause: 'O2 sensörü zengin/fakir sinyali - sürekli fakir (Banka 1 S1).',
-    advice: '1. O2 sensörünü değiştirin. 2. Egzoz sızıntısı kontrol edin. 3. Yakıt basıncını kontrol edin. 4. Enjektör tıkanıklığı kontrol edin.',
+    advice:
+      '1. O2 sensörünü değiştirin. 2. Egzoz sızıntısı kontrol edin. 3. Yakıt basıncını kontrol edin. 4. Enjektör tıkanıklığı kontrol edin.',
   },
   P2196: {
     cause: 'O2 sensörü zengin/fakir sinyali - sürekli zengin (Banka 1 S1).',
-    advice: '1. O2 sensörünü değiştirin. 2. Yakıt basıncı çok yüksek olabilir. 3. Enjektör sızıntısı kontrol edin. 4. Hava filtresi tıkalı olabilir.',
+    advice:
+      '1. O2 sensörünü değiştirin. 2. Yakıt basıncı çok yüksek olabilir. 3. Enjektör sızıntısı kontrol edin. 4. Hava filtresi tıkalı olabilir.',
   },
   P2270: {
-    cause: 'O2 sensörü sinyali sürekli fakir (Banka 1 Sensör 2 - katalizör sonrası).',
-    advice: '1. O2 sensörünü kontrol edin veya değiştirin. 2. Egzoz sızıntısı kontrol edin. 3. Katalitik konvertör verimini kontrol edin.',
+    cause:
+      'O2 sensörü sinyali sürekli fakir (Banka 1 Sensör 2 - katalizör sonrası).',
+    advice:
+      '1. O2 sensörünü kontrol edin veya değiştirin. 2. Egzoz sızıntısı kontrol edin. 3. Katalitik konvertör verimini kontrol edin.',
   },
   P2271: {
     cause: 'O2 sensörü sinyali sürekli zengin (Banka 1 Sensör 2).',
-    advice: '1. O2 sensörünü kontrol edin. 2. Katalitik konvertör verimsiz olabilir. 3. Yakıt düzeltme değerlerini kontrol edin.',
+    advice:
+      '1. O2 sensörünü kontrol edin. 2. Katalitik konvertör verimsiz olabilir. 3. Yakıt düzeltme değerlerini kontrol edin.',
   },
   P2279: {
     cause: 'Emme havası sistemi kaçağı tespiti.',
-    advice: '1. Tüm vakum hortumlarını görsel kontrol edin. 2. Emme manifoldu contasını kontrol edin. 3. Fren servosu hortumunu kontrol edin. 4. Duman testi yaparak kaçağı bulun.',
+    advice:
+      '1. Tüm vakum hortumlarını görsel kontrol edin. 2. Emme manifoldu contasını kontrol edin. 3. Fren servosu hortumunu kontrol edin. 4. Duman testi yaparak kaçağı bulun.',
   },
   P2400: {
     cause: 'EVAP sızıntı tespit pompası kontrol devresi arızası.',
-    advice: '1. Sızıntı tespit pompasını (LDP) kontrol edin. 2. Pompa fişini ve kablolarını kontrol edin. 3. Pompa direncini ölçün. 4. Sigorta kontrolü yapın.',
+    advice:
+      '1. Sızıntı tespit pompasını (LDP) kontrol edin. 2. Pompa fişini ve kablolarını kontrol edin. 3. Pompa direncini ölçün. 4. Sigorta kontrolü yapın.',
   },
   P2413: {
     cause: 'EGR sistemi performans sorunu - egzoz gazı akış tutarsızlığı.',
-    advice: '1. EGR valfini söküp kurum temizliği yapın. 2. EGR soğutucu tıkanıklık kontrolü. 3. EGR basınç geri bildirim sensörünü kontrol edin. 4. EGR vakum hortumlarını kontrol edin.',
+    advice:
+      '1. EGR valfini söküp kurum temizliği yapın. 2. EGR soğutucu tıkanıklık kontrolü. 3. EGR basınç geri bildirim sensörünü kontrol edin. 4. EGR vakum hortumlarını kontrol edin.',
   },
   P242F: {
     cause: 'Dizel partikül filtresi kısıtlaması - kurum birikimi çok yüksek.',
-    advice: '1. Zorunlu DPF rejenerasyonu başlatın. 2. Rejenerasyon başarısız olursa DPF temizliği veya değişimi gerekir. 3. Motor yağı seviyesini kontrol edin (dizel yakıt karışması olabilir). 4. Uzun süre düşük devir kullanımdan kaçının.',
+    advice:
+      '1. Zorunlu DPF rejenerasyonu başlatın. 2. Rejenerasyon başarısız olursa DPF temizliği veya değişimi gerekir. 3. Motor yağı seviyesini kontrol edin (dizel yakıt karışması olabilir). 4. Uzun süre düşük devir kullanımdan kaçının.',
   },
   P2431: {
-    cause: 'İkincil hava enjeksiyon sistemi akış sensörü/Banka 1 aralık/performans.',
-    advice: '1. Hava pompası çıkış hortumlarını kontrol edin. 2. Akış sensörünü kontrol edin. 3. Hava enjeksiyon valflerini kontrol edin.',
+    cause:
+      'İkincil hava enjeksiyon sistemi akış sensörü/Banka 1 aralık/performans.',
+    advice:
+      '1. Hava pompası çıkış hortumlarını kontrol edin. 2. Akış sensörünü kontrol edin. 3. Hava enjeksiyon valflerini kontrol edin.',
   },
   P2440: {
     cause: 'İkincil hava enjeksiyon sistemi valf sıkışmış açık (Banka 1).',
-    advice: '1. Hava enjeksiyon valfini söküp temizleyin. 2. Valf sıkışmış ise değiştirin. 3. Karbon birikimi varsa temizleyin.',
+    advice:
+      '1. Hava enjeksiyon valfini söküp temizleyin. 2. Valf sıkışmış ise değiştirin. 3. Karbon birikimi varsa temizleyin.',
   },
   P2452: {
     cause: 'Dizel partikül filtresi basınç sensörü devre arızası.',
-    advice: '1. DPF basınç sensörü fişini kontrol edin. 2. Sensör hortumlarını tıkanıklık/çatlak kontrolü. 3. Sensör değişimi gerekebilir. 4. Egzoz sistemi hasar kontrolü.',
+    advice:
+      '1. DPF basınç sensörü fişini kontrol edin. 2. Sensör hortumlarını tıkanıklık/çatlak kontrolü. 3. Sensör değişimi gerekebilir. 4. Egzoz sistemi hasar kontrolü.',
   },
   P2454: {
-    cause: 'DPF basınç sensörü devresi düşük giriş. Sensör voltajı beklenenden düşük.',
-    advice: '1. DPF basınç sensörü hortumlarını kontrol edin (tıkalı olabilir). 2. Sensör referans voltajını kontrol edin (5V). 3. Sensör fişini kontrol edin.',
+    cause:
+      'DPF basınç sensörü devresi düşük giriş. Sensör voltajı beklenenden düşük.',
+    advice:
+      '1. DPF basınç sensörü hortumlarını kontrol edin (tıkalı olabilir). 2. Sensör referans voltajını kontrol edin (5V). 3. Sensör fişini kontrol edin.',
   },
   P2455: {
-    cause: 'DPF basınç sensörü devresi yüksek giriş. Sensör voltajı beklenenden yüksek.',
-    advice: '1. DPF sensör hortumlarında tıkanıklık kontrolü. 2. DPF aşırı dolu olabilir. 3. Sensör fişi ve kablajını kontrol edin.',
+    cause:
+      'DPF basınç sensörü devresi yüksek giriş. Sensör voltajı beklenenden yüksek.',
+    advice:
+      '1. DPF sensör hortumlarında tıkanıklık kontrolü. 2. DPF aşırı dolu olabilir. 3. Sensör fişi ve kablajını kontrol edin.',
   },
   P2463: {
     cause: 'DPF kurum birikimi - rejenerasyon gerekli. Filtre çok dolu.',
-    advice: '1. DPF rejenerasyonu için araç sıcakken otoyol sürüşü yapın. 2. Zorunlu rejenerasyon yapın (diagnostik cihazı ile). 3. Motor yağını kontrol edin. 4. DPF temizliği gerekebilir.',
+    advice:
+      '1. DPF rejenerasyonu için araç sıcakken otoyol sürüşü yapın. 2. Zorunlu rejenerasyon yapın (diagnostik cihazı ile). 3. Motor yağını kontrol edin. 4. DPF temizliği gerekebilir.',
   },
   P2499: {
     cause: 'AdBlue dozaj valfi devre yüksek giriş.',
-    advice: '1. AdBlue dozaj valfi fişini kontrol edin. 2. Valf direncini ölçün. 3. Kablajda kısa devre kontrolü yapın.',
+    advice:
+      '1. AdBlue dozaj valfi fişini kontrol edin. 2. Valf direncini ölçün. 3. Kablajda kısa devre kontrolü yapın.',
   },
   P2502: {
     cause: 'Şarj sistemi voltajı düşük - akü şarj almıyor olabilir.',
-    advice: '1. Alternatör kayışını kontrol edin (kopma/gevyeme). 2. Alternatör çıkış voltajını ölçün. 3. Akü bağlantılarını temizleyin. 4. Alternatör fırça/modül arızası olabilir.',
+    advice:
+      '1. Alternatör kayışını kontrol edin (kopma/gevyeme). 2. Alternatör çıkış voltajını ölçün. 3. Akü bağlantılarını temizleyin. 4. Alternatör fırça/modül arızası olabilir.',
   },
   P2503: {
     cause: 'Şarj sistemi voltajı düşük (devir yükseldikçe düzeliyor).',
-    advice: '1. Alternatör kayışı kayması kontrolü. 2. Alternatör diyot modülü kontrolü. 3. Akü şarj durumu testi.',
+    advice:
+      '1. Alternatör kayışı kayması kontrolü. 2. Alternatör diyot modülü kontrolü. 3. Akü şarj durumu testi.',
   },
 };

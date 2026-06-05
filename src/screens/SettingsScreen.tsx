@@ -111,7 +111,10 @@ export default function SettingsScreen({onBack}: Props) {
     setSettingProto(false);
     setProtocolLabel(obd2Service.protocolLabel);
     if (!ok) {
-      Alert.alert('Hata', 'USB ELM327 cihazına bağlanılamadı. OTG kablosunu taktığınızdan ve uygulamanın USB iznine sahip olduğundan emin olun.');
+      Alert.alert(
+        'Hata',
+        'USB ELM327 cihazına bağlanılamadı. OTG kablosunu taktığınızdan ve uygulamanın USB iznine sahip olduğundan emin olun.',
+      );
     } else {
       Alert.alert('Başarılı', 'USB üzerinden ELM327 bağlantısı kuruldu!');
     }
@@ -228,7 +231,9 @@ export default function SettingsScreen({onBack}: Props) {
             <Text style={styles.rowIcon}>🌙</Text>
             <View style={styles.rowContent}>
               <Text style={styles.rowLabel}>Karanlık Mod (Gece)</Text>
-              <Text style={styles.rowDesc}>Pil tasarrufu ve göz yorgunluğunu azaltır.</Text>
+              <Text style={styles.rowDesc}>
+                Pil tasarrufu ve göz yorgunluğunu azaltır.
+              </Text>
             </View>
             <Switch
               value={darkMode}
@@ -311,7 +316,9 @@ export default function SettingsScreen({onBack}: Props) {
             <Text style={styles.rowIcon}>🏔️</Text>
             <View style={styles.rowContent}>
               <Text style={styles.rowLabel}>Eski Range Rover (EAS)</Text>
-              <Text style={styles.rowDesc}>L322/P38 Air Süspansiyon KWP uyandırması (AT IIA 14)</Text>
+              <Text style={styles.rowDesc}>
+                L322/P38 Air Süspansiyon KWP uyandırması (AT IIA 14)
+              </Text>
             </View>
             <Switch
               value={rangeRoverLegacyMode}
@@ -419,144 +426,150 @@ export default function SettingsScreen({onBack}: Props) {
   );
 }
 
-const getStyles = (colors: any) => StyleSheet.create({
-  container: {flex: 1, backgroundColor: colors.bg},
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 16,
-  },
-  backButton: {padding: 8},
-  backText: {color: colors.accent, fontSize: 16, fontWeight: '700'},
-  title: {color: colors.text, fontSize: 18, fontWeight: '900', letterSpacing: 1},
-  section: {marginBottom: 25},
-  sectionTitle: {
-    color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-    marginBottom: 12,
-    marginLeft: 4,
-  },
-  sectionDesc: {
-    color: colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
-    marginBottom: 12,
-    marginHorizontal: 4,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-  },
-  rowIcon: {fontSize: 22, marginRight: 14},
-  rowContent: {flex: 1},
-  rowLabel: {color: colors.text, fontSize: 15, fontWeight: '600'},
-  rowDesc: {color: colors.textDim, fontSize: 12, marginTop: 2},
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.inputBg,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: -4,
-    marginBottom: 8,
-    marginLeft: 50,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-  },
-  settingLabel: {
-    color: colors.textDim,
-    fontSize: 13,
-    fontWeight: '600',
-    marginRight: 10,
-  },
-  settingInput: {
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    padding: 8,
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '800',
-    width: 70,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-  },
-  settingUnit: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  scanBtn: {
-    backgroundColor: colors.gaugeBg,
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.accent,
-    marginBottom: 12,
-  },
-  scanBtnText: {
-    color: colors.accent,
-    fontWeight: '800',
-    fontSize: 14,
-    letterSpacing: 1,
-  },
-  scanResults: {
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-  },
-  scanRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.cardBorder,
-  },
-  scanRowOk: {backgroundColor: 'rgba(0,255,127,0.05)', borderRadius: 8},
-  scanProto: {
-    color: colors.textDim,
-    fontSize: 11,
-    fontWeight: '700',
-    fontFamily: 'monospace',
-    width: 45,
-  },
-  scanLabel: {color: colors.textDim, fontSize: 11, flex: 1},
-  scanMatch: {
-    color: '#00ff7f',
-    fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 1,
-  },
-  protoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.cardBorder,
-  },
-  protoBadge: {
-    color: colors.accent,
-    fontSize: 11,
-    fontWeight: '800',
-    fontFamily: 'monospace',
-    width: 40,
-    letterSpacing: 1,
-  },
-  protoLabel: {color: colors.textDim, fontSize: 13, flex: 1},
-});
+const getStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {flex: 1, backgroundColor: colors.bg},
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 20,
+      paddingTop: 16,
+    },
+    backButton: {padding: 8},
+    backText: {color: colors.accent, fontSize: 16, fontWeight: '700'},
+    title: {
+      color: colors.text,
+      fontSize: 18,
+      fontWeight: '900',
+      letterSpacing: 1,
+    },
+    section: {marginBottom: 25},
+    sectionTitle: {
+      color: colors.textMuted,
+      fontSize: 11,
+      fontWeight: '700',
+      letterSpacing: 1.5,
+      marginBottom: 12,
+      marginLeft: 4,
+    },
+    sectionDesc: {
+      color: colors.textMuted,
+      fontSize: 12,
+      lineHeight: 18,
+      marginBottom: 12,
+      marginHorizontal: 4,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+    },
+    rowIcon: {fontSize: 22, marginRight: 14},
+    rowContent: {flex: 1},
+    rowLabel: {color: colors.text, fontSize: 15, fontWeight: '600'},
+    rowDesc: {color: colors.textDim, fontSize: 12, marginTop: 2},
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.inputBg,
+      borderRadius: 12,
+      padding: 12,
+      marginTop: -4,
+      marginBottom: 8,
+      marginLeft: 50,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+    },
+    settingLabel: {
+      color: colors.textDim,
+      fontSize: 13,
+      fontWeight: '600',
+      marginRight: 10,
+    },
+    settingInput: {
+      backgroundColor: 'transparent',
+      borderRadius: 10,
+      padding: 8,
+      color: colors.text,
+      fontSize: 16,
+      fontWeight: '800',
+      width: 70,
+      textAlign: 'center',
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+    },
+    settingUnit: {
+      color: colors.textMuted,
+      fontSize: 12,
+      fontWeight: '700',
+      marginLeft: 8,
+    },
+    scanBtn: {
+      backgroundColor: colors.gaugeBg,
+      borderRadius: 16,
+      padding: 16,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: colors.accent,
+      marginBottom: 12,
+    },
+    scanBtnText: {
+      color: colors.accent,
+      fontWeight: '800',
+      fontSize: 14,
+      letterSpacing: 1,
+    },
+    scanResults: {
+      backgroundColor: colors.card,
+      borderRadius: 14,
+      padding: 12,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+    },
+    scanRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 4,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.cardBorder,
+    },
+    scanRowOk: {backgroundColor: 'rgba(0,255,127,0.05)', borderRadius: 8},
+    scanProto: {
+      color: colors.textDim,
+      fontSize: 11,
+      fontWeight: '700',
+      fontFamily: 'monospace',
+      width: 45,
+    },
+    scanLabel: {color: colors.textDim, fontSize: 11, flex: 1},
+    scanMatch: {
+      color: '#00ff7f',
+      fontSize: 9,
+      fontWeight: '800',
+      letterSpacing: 1,
+    },
+    protoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.cardBorder,
+    },
+    protoBadge: {
+      color: colors.accent,
+      fontSize: 11,
+      fontWeight: '800',
+      fontFamily: 'monospace',
+      width: 40,
+      letterSpacing: 1,
+    },
+    protoLabel: {color: colors.textDim, fontSize: 13, flex: 1},
+  });

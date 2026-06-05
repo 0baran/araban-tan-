@@ -74,6 +74,9 @@ const newDTCs = `
   U0022: 'Düşük Hız CAN İletişim Bus + Kapalı',
 `;
 
-content = content.replace(/};\s*export function getDTCCategory/, newDTCs + '\n};\n\nexport function getDTCCategory');
+content = content.replace(
+  /};\s*export function getDTCCategory/,
+  newDTCs + '\n};\n\nexport function getDTCCategory',
+);
 fs.writeFileSync(filePath, content, 'utf8');
 console.log('DTCs appended successfully.');

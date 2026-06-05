@@ -64,7 +64,9 @@ export async function deleteDTCScan(
 ): Promise<void> {
   const key = scanKey(vehicleId);
   const raw = await AsyncStorage.getItem(key);
-  if (!raw) return;
+  if (!raw) {
+    return;
+  }
   const scans: DTCScan[] = JSON.parse(raw);
   const filtered = scans.filter(s => s.id !== scanId);
   await AsyncStorage.setItem(key, JSON.stringify(filtered));
@@ -105,7 +107,9 @@ export async function getAllDTCHistory(): Promise<
 > {
   try {
     const idxRaw = await AsyncStorage.getItem(scanIndexKey());
-    if (!idxRaw) return [];
+    if (!idxRaw) {
+      return [];
+    }
     const index: Record<string, number> = JSON.parse(idxRaw);
     const results: {vehicleId: string; scans: DTCScan[]}[] = [];
     for (const vehicleId of Object.keys(index)) {
@@ -120,9 +124,12 @@ export async function getAllDTCHistory(): Promise<
   }
 }
 
-export async function getDTCStats(
-  vehicleId: string,
-): Promise<{totalScans: number; totalCodes: number; uniqueCodes: number; mostCommon: {code: string; count: number}[]}> {
+export async function getDTCStats(vehicleId: string): Promise<{
+  totalScans: number;
+  totalCodes: number;
+  uniqueCodes: number;
+  mostCommon: {code: string; count: number}[];
+}> {
   const scans = await getDTCHistory(vehicleId);
   const codeCount: Record<string, number> = {};
   let totalCodes = 0;
@@ -140,5 +147,10 @@ export async function getDTCStats(
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([code, count]) => ({code, count}));
-  return {totalScans: scans.length, totalCodes, uniqueCodes: Object.keys(codeCount).length, mostCommon: sorted};
+  return {
+    totalScans: scans.length,
+    totalCodes,
+    uniqueCodes: Object.keys(codeCount).length,
+    mostCommon: sorted,
+  };
 }

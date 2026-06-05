@@ -5,11 +5,11 @@ let code = fs.readFileSync(file, 'utf8');
 
 code = code.replaceAll(
   'if (this.dataCallback) {\n      this.dataCallback({...this.currentData});\n    }',
-  'this.dataCallbacks.forEach(cb => cb({...this.currentData}));'
+  'this.dataCallbacks.forEach(cb => cb({...this.currentData}));',
 );
 code = code.replaceAll(
   'if (this.dataCallback) {\n        this.dataCallback({...this.currentData});\n      }',
-  'this.dataCallbacks.forEach(cb => cb({...this.currentData}));'
+  'this.dataCallbacks.forEach(cb => cb({...this.currentData}));',
 );
 
 fs.writeFileSync(file, code);

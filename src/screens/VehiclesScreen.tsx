@@ -11,7 +11,7 @@ import {
   Modal,
   Image,
 } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {useTheme} from '../services/ThemeContext';
 import {
   loadVehicles,
@@ -56,9 +56,16 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
   const [scanCounts, setScanCounts] = useState<Record<string, number>>({});
   const [historyVehicle, setHistoryVehicle] = useState<Vehicle | null>(null);
   const [historyScans, setHistoryScans] = useState<DTCScan[]>([]);
-  const [historyStats, setHistoryStats] = useState<{totalScans: number; totalCodes: number; uniqueCodes: number; mostCommon: {code: string; count: number}[]} | null>(null);
+  const [historyStats, setHistoryStats] = useState<{
+    totalScans: number;
+    totalCodes: number;
+    uniqueCodes: number;
+    mostCommon: {code: string; count: number}[];
+  } | null>(null);
   const [showCompare, setShowCompare] = useState(false);
-  const [compareData, setCompareData] = useState<{vehicleId: string; scans: DTCScan[]}[]>([]);
+  const [compareData, setCompareData] = useState<
+    {vehicleId: string; scans: DTCScan[]}[]
+  >([]);
 
   const refresh = useCallback(async () => {
     await loadVehicles();
@@ -103,8 +110,13 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
 
   const handleSelectImage = async () => {
     try {
-      const result = await launchImageLibrary({mediaType: 'photo', quality: 0.5});
-      if (result.didCancel) return;
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 0.5,
+      });
+      if (result.didCancel) {
+        return;
+      }
       if (result.errorCode) {
         Alert.alert('Hata', result.errorMessage || 'Resim seçilemedi');
         return;
@@ -173,7 +185,9 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
   };
 
   const handleDeleteScan = async (scanId: string) => {
-    if (!historyVehicle) return;
+    if (!historyVehicle) {
+      return;
+    }
     await deleteDTCScan(historyVehicle.id, scanId);
     setHistoryScans(await getDTCHistory(historyVehicle.id));
     setHistoryStats(await getDTCStats(historyVehicle.id));
@@ -181,15 +195,21 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
   };
 
   const handleClearAllHistory = () => {
-    if (!historyVehicle) return;
+    if (!historyVehicle) {
+      return;
+    }
     Alert.alert('Tüm Geçmişi Sil', 'Bu aracın tüm DTC geçmişi silinecek?', [
       {text: 'İptal', style: 'cancel'},
-      {text: 'Sil', style: 'destructive', onPress: async () => {
-        await clearDTCHistory(historyVehicle.id);
-        setHistoryScans([]);
-        setHistoryStats(null);
-        setScanCounts(await getDTCScanCounts());
-      }},
+      {
+        text: 'Sil',
+        style: 'destructive',
+        onPress: async () => {
+          await clearDTCHistory(historyVehicle.id);
+          setHistoryScans([]);
+          setHistoryStats(null);
+          setScanCounts(await getDTCScanCounts());
+        },
+      },
     ]);
   };
 
@@ -212,12 +232,17 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
       </View>
       {list.length >= 2 && (
         <TouchableOpacity
-          style={[styles.compareBtn, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}
+          style={[
+            styles.compareBtn,
+            {backgroundColor: colors.card, borderColor: colors.cardBorder},
+          ]}
           onPress={async () => {
             setCompareData(await getAllDTCHistory());
             setShowCompare(true);
           }}>
-          <Text style={[styles.compareBtnText, {color: colors.accent}]}>🔄 TÜM ARAÇLARI KARŞILAŞTIR</Text>
+          <Text style={[styles.compareBtnText, {color: colors.accent}]}>
+            🔄 TÜM ARAÇLARI KARŞILAŞTIR
+          </Text>
         </TouchableOpacity>
       )}
       <ScrollView contentContainerStyle={styles.list}>
@@ -233,16 +258,37 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
               key={v.id}
               style={[
                 styles.card,
-                {backgroundColor: colors.card, borderColor: activeId === v.id ? colors.accent : colors.cardBorder},
-                activeId === v.id && {borderWidth: 2}
+                {
+                  backgroundColor: colors.card,
+                  borderColor:
+                    activeId === v.id ? colors.accent : colors.cardBorder,
+                },
+                activeId === v.id && {borderWidth: 2},
               ]}
               onPress={() => selectVehicle(v.id)}
               onLongPress={() => remove(v.id)}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 {v.imageUri ? (
-                  <Image source={{uri: v.imageUri}} style={{width: 50, height: 50, borderRadius: 25, marginRight: 15}} />
+                  <Image
+                    source={{uri: v.imageUri}}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 25,
+                      marginRight: 15,
+                    }}
+                  />
                 ) : (
-                  <View style={{width: 50, height: 50, borderRadius: 25, backgroundColor: colors.inputBg, marginRight: 15, justifyContent: 'center', alignItems: 'center'}}>
+                  <View
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 25,
+                      backgroundColor: colors.inputBg,
+                      marginRight: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
                     <Text style={{fontSize: 24}}>🚗</Text>
                   </View>
                 )}
@@ -251,9 +297,15 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                     <Text style={[styles.cardBrand, {color: colors.text}]}>
                       {v.name}
                     </Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 10,
+                      }}>
                       {v.plate ? (
-                        <Text style={[styles.cardPlate, {color: colors.accent}]}>
+                        <Text
+                          style={[styles.cardPlate, {color: colors.accent}]}>
                           {v.plate}
                         </Text>
                       ) : null}
@@ -263,7 +315,8 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                     </View>
                   </View>
                   {v.brand || v.model || v.year ? (
-                    <Text style={[styles.cardDetail, {color: colors.textMuted}]}>
+                    <Text
+                      style={[styles.cardDetail, {color: colors.textMuted}]}>
                       {[v.brand, v.model, v.year].filter(Boolean).join(' / ')}
                     </Text>
                   ) : null}
@@ -273,15 +326,23 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                     </Text>
                   ) : null}
                   {v.lastConnected ? (
-                    <Text style={[styles.cardConnected, {color: colors.textDim}]}>
+                    <Text
+                      style={[styles.cardConnected, {color: colors.textDim}]}>
                       Son: {v.lastConnected}
                     </Text>
                   ) : null}
                   <View style={styles.cardActions}>
                     <TouchableOpacity
-                      style={[styles.dtcHistoryBtn, {borderColor: colors.cardBorder}]}
+                      style={[
+                        styles.dtcHistoryBtn,
+                        {borderColor: colors.cardBorder},
+                      ]}
                       onPress={() => openDtcHistory(v)}>
-                      <Text style={[styles.dtcHistoryBtnText, {color: colors.accent}]}>
+                      <Text
+                        style={[
+                          styles.dtcHistoryBtnText,
+                          {color: colors.accent},
+                        ]}>
                         🔧 DTC {scanCount > 0 ? `(${scanCount})` : ''}
                       </Text>
                     </TouchableOpacity>
@@ -305,14 +366,32 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
               </Text>
 
               <View style={{alignItems: 'center', marginVertical: 15}}>
-                <TouchableOpacity onPress={handleSelectImage} style={{width: 100, height: 100, borderRadius: 50, backgroundColor: colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: colors.cardBorder, overflow: 'hidden'}}>
+                <TouchableOpacity
+                  onPress={handleSelectImage}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    backgroundColor: colors.inputBg,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderWidth: 2,
+                    borderColor: colors.cardBorder,
+                    overflow: 'hidden',
+                  }}>
                   {imageUri ? (
-                    <Image source={{uri: imageUri}} style={{width: 100, height: 100}} />
+                    <Image
+                      source={{uri: imageUri}}
+                      style={{width: 100, height: 100}}
+                    />
                   ) : (
                     <Text style={{fontSize: 30}}>📸</Text>
                   )}
                 </TouchableOpacity>
-                <Text style={{color: colors.textMuted, fontSize: 11, marginTop: 8}}>Fotoğraf Seç (İsteğe Bağlı)</Text>
+                <Text
+                  style={{color: colors.textMuted, fontSize: 11, marginTop: 8}}>
+                  Fotoğraf Seç (İsteğe Bağlı)
+                </Text>
               </View>
               <Text style={[styles.label, {color: colors.textDim}]}>
                 Araç Adı *
@@ -457,9 +536,10 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                   {historyVehicle?.name}
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={() => setHistoryVehicle(null)}>
-                <Text style={[styles.historyClose, {color: colors.accent}]}>KAPAT</Text>
+              <TouchableOpacity onPress={() => setHistoryVehicle(null)}>
+                <Text style={[styles.historyClose, {color: colors.accent}]}>
+                  KAPAT
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -467,25 +547,51 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
               <View style={[styles.statsCard, {backgroundColor: colors.card}]}>
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, {color: '#00bfff'}]}>{historyStats.totalScans}</Text>
-                    <Text style={[styles.statLabel, {color: colors.textDim}]}>Tarama</Text>
+                    <Text style={[styles.statValue, {color: '#00bfff'}]}>
+                      {historyStats.totalScans}
+                    </Text>
+                    <Text style={[styles.statLabel, {color: colors.textDim}]}>
+                      Tarama
+                    </Text>
                   </View>
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, {color: '#ffa502'}]}>{historyStats.totalCodes}</Text>
-                    <Text style={[styles.statLabel, {color: colors.textDim}]}>Toplam Kod</Text>
+                    <Text style={[styles.statValue, {color: '#ffa502'}]}>
+                      {historyStats.totalCodes}
+                    </Text>
+                    <Text style={[styles.statLabel, {color: colors.textDim}]}>
+                      Toplam Kod
+                    </Text>
                   </View>
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, {color: '#7bed9f'}]}>{historyStats.uniqueCodes}</Text>
-                    <Text style={[styles.statLabel, {color: colors.textDim}]}>Farklı Kod</Text>
+                    <Text style={[styles.statValue, {color: '#7bed9f'}]}>
+                      {historyStats.uniqueCodes}
+                    </Text>
+                    <Text style={[styles.statLabel, {color: colors.textDim}]}>
+                      Farklı Kod
+                    </Text>
                   </View>
                 </View>
                 {historyStats.mostCommon.length > 0 && (
                   <View style={styles.commonCodes}>
-                    <Text style={[styles.commonTitle, {color: colors.textDim}]}>Sık Görülen Kodlar:</Text>
+                    <Text style={[styles.commonTitle, {color: colors.textDim}]}>
+                      Sık Görülen Kodlar:
+                    </Text>
                     {historyStats.mostCommon.map(mc => (
                       <View key={mc.code} style={styles.commonItem}>
-                        <Text style={[styles.commonCode, {color: getDTCCategoryColor(mc.code)}]}>{mc.code}</Text>
-                        <Text style={[styles.commonCount, {color: colors.textMuted}]}>{mc.count}x</Text>
+                        <Text
+                          style={[
+                            styles.commonCode,
+                            {color: getDTCCategoryColor(mc.code)},
+                          ]}>
+                          {mc.code}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.commonCount,
+                            {color: colors.textMuted},
+                          ]}>
+                          {mc.count}x
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -500,34 +606,63 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                 </Text>
               )}
               {historyScans.map(scan => (
-                <View key={scan.id} style={[styles.historyCard, {backgroundColor: colors.card}]}>
+                <View
+                  key={scan.id}
+                  style={[styles.historyCard, {backgroundColor: colors.card}]}>
                   <View style={styles.historyCardHeader}>
                     <Text style={[styles.historyDate, {color: colors.text}]}>
                       {new Date(scan.timestamp).toLocaleDateString('tr-TR', {
-                        day: 'numeric', month: 'long', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })}
                     </Text>
                     <View style={{flexDirection: 'row', gap: 6}}>
-                      {scan.isManual && <Text style={{color: '#ffa502', fontSize: 10, fontWeight: '800'}}>MANUEL</Text>}
-                      <TouchableOpacity onPress={() => handleDeleteScan(scan.id)}>
+                      {scan.isManual && (
+                        <Text
+                          style={{
+                            color: '#ffa502',
+                            fontSize: 10,
+                            fontWeight: '800',
+                          }}>
+                          MANUEL
+                        </Text>
+                      )}
+                      <TouchableOpacity
+                        onPress={() => handleDeleteScan(scan.id)}>
                         <Text style={{fontSize: 14}}>🗑️</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
                   {scan.dtcs.map(d => (
                     <View key={d.code} style={styles.historyItem}>
-                      <Text style={[styles.historyCode, {color: getDTCCategoryColor(d.code)}]}>{d.code}</Text>
-                      <Text style={[styles.historyDesc, {color: colors.textDim}]} numberOfLines={1}>{d.description}</Text>
+                      <Text
+                        style={[
+                          styles.historyCode,
+                          {color: getDTCCategoryColor(d.code)},
+                        ]}>
+                        {d.code}
+                      </Text>
+                      <Text
+                        style={[styles.historyDesc, {color: colors.textDim}]}
+                        numberOfLines={1}>
+                        {d.description}
+                      </Text>
                     </View>
                   ))}
                   {scan.pendingDTCs.length > 0 && (
-                    <Text style={{color: '#ffa502', fontSize: 11, marginTop: 4}}>
-                      ⏳ Bekleyen: {scan.pendingDTCs.map(p => p.code).join(', ')}
+                    <Text
+                      style={{color: '#ffa502', fontSize: 11, marginTop: 4}}>
+                      ⏳ Bekleyen:{' '}
+                      {scan.pendingDTCs.map(p => p.code).join(', ')}
                     </Text>
                   )}
                   {scan.dtcs.length === 0 && scan.pendingDTCs.length === 0 && (
-                    <Text style={{color: '#00ff7f', fontSize: 12}}>✅ Hata kodu bulunamadı</Text>
+                    <Text style={{color: '#00ff7f', fontSize: 12}}>
+                      ✅ Hata kodu bulunamadı
+                    </Text>
                   )}
                 </View>
               ))}
@@ -552,7 +687,9 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                 🔄 KARŞILAŞTIRMA
               </Text>
               <TouchableOpacity onPress={() => setShowCompare(false)}>
-                <Text style={[styles.historyClose, {color: colors.accent}]}>KAPAT</Text>
+                <Text style={[styles.historyClose, {color: colors.accent}]}>
+                  KAPAT
+                </Text>
               </TouchableOpacity>
             </View>
             <ScrollView>
@@ -565,57 +702,150 @@ export default function VehiclesScreen({onBack, onNavigate}: Props) {
                 const allCodes = new Set<string>();
                 const allPending = new Set<string>();
                 for (const s of scans) {
-                  for (const d of s.dtcs) allCodes.add(d.code);
-                  for (const d of s.pendingDTCs) allPending.add(d.code);
+                  for (const d of s.dtcs) {
+                    allCodes.add(d.code);
+                  }
+                  for (const d of s.pendingDTCs) {
+                    allPending.add(d.code);
+                  }
                 }
                 const v = list.find(x => x.id === vehicleId);
                 return (
-                  <View key={vehicleId} style={[styles.historyCard, {backgroundColor: colors.card}]}>
-                    <Text style={[styles.historyModalSub, {color: colors.text, fontWeight: '800', marginBottom: 6}]}>
+                  <View
+                    key={vehicleId}
+                    style={[
+                      styles.historyCard,
+                      {backgroundColor: colors.card},
+                    ]}>
+                    <Text
+                      style={[
+                        styles.historyModalSub,
+                        {
+                          color: colors.text,
+                          fontWeight: '800',
+                          marginBottom: 6,
+                        },
+                      ]}>
                       {v?.name || vehicleId} {v?.plate ? `(${v.plate})` : ''}
                     </Text>
-                    <Text style={[styles.historyDate, {color: colors.textMuted, marginBottom: 4}]}>{scans.length} tarama • {allCodes.size + allPending.size} farklı kod</Text>
+                    <Text
+                      style={[
+                        styles.historyDate,
+                        {color: colors.textMuted, marginBottom: 4},
+                      ]}>
+                      {scans.length} tarama • {allCodes.size + allPending.size}{' '}
+                      farklı kod
+                    </Text>
                     {allCodes.size > 0 && (
-                      <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 4}}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          gap: 4,
+                        }}>
                         {[...allCodes].sort().map(code => (
-                          <View key={code} style={{backgroundColor: getDTCCategoryColor(code) + '22', borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2}}>
-                            <Text style={{color: getDTCCategoryColor(code), fontSize: 10, fontWeight: '800'}}>{code}</Text>
+                          <View
+                            key={code}
+                            style={{
+                              backgroundColor: getDTCCategoryColor(code) + '22',
+                              borderRadius: 4,
+                              paddingHorizontal: 6,
+                              paddingVertical: 2,
+                            }}>
+                            <Text
+                              style={{
+                                color: getDTCCategoryColor(code),
+                                fontSize: 10,
+                                fontWeight: '800',
+                              }}>
+                              {code}
+                            </Text>
                           </View>
                         ))}
                       </View>
                     )}
                     {allPending.size > 0 && (
-                      <Text style={{color: '#ffa502', fontSize: 10, marginTop: 4}}>
+                      <Text
+                        style={{color: '#ffa502', fontSize: 10, marginTop: 4}}>
                         ⏳ Bekleyen: {[...allPending].sort().join(', ')}
                       </Text>
                     )}
                     {allCodes.size === 0 && allPending.size === 0 && (
-                      <Text style={{color: '#00ff7f', fontSize: 11}}>✅ Hata kodu yok</Text>
+                      <Text style={{color: '#00ff7f', fontSize: 11}}>
+                        ✅ Hata kodu yok
+                      </Text>
                     )}
                   </View>
                 );
               })}
               {compareData.length >= 2 && (
-                <View style={[styles.historyCard, {backgroundColor: 'rgba(0,191,255,0.06)', borderLeftWidth: 3, borderLeftColor: '#00bfff'}]}>
-                  <Text style={[styles.historyModalSub, {color: '#00bfff', fontWeight: '800', marginBottom: 6}]}>
+                <View
+                  style={[
+                    styles.historyCard,
+                    {
+                      backgroundColor: 'rgba(0,191,255,0.06)',
+                      borderLeftWidth: 3,
+                      borderLeftColor: '#00bfff',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.historyModalSub,
+                      {color: '#00bfff', fontWeight: '800', marginBottom: 6},
+                    ]}>
                     📊 ORTAK KODLAR
                   </Text>
                   {(() => {
                     const allVehicleCodes = compareData.map(({scans}) => {
                       const codes = new Set<string>();
                       for (const s of scans) {
-                        for (const d of s.dtcs) codes.add(d.code);
+                        for (const d of s.dtcs) {
+                          codes.add(d.code);
+                        }
                       }
                       return codes;
                     });
-                    if (allVehicleCodes.length < 2) return <Text style={{color: colors.textDim, fontSize: 12}}>Yeterli veri yok</Text>;
-                    const common = [...allVehicleCodes[0]].filter(c => allVehicleCodes.slice(1).every(s => s.has(c)));
-                    if (common.length === 0) return <Text style={{color: '#00ff7f', fontSize: 12}}>✅ Ortak hata kodu bulunamadı</Text>;
+                    if (allVehicleCodes.length < 2) {
+                      return (
+                        <Text style={{color: colors.textDim, fontSize: 12}}>
+                          Yeterli veri yok
+                        </Text>
+                      );
+                    }
+                    const common = [...allVehicleCodes[0]].filter(c =>
+                      allVehicleCodes.slice(1).every(s => s.has(c)),
+                    );
+                    if (common.length === 0) {
+                      return (
+                        <Text style={{color: '#00ff7f', fontSize: 12}}>
+                          ✅ Ortak hata kodu bulunamadı
+                        </Text>
+                      );
+                    }
                     return (
-                      <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 4}}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          gap: 4,
+                        }}>
                         {common.sort().map(code => (
-                          <View key={code} style={{backgroundColor: getDTCCategoryColor(code) + '33', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3}}>
-                            <Text style={{color: getDTCCategoryColor(code), fontSize: 11, fontWeight: '800'}}>{code}</Text>
+                          <View
+                            key={code}
+                            style={{
+                              backgroundColor: getDTCCategoryColor(code) + '33',
+                              borderRadius: 4,
+                              paddingHorizontal: 8,
+                              paddingVertical: 3,
+                            }}>
+                            <Text
+                              style={{
+                                color: getDTCCategoryColor(code),
+                                fontSize: 11,
+                                fontWeight: '800',
+                              }}>
+                              {code}
+                            </Text>
                           </View>
                         ))}
                       </View>
@@ -733,9 +963,23 @@ const styles = StyleSheet.create({
   statItem: {alignItems: 'center'},
   statValue: {fontSize: 24, fontWeight: '900'},
   statLabel: {fontSize: 11, fontWeight: '700', marginTop: 2},
-  commonCodes: {marginTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)', paddingTop: 10},
-  commonTitle: {fontSize: 11, fontWeight: '700', marginBottom: 6, letterSpacing: 0.5},
-  commonItem: {flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2},
+  commonCodes: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.06)',
+    paddingTop: 10,
+  },
+  commonTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    marginBottom: 6,
+    letterSpacing: 0.5,
+  },
+  commonItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 2,
+  },
   commonCode: {fontSize: 12, fontWeight: '800', letterSpacing: 0.5},
   commonCount: {fontSize: 12, fontWeight: '700'},
   historyCard: {
@@ -756,7 +1000,12 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     gap: 8,
   },
-  historyCode: {fontSize: 12, fontWeight: '800', letterSpacing: 0.5, minWidth: 55},
+  historyCode: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    minWidth: 55,
+  },
   historyDesc: {fontSize: 11, flex: 1},
   clearAllBtn: {
     backgroundColor: 'rgba(255,71,87,0.15)',

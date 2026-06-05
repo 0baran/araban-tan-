@@ -5,12 +5,13 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView, FlatList,
+  ScrollView,
+  FlatList,
   TextInput,
   Platform,
 } from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
-import { OEM_SENSORS } from '../services/OemSensors';
+import {OEM_SENSORS} from '../services/OemSensors';
 import {loadSettings, saveSettings, getSettings} from '../services/AppSettings';
 import {useTheme} from '../services/ThemeContext';
 import {voiceAlertService} from '../services/VoiceAlertService';
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const PARAM_META: {
-  key: keyof OBD2Data;
+  key: string;
   label: string;
   unit: string;
   color: string;
@@ -662,72 +663,71 @@ const PARAM_META: {
     label: 'DSG Kavrama Basıncı (VAG)',
     unit: 'Bar',
     color: '#eb4d4b',
-    category: 'şanzıman'
+    category: 'şanzıman',
   },
   {
     key: 'oem_vag_haldex',
     label: 'Haldex Yağ Sıcaklığı (VAG)',
     unit: '°C',
     color: '#686de0',
-    category: 'şasi'
+    category: 'şasi',
   },
   {
     key: 'oem_alfa_dna',
     label: 'DNA Mod Durumu (Alfa)',
     unit: '',
     color: '#e056fd',
-    category: 'sürüş'
+    category: 'sürüş',
   },
   {
     key: 'oem_volvo_dpf_diff',
     label: 'DPF Fark Basıncı (Volvo)',
     unit: 'hPa',
     color: '#4834d4',
-    category: 'egzoz'
+    category: 'egzoz',
   },
   {
     key: 'oem_nissan_attesa',
     label: 'ATTESA AWD (Nissan)',
     unit: '% (Ön)',
     color: '#be2edd',
-    category: 'şasi'
+    category: 'şasi',
   },
   {
     key: 'oem_generic_tpms1',
     label: 'TPMS Sol Ön (Genel)',
     unit: 'PSI',
     color: '#22a6b3',
-    category: 'şasi'
+    category: 'şasi',
   },
   {
     key: 'oem_bmw_battery_soc',
     label: 'Akü Şarj Durumu (BMW)',
     unit: '%',
     color: '#f9ca24',
-    category: 'elektrik'
+    category: 'elektrik',
   },
   {
     key: 'oem_mb_oil_temp',
     label: 'AMG Motor Yağı',
     unit: '°C',
     color: '#eb4d4b',
-    category: 'motor'
+    category: 'motor',
   },
   {
     key: 'oem_vag_misfire_1',
     label: 'Silindir 1 Tekleme (VAG)',
     unit: 'Kez',
     color: '#ff7979',
-    category: 'motor'
+    category: 'motor',
   },
   {
     key: 'oem_lr_def_level',
     label: 'AdBlue Seviyesi (LR)',
     unit: '%',
     color: '#c7ecee',
-    category: 'egzoz'
-  }
-
+    category: 'egzoz',
+  },
 ];
 
 OEM_SENSORS.forEach(sensor => {
@@ -736,10 +736,9 @@ OEM_SENSORS.forEach(sensor => {
     label: sensor.name,
     unit: sensor.unit,
     color: sensor.color || '#ffffff',
-    category: sensor.category || 'diğer'
+    category: sensor.category || 'diğer',
   });
 });
-
 
 const CATEGORIES = [
   {key: '', label: 'TÜMÜ'},
@@ -988,7 +987,13 @@ export default function LiveDataScreen({onBack}: Props) {
   }).current;
 
   useEffect(() => {
-    const cyberBarKeys = ['rpm', 'speed', 'coolantTemp', 'engineLoad', 'batteryVoltage'];
+    const cyberBarKeys = [
+      'rpm',
+      'speed',
+      'coolantTemp',
+      'engineLoad',
+      'batteryVoltage',
+    ];
     const toPrioritize = new Set([...cyberBarKeys, ...pinned, ...visibleKeys]);
     obd2Service.requestPriorityPids(Array.from(toPrioritize));
     return () => obd2Service.requestPriorityPids(pinned);
@@ -1003,7 +1008,7 @@ export default function LiveDataScreen({onBack}: Props) {
   );
 
   const fmt = (p: (typeof PARAM_META)[0]): string => {
-    const val = data[p.key];
+    const val = data[p.key as keyof OBD2Data];
     if (p.key === 'fuelSystemStatus' || p.key === 'fuelType') {
       return String(val);
     }
@@ -1112,20 +1117,99 @@ export default function LiveDataScreen({onBack}: Props) {
 
         {/* CYBERPUNK DASHBOARD FOR KEY METRICS */}
         {(isHudMode || showDashboard) && (
-          <View style={{backgroundColor: 'rgba(255,255,255,0.02)', marginHorizontal: 16, borderRadius: 16, padding: 10, marginBottom: 15, borderWidth: 1, borderColor: 'rgba(0,191,255,0.2)'}}>
-            <CyberBar label="MOTOR DEVRİ" value={data.rpm} max={8000} unit="RPM" color="#00bfff" />
-            <CyberBar label="HIZ" value={data.speed} max={240} unit="KM/H" color={data.speed > 120 ? '#ff4757' : '#00ff7f'} />
-            <CyberBar label="SOĞUTMA" value={data.coolantTemp} max={130} unit="°C" color={data.coolantTemp > 105 ? '#ff4757' : '#ff9ff3'} />
-            <CyberBar label="MOTOR YÜKÜ" value={data.engineLoad} max={100} unit="%" color="#feca57" />
-            <CyberBar label="AKÜ VOLTAJI" value={data.batteryVoltage} max={16} unit="V" color="#8ecae6" valueFormatter={v => v.toFixed(1)} />
+          <View
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.02)',
+              marginHorizontal: 16,
+              borderRadius: 16,
+              padding: 10,
+              marginBottom: 15,
+              borderWidth: 1,
+              borderColor: 'rgba(0,191,255,0.2)',
+            }}>
+            <CyberBar
+              label="MOTOR DEVRİ"
+              value={data.rpm}
+              max={8000}
+              unit="RPM"
+              color="#00bfff"
+            />
+            <CyberBar
+              label="HIZ"
+              value={data.speed}
+              max={240}
+              unit="KM/H"
+              color={data.speed > 120 ? '#ff4757' : '#00ff7f'}
+            />
+            <CyberBar
+              label="SOĞUTMA"
+              value={data.coolantTemp}
+              max={130}
+              unit="°C"
+              color={data.coolantTemp > 105 ? '#ff4757' : '#ff9ff3'}
+            />
+            <CyberBar
+              label="MOTOR YÜKÜ"
+              value={data.engineLoad}
+              max={100}
+              unit="%"
+              color="#feca57"
+            />
+            <CyberBar
+              label="AKÜ VOLTAJI"
+              value={data.batteryVoltage}
+              max={16}
+              unit="V"
+              color="#8ecae6"
+              valueFormatter={v => v.toFixed(1)}
+            />
 
             {pinnedMeta.length > 0 && (
-              <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 15, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.05)', paddingTop: 15}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginTop: 15,
+                  borderTopWidth: 1,
+                  borderColor: 'rgba(255,255,255,0.05)',
+                  paddingTop: 15,
+                }}>
                 {pinnedMeta.map(p => (
-                  <View key={p.key} style={{width: '50%', marginBottom: 15, alignItems: 'center'}}>
-                    <Text style={{color: p.color, fontSize: 32, fontWeight: '900', textShadowColor: p.color, textShadowOffset: {width: 0, height: 0}, textShadowRadius: 10}}>{fmt(p)}</Text>
-                    <Text style={{color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '700', marginTop: 4}}>{p.label}</Text>
-                    <Text style={{color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: '700'}}>{p.unit}</Text>
+                  <View
+                    key={p.key}
+                    style={{
+                      width: '50%',
+                      marginBottom: 15,
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        color: p.color,
+                        fontSize: 32,
+                        fontWeight: '900',
+                        textShadowColor: p.color,
+                        textShadowOffset: {width: 0, height: 0},
+                        textShadowRadius: 10,
+                      }}>
+                      {fmt(p)}
+                    </Text>
+                    <Text
+                      style={{
+                        color: 'rgba(255,255,255,0.5)',
+                        fontSize: 11,
+                        fontWeight: '700',
+                        marginTop: 4,
+                      }}>
+                      {p.label}
+                    </Text>
+                    <Text
+                      style={{
+                        color: 'rgba(255,255,255,0.3)',
+                        fontSize: 10,
+                        fontWeight: '700',
+                      }}>
+                      {p.unit}
+                    </Text>
                   </View>
                 ))}
               </View>

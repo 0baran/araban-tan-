@@ -36,15 +36,34 @@ export default function VehicleStatusCard({
   const styles = getStyles(colors);
 
   return (
-    <View style={[styles.glassCard, {backgroundColor: colors.card, borderColor: colors.cardBorder}]}>
-      <Text style={[styles.cardLabel, {color: colors.textDim}]}>ARAÇ DURUMU</Text>
-      <Text style={[styles.vehicleText, {color: colors.text}, isConnected && styles.textNeonGreen]}>
+    <View
+      style={[
+        styles.glassCard,
+        {backgroundColor: colors.card, borderColor: colors.cardBorder},
+      ]}>
+      <Text style={[styles.cardLabel, {color: colors.textDim}]}>
+        ARAÇ DURUMU
+      </Text>
+      <Text
+        style={[
+          styles.vehicleText,
+          {color: colors.text},
+          isConnected && styles.textNeonGreen,
+        ]}>
         {statusText}
       </Text>
       {updateStatus ? (
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 6,
+          }}>
           <ActivityIndicator size="small" color="#00bfff" />
-          <Text style={[styles.protocolText, {color: '#00bfff'}]}>{updateStatus}</Text>
+          <Text style={[styles.protocolText, {color: '#00bfff'}]}>
+            {updateStatus}
+          </Text>
         </View>
       ) : null}
       {isConnected && (
@@ -71,14 +90,29 @@ export default function VehicleStatusCard({
   );
 }
 
-const getStyles = (colors: any) => StyleSheet.create({
-  glassCard: {
-    borderRadius: 24, padding: 20, borderWidth: 1, marginBottom: 20,
-  },
-  cardLabel: {color: colors.textDim, fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 10},
-  vehicleText: {color: colors.text, fontSize: 20, fontWeight: 'bold', marginBottom: 5},
-  textNeonGreen: {color: '#00ff7f'},
-  protocolText: {color: colors.textMuted, fontSize: 14},
-  vehicleInfoRow: {flexDirection: 'row', gap: 16, marginTop: 10},
-  vehicleInfoItem: {color: colors.textDim, fontSize: 13, fontWeight: '600'},
-});
+const getStyles = (colors: any) =>
+  StyleSheet.create({
+    glassCard: {
+      borderRadius: 24,
+      padding: 20,
+      borderWidth: 1,
+      marginBottom: 20,
+    },
+    cardLabel: {
+      color: colors.textDim,
+      fontSize: 12,
+      fontWeight: 'bold',
+      letterSpacing: 1,
+      marginBottom: 10,
+    },
+    vehicleText: {
+      color: colors.text,
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+    textNeonGreen: {color: '#00ff7f'},
+    protocolText: {color: colors.textMuted, fontSize: 14},
+    vehicleInfoRow: {flexDirection: 'row', gap: 16, marginTop: 10},
+    vehicleInfoItem: {color: colors.textDim, fontSize: 13, fontWeight: '600'},
+  });

@@ -166,7 +166,10 @@ export type ConnectionConfig = {
 };
 
 export type OBD2Callback = (data: OBD2Data) => void;
-export type ConnectionCallback = (state: ConnectionState, message?: string) => void;
+export type ConnectionCallback = (
+  state: ConnectionState,
+  message?: string,
+) => void;
 
 export interface Transport {
   connect(onProgress?: (msg: string) => void): Promise<boolean>;

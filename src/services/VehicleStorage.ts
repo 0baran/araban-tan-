@@ -28,8 +28,11 @@ export async function getActiveVehicleId(): Promise<string | null> {
 
 export async function setActiveVehicleId(id: string | null): Promise<void> {
   activeVehicleId = id;
-  if (id) await AsyncStorage.setItem(ACTIVE_KEY, id);
-  else await AsyncStorage.removeItem(ACTIVE_KEY);
+  if (id) {
+    await AsyncStorage.setItem(ACTIVE_KEY, id);
+  } else {
+    await AsyncStorage.removeItem(ACTIVE_KEY);
+  }
 }
 
 export async function loadVehicles(): Promise<Vehicle[]> {
@@ -74,7 +77,9 @@ export async function updateVehicle(
 
 export async function deleteVehicle(id: string): Promise<void> {
   vehicles = vehicles.filter(v => v.id !== id);
-  if (activeVehicleId === id) await setActiveVehicleId(null);
+  if (activeVehicleId === id) {
+    await setActiveVehicleId(null);
+  }
   await saveVehicles();
 }
 

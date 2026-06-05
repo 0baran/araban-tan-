@@ -1,7 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {accelerometer, setUpdateIntervalForType, SensorTypes} from 'react-native-sensors';
+import {
+  accelerometer,
+  setUpdateIntervalForType,
+  SensorTypes,
+} from 'react-native-sensors';
 import {obd2Service} from '../services/OBD2Service';
 import CyberBar from '../components/CyberBar';
 import {useTheme} from '../services/ThemeContext';
@@ -13,15 +24,17 @@ interface Props {
 }
 
 export default function PerformanceScreen({onBack}: Props) {
-  const {theme} = useTheme();
-  
+  const {colors: theme} = useTheme();
+
   const [speed, setSpeed] = useState(0);
   const [rpm, setRpm] = useState(0);
   const [hp, setHp] = useState(0);
   const [torque, setTorque] = useState(0);
 
   // 0-100 Logic
-  const [timerState, setTimerState] = useState<'IDLE' | 'READY' | 'RUNNING' | 'DONE'>('IDLE');
+  const [timerState, setTimerState] = useState<
+    'IDLE' | 'READY' | 'RUNNING' | 'DONE'
+  >('IDLE');
   const [timerMs, setTimerMs] = useState(0);
   const [startTime, setStartTime] = useState(0);
 
@@ -38,7 +51,7 @@ export default function PerformanceScreen({onBack}: Props) {
       const gy = y / 9.81;
       const gz = z / 9.81;
       setGForce({x: gx, y: gy, z: gz});
-      const currentG = Math.sqrt(gx*gx + gy*gy);
+      const currentG = Math.sqrt(gx * gx + gy * gy);
       if (currentG > maxG) {
         setMaxG(currentG);
       }
@@ -51,8 +64,8 @@ export default function PerformanceScreen({onBack}: Props) {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    
-    const obdSub = obd2Service.subscribe((data) => {
+
+    const unsubscribe = obd2Service.onDataUpdate((data) => {
       const currentSpeed = typeof data.speed === 'number' ? data.speed : 0;
       const currentRpm = typeof data.rpm === 'number' ? data.rpm : 0;
       const maf = typeof data.maf === 'number' ? data.maf : 0;
@@ -63,7 +76,7 @@ export default function PerformanceScreen({onBack}: Props) {
       // Virtual Dyno (Rough estimation: HP ≈ MAF * 1.25)
       const estHp = maf > 0 ? maf * 1.25 : 0;
       setHp(Math.round(estHp));
-      
+
       if (currentRpm > 0 && estHp > 0) {
         const estTorque = (estHp * 7120) / currentRpm; // 7120 instead of 5252 for metric Nm? Actually (HP * 7120) / RPM = Nm
         setTorque(Math.round(estTorque));
@@ -97,8 +110,10 @@ export default function PerformanceScreen({onBack}: Props) {
     }
 
     return () => {
-      obd2Service.unsubscribe(obdSub);
-      if (interval) clearInterval(interval);
+      unsubscribe();
+      if (interval) {
+        clearInterval(interval);
+      }
     };
   }, [timerState, startTime]);
 
@@ -111,7 +126,8 @@ export default function PerformanceScreen({onBack}: Props) {
   const timerText = (timerMs / 1000).toFixed(2) + ' sn';
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: theme.background}]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.bg}]}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
           <Text style={styles.backText}>{'< GERİ'}</Text>
@@ -120,13 +136,20 @@ export default function PerformanceScreen({onBack}: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        
         {/* 0-100 TIMER */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>0-100 km/h TESTİ</Text>
           <View style={styles.timerDisplay}>
-            <Text style={[styles.timerValue, {color: timerState === 'DONE' ? '#00E676' : '#FFD700'}]}>
-              {timerState === 'IDLE' ? 'DURUN' : timerState === 'READY' ? 'HAZIR' : timerText}
+            <Text
+              style={[
+                styles.timerValue,
+                {color: timerState === 'DONE' ? '#00E676' : '#FFD700'},
+              ]}>
+              {timerState === 'IDLE'
+                ? 'DURUN'
+                : timerState === 'READY'
+                ? 'HAZIR'
+                : timerText}
             </Text>
           </View>
           <Text style={styles.timerSub}>Durum: {timerState}</Text>
@@ -142,18 +165,25 @@ export default function PerformanceScreen({onBack}: Props) {
           <View style={styles.gForceContainer}>
             <View style={styles.gForceCircle}>
               {/* Ball */}
-              <View style={[styles.gForceBall, {
-                transform: [
-                  { translateX: gForce.x * 50 },
-                  { translateY: -gForce.y * 50 } // invert Y
-                ]
-              }]} />
+              <View
+                style={[
+                  styles.gForceBall,
+                  {
+                    transform: [
+                      {translateX: gForce.x * 50},
+                      {translateY: -gForce.y * 50}, // invert Y
+                    ],
+                  },
+                ]}
+              />
               <View style={styles.crosshairH} />
               <View style={styles.crosshairV} />
             </View>
           </View>
           <View style={styles.gForceRow}>
-            <Text style={styles.gForceText}>Anlık: {Math.sqrt(gForce.x**2 + gForce.y**2).toFixed(2)} G</Text>
+            <Text style={styles.gForceText}>
+              Anlık: {Math.sqrt(gForce.x ** 2 + gForce.y ** 2).toFixed(2)} G
+            </Text>
             <Text style={styles.gForceText}>Maks: {maxG.toFixed(2)} G</Text>
           </View>
           <TouchableOpacity style={styles.btn} onPress={resetMaxG}>
@@ -174,10 +204,11 @@ export default function PerformanceScreen({onBack}: Props) {
               <Text style={styles.dynoLabel}>Nm</Text>
             </View>
           </View>
-          <CyberBar value={rpm} max={8000} color="#FF3366" label="RPM" />
-          <Text style={styles.dynoDisclaimer}>*Sadece MAF tabanlı tahmini veridir.</Text>
+          <CyberBar value={rpm} max={8000} color="#FF3366" label="RPM" unit="" />
+          <Text style={styles.dynoDisclaimer}>
+            *Sadece MAF tabanlı tahmini veridir.
+          </Text>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -328,5 +359,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Courier',
     marginTop: 10,
     textAlign: 'center',
-  }
+  },
 });

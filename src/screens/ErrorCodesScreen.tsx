@@ -24,7 +24,12 @@ import {
   DTC_DESCRIPTIONS,
 } from '../services/DTCDatabase';
 import {getActiveVehicleId} from '../services/VehicleStorage';
-import {saveDTCScan, getDTCHistory, deleteDTCScan, type DTCScan} from '../services/DTCHistory';
+import {
+  saveDTCScan,
+  getDTCHistory,
+  deleteDTCScan,
+  type DTCScan,
+} from '../services/DTCHistory';
 
 interface Props {
   onBack: () => void;
@@ -104,7 +109,9 @@ export default function ErrorCodesScreen({onBack}: Props) {
   const [manualCode3, setManualCode3] = useState('');
   const [scanCounts, setScanCounts] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
-  const [activeVehicleId, setActiveVehicleIdState] = useState<string | null>(null);
+  const [activeVehicleId, setActiveVehicleIdState] = useState<string | null>(
+    null,
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<DTC[]>([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -136,14 +143,18 @@ export default function ErrorCodesScreen({onBack}: Props) {
 
   const openHistory = async () => {
     const vid = await getActiveVehicleId();
-    if (!vid) return;
+    if (!vid) {
+      return;
+    }
     setHistory(await getDTCHistory(vid));
     setShowHistory(true);
   };
 
   const handleDeleteScan = async (scanId: string) => {
     const vid = await getActiveVehicleId();
-    if (!vid) return;
+    if (!vid) {
+      return;
+    }
     await deleteDTCScan(vid, scanId);
     setHistory(await getDTCHistory(vid));
   };
@@ -152,7 +163,9 @@ export default function ErrorCodesScreen({onBack}: Props) {
     const codes = [manualCode, manualCode2, manualCode3]
       .map(c => c.trim().toUpperCase())
       .filter(c => /^[PUCB]\d{4}$/.test(c));
-    if (codes.length === 0) return;
+    if (codes.length === 0) {
+      return;
+    }
 
     const vid = await getActiveVehicleId();
     if (!vid) {
@@ -162,10 +175,14 @@ export default function ErrorCodesScreen({onBack}: Props) {
 
     const dtcList: DTC[] = codes.map(code => ({
       code,
-      description: KNOWN_CODES[code] || getDtcDescription(code) || 'Bilinmiyor (manuel)',
+      description:
+        KNOWN_CODES[code] || getDtcDescription(code) || 'Bilinmiyor (manuel)',
     }));
 
-    await saveDTCScan(vid, dtcList, [], {isManual: true, notes: 'Manuel giriş'});
+    await saveDTCScan(vid, dtcList, [], {
+      isManual: true,
+      notes: 'Manuel giriş',
+    });
     setManualCode('');
     setManualCode2('');
     setManualCode3('');
@@ -174,7 +191,9 @@ export default function ErrorCodesScreen({onBack}: Props) {
   };
 
   useEffect(() => {
-    if (showHistory) openHistory();
+    if (showHistory) {
+      openHistory();
+    }
   }, [showHistory]);
 
   const fetchPermanentDTCs = useCallback(async () => {
@@ -193,7 +212,10 @@ export default function ErrorCodesScreen({onBack}: Props) {
 
   const handleDatabaseSearch = useCallback((query: string) => {
     const q = query.trim();
-    if (!q) {setSearchResults([]); return;}
+    if (!q) {
+      setSearchResults([]);
+      return;
+    }
     const upper = q.toUpperCase();
     const lowerTR = q.toLocaleLowerCase('tr');
     const isCodeSearch = /^[PUCB]\d{0,4}$/i.test(q);
@@ -205,39 +227,65 @@ export default function ErrorCodesScreen({onBack}: Props) {
       if (isCodeSearch && code.startsWith(upper)) {
         matched.push({code, description: desc, source: 'VT'});
         seenCodes.add(code);
-      } else if (!isCodeSearch && desc.toLocaleLowerCase('tr').includes(lowerTR)) {
+      } else if (
+        !isCodeSearch &&
+        desc.toLocaleLowerCase('tr').includes(lowerTR)
+      ) {
         matched.push({code, description: desc, source: 'VT'});
         seenCodes.add(code);
       }
-      if (matched.length >= 50) break;
+      if (matched.length >= 50) {
+        break;
+      }
     }
 
     // 2. DTC_AI_ADVICE (91 kayıt - cause/advice içinde ara)
     if (!isCodeSearch && matched.length < 50) {
       for (const [code, advice] of Object.entries(DTC_AI_ADVICE)) {
-        if (seenCodes.has(code)) continue;
-        const text = (advice.cause + ' ' + advice.advice).toLocaleLowerCase('tr');
+        if (seenCodes.has(code)) {
+          continue;
+        }
+        const text = (advice.cause + ' ' + advice.advice).toLocaleLowerCase(
+          'tr',
+        );
         if (text.includes(lowerTR)) {
-          const desc = DTC_DESCRIPTIONS[code] || KNOWN_CODES[code] || getDtcDescription(code) || `${code} - Tanımlanmamış`;
-          matched.push({code, description: desc + ' (AI tavsiye)', source: 'AI'});
+          const desc =
+            DTC_DESCRIPTIONS[code] ||
+            KNOWN_CODES[code] ||
+            getDtcDescription(code) ||
+            `${code} - Tanımlanmamış`;
+          matched.push({
+            code,
+            description: desc + ' (AI tavsiye)',
+            source: 'AI',
+          });
           seenCodes.add(code);
         }
-        if (matched.length >= 50) break;
+        if (matched.length >= 50) {
+          break;
+        }
       }
     }
 
     // 3. KNOWN_CODES (87 yaygın kod)
     if (matched.length < 50) {
       for (const [code, desc] of Object.entries(KNOWN_CODES)) {
-        if (seenCodes.has(code)) continue;
+        if (seenCodes.has(code)) {
+          continue;
+        }
         if (isCodeSearch && code.startsWith(upper)) {
           matched.push({code, description: desc, source: 'Bilinen'});
           seenCodes.add(code);
-        } else if (!isCodeSearch && desc.toLocaleLowerCase('tr').includes(lowerTR)) {
+        } else if (
+          !isCodeSearch &&
+          desc.toLocaleLowerCase('tr').includes(lowerTR)
+        ) {
           matched.push({code, description: desc, source: 'Bilinen'});
           seenCodes.add(code);
         }
-        if (matched.length >= 50) break;
+        if (matched.length >= 50) {
+          break;
+        }
       }
     }
 
@@ -253,7 +301,9 @@ export default function ErrorCodesScreen({onBack}: Props) {
 
   const groupedDTCs = dtcs.reduce<Record<string, DTC[]>>((acc, d) => {
     const cat = getDTCSubCategory(d.code);
-    if (!acc[cat]) {acc[cat] = [];}
+    if (!acc[cat]) {
+      acc[cat] = [];
+    }
     acc[cat].push(d);
     return acc;
   }, {});
@@ -298,7 +348,13 @@ export default function ErrorCodesScreen({onBack}: Props) {
         </TouchableOpacity>
         <Text style={[styles.title, {color: colors.text}]}>HATA KODLARI</Text>
         <View style={{flexDirection: 'row', gap: 6}}>
-          <TouchableOpacity style={{padding: 8}} onPress={() => {setShowSearch(s=>!s); setSearchQuery(''); setSearchResults([]);}}>
+          <TouchableOpacity
+            style={{padding: 8}}
+            onPress={() => {
+              setShowSearch(s => !s);
+              setSearchQuery('');
+              setSearchResults([]);
+            }}>
             <Text style={{fontSize: 18}}>🔎</Text>
           </TouchableOpacity>
           {activeVehicleId && (
@@ -314,31 +370,58 @@ export default function ErrorCodesScreen({onBack}: Props) {
       {showSearch && (
         <View style={{paddingHorizontal: 20, marginBottom: 8}}>
           <TextInput
-            style={[styles.manualInput, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder, marginBottom: 0}]}
+            style={[
+              styles.manualInput,
+              {
+                backgroundColor: colors.inputBg,
+                color: colors.text,
+                borderColor: colors.cardBorder,
+                marginBottom: 0,
+              },
+            ]}
             value={searchQuery}
-            onChangeText={txt => {setSearchQuery(txt); handleDatabaseSearch(txt);}}
+            onChangeText={txt => {
+              setSearchQuery(txt);
+              handleDatabaseSearch(txt);
+            }}
             placeholder="Kod (P0299) veya kelime (turbo, egr, batarya)..."
             placeholderTextColor={colors.textMuted}
             autoCapitalize="characters"
             autoFocus
           />
           {searchResults.length > 0 && (
-            <Text style={{color: colors.textDim, fontSize: 11, paddingTop: 4, paddingBottom: 4}}>
+            <Text
+              style={{
+                color: colors.textDim,
+                fontSize: 11,
+                paddingTop: 4,
+                paddingBottom: 4,
+              }}>
               {searchResults.length} sonuç bulundu
             </Text>
           )}
         </View>
       )}
-      <View style={{flexDirection: 'row', paddingHorizontal: 20, gap: 8, marginBottom: 8}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          paddingHorizontal: 20,
+          gap: 8,
+          marginBottom: 8,
+        }}>
         <TouchableOpacity
           style={[styles.manualBtn, {borderColor: colors.cardBorder}]}
           onPress={() => setShowManual(true)}>
-          <Text style={[styles.manualBtnText, {color: colors.accent}]}>+ MANUEL KOD</Text>
+          <Text style={[styles.manualBtnText, {color: colors.accent}]}>
+            + MANUEL KOD
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.manualBtn, {borderColor: colors.cardBorder}]}
           onPress={fetchPermanentDTCs}>
-          <Text style={[styles.manualBtnText, {color: '#ff6b81'}]}>{loadingPermanent ? '...' : '🔴 KALICI'}</Text>
+          <Text style={[styles.manualBtnText, {color: '#ff6b81'}]}>
+            {loadingPermanent ? '...' : '🔴 KALICI'}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -381,22 +464,58 @@ export default function ErrorCodesScreen({onBack}: Props) {
                 </View>
               )}
               {permanent.length > 0 && (
-                <View style={[styles.pendingCard, {borderLeftColor: '#ff6b81', backgroundColor: 'rgba(255,107,129,0.06)'}]}>
-                  <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                    <Text style={[styles.pendingTitle, {color:'#ff6b81'}]}>🔴 KALICI KODLAR (Mode 0A)</Text>
+                <View
+                  style={[
+                    styles.pendingCard,
+                    {
+                      borderLeftColor: '#ff6b81',
+                      backgroundColor: 'rgba(255,107,129,0.06)',
+                    },
+                  ]}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={[styles.pendingTitle, {color: '#ff6b81'}]}>
+                      🔴 KALICI KODLAR (Mode 0A)
+                    </Text>
                     <TouchableOpacity onPress={fetchPermanentDTCs}>
-                      <Text style={{color:'#ff6b81', fontSize:11, fontWeight:'700'}}>YENİLE</Text>
+                      <Text
+                        style={{
+                          color: '#ff6b81',
+                          fontSize: 11,
+                          fontWeight: '700',
+                        }}>
+                        YENİLE
+                      </Text>
                     </TouchableOpacity>
                   </View>
                   {permanent.map(p => (
-                    <TouchableOpacity key={p.code} style={styles.pendingItem} onLongPress={() => handleSearch(p.code)}>
+                    <TouchableOpacity
+                      key={p.code}
+                      style={styles.pendingItem}
+                      onLongPress={() => handleSearch(p.code)}>
                       <View style={styles.pendingCodeRow}>
-                        <Text style={[styles.pendingCode, {color:'#ff6b81'}]}>{p.code}</Text>
-                        <Text style={[styles.pendingBadge, {color: getDTCCategoryColor(p.code), borderColor: getDTCCategoryColor(p.code)}]}>
+                        <Text style={[styles.pendingCode, {color: '#ff6b81'}]}>
+                          {p.code}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.pendingBadge,
+                            {
+                              color: getDTCCategoryColor(p.code),
+                              borderColor: getDTCCategoryColor(p.code),
+                            },
+                          ]}>
                           {getDTCCategory(p.code).split(' ')[0]}
                         </Text>
                       </View>
-                      <Text style={[styles.pendingDesc, {color: colors.textDim}]}>{p.description}</Text>
+                      <Text
+                        style={[styles.pendingDesc, {color: colors.textDim}]}>
+                        {p.description}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -457,20 +576,86 @@ export default function ErrorCodesScreen({onBack}: Props) {
                   {searchResults.map(item => (
                     <TouchableOpacity
                       key={item.code + (item as any).source}
-                      style={[styles.dtcItem, {borderLeftColor: getDTCCategoryColor(item.code)}]}
+                      style={[
+                        styles.dtcItem,
+                        {borderLeftColor: getDTCCategoryColor(item.code)},
+                      ]}
                       onPress={() => setSelected(item)}
                       onLongPress={() => handleSearch(item.code)}>
-                      <View style={[styles.dtcHeader, {backgroundColor: getDTCCategoryColor(item.code) + '15', borderBottomColor: getDTCCategoryColor(item.code) + '30'}]}>
-                        <View style={{flexDirection:'row', alignItems:'center', gap:6}}>
-                          <Text style={[styles.dtcSeverity, {color: getDTCCategoryColor(item.code)}]}>{(item as any).source === 'AI' ? '🤖' : (item as any).source === 'Bilinen' ? '✓' : '📚'} {getDTCCategory(item.code)}</Text>
-                          <Text style={{fontSize:8, fontWeight:'700', color: (item as any).source === 'AI' ? '#00bfff' : (item as any).source === 'Bilinen' ? '#7bed9f' : '#ffa502', backgroundColor: 'rgba(255,255,255,0.06)', paddingHorizontal:4, paddingVertical:1, borderRadius:3}}>{(item as any).source}</Text>
+                      <View
+                        style={[
+                          styles.dtcHeader,
+                          {
+                            backgroundColor:
+                              getDTCCategoryColor(item.code) + '15',
+                            borderBottomColor:
+                              getDTCCategoryColor(item.code) + '30',
+                          },
+                        ]}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 6,
+                          }}>
+                          <Text
+                            style={[
+                              styles.dtcSeverity,
+                              {color: getDTCCategoryColor(item.code)},
+                            ]}>
+                            {(item as any).source === 'AI'
+                              ? '🤖'
+                              : (item as any).source === 'Bilinen'
+                              ? '✓'
+                              : '📚'}{' '}
+                            {getDTCCategory(item.code)}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 8,
+                              fontWeight: '700',
+                              color:
+                                (item as any).source === 'AI'
+                                  ? '#00bfff'
+                                  : (item as any).source === 'Bilinen'
+                                  ? '#7bed9f'
+                                  : '#ffa502',
+                              backgroundColor: 'rgba(255,255,255,0.06)',
+                              paddingHorizontal: 4,
+                              paddingVertical: 1,
+                              borderRadius: 3,
+                            }}>
+                            {(item as any).source}
+                          </Text>
                         </View>
-                        <TouchableOpacity style={[styles.searchBtn, {borderColor: getDTCCategoryColor(item.code) + '44'}]} onPress={() => handleSearch(item.code)}>
-                          <Text style={[styles.searchBtnText, {color: getDTCCategoryColor(item.code)}]}>🔍</Text>
+                        <TouchableOpacity
+                          style={[
+                            styles.searchBtn,
+                            {
+                              borderColor:
+                                getDTCCategoryColor(item.code) + '44',
+                            },
+                          ]}
+                          onPress={() => handleSearch(item.code)}>
+                          <Text
+                            style={[
+                              styles.searchBtnText,
+                              {color: getDTCCategoryColor(item.code)},
+                            ]}>
+                            🔍
+                          </Text>
                         </TouchableOpacity>
                       </View>
-                      <Text style={[styles.dtcCode, {color: getDTCCategoryColor(item.code)}]}>📖 {item.code}</Text>
-                      <Text style={[styles.dtcDesc, {color: colors.textDim}]}>{item.description}</Text>
+                      <Text
+                        style={[
+                          styles.dtcCode,
+                          {color: getDTCCategoryColor(item.code)},
+                        ]}>
+                        📖 {item.code}
+                      </Text>
+                      <Text style={[styles.dtcDesc, {color: colors.textDim}]}>
+                        {item.description}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </>
@@ -594,7 +779,8 @@ export default function ErrorCodesScreen({onBack}: Props) {
                           MANUEL
                         </Text>
                       )}
-                      <TouchableOpacity onPress={() => handleDeleteScan(scan.id)}>
+                      <TouchableOpacity
+                        onPress={() => handleDeleteScan(scan.id)}>
                         <Text style={{fontSize: 14}}>🗑️</Text>
                       </TouchableOpacity>
                     </View>
@@ -622,7 +808,8 @@ export default function ErrorCodesScreen({onBack}: Props) {
                           styles.historyCode,
                           {color: '#ffa502', fontSize: 12, marginTop: 6},
                         ]}>
-                        ⏳ Bekleyen: {scan.pendingDTCs.map(p => p.code).join(', ')}
+                        ⏳ Bekleyen:{' '}
+                        {scan.pendingDTCs.map(p => p.code).join(', ')}
                       </Text>
                     </>
                   )}
@@ -642,14 +829,23 @@ export default function ErrorCodesScreen({onBack}: Props) {
       <Modal visible={showManual} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, {backgroundColor: colors.card}]}>
-            <Text style={[styles.modalCode, {color: colors.text, fontSize: 22}]}>
+            <Text
+              style={[styles.modalCode, {color: colors.text, fontSize: 22}]}>
               + MANUEL KOD GİR
             </Text>
-            <Text style={[styles.modalDesc, {color: colors.textDim, fontSize: 13}]}>
+            <Text
+              style={[styles.modalDesc, {color: colors.textDim, fontSize: 13}]}>
               OBD2 hata kodunu elle girin (örn: P0301)
             </Text>
             <TextInput
-              style={[styles.manualInput, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]}
+              style={[
+                styles.manualInput,
+                {
+                  backgroundColor: colors.inputBg,
+                  color: colors.text,
+                  borderColor: colors.cardBorder,
+                },
+              ]}
               value={manualCode}
               onChangeText={setManualCode}
               placeholder="P0301"
@@ -658,7 +854,14 @@ export default function ErrorCodesScreen({onBack}: Props) {
               maxLength={5}
             />
             <TextInput
-              style={[styles.manualInput, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]}
+              style={[
+                styles.manualInput,
+                {
+                  backgroundColor: colors.inputBg,
+                  color: colors.text,
+                  borderColor: colors.cardBorder,
+                },
+              ]}
               value={manualCode2}
               onChangeText={setManualCode2}
               placeholder="P0171 (opsiyonel)"
@@ -667,7 +870,14 @@ export default function ErrorCodesScreen({onBack}: Props) {
               maxLength={5}
             />
             <TextInput
-              style={[styles.manualInput, {backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.cardBorder}]}
+              style={[
+                styles.manualInput,
+                {
+                  backgroundColor: colors.inputBg,
+                  color: colors.text,
+                  borderColor: colors.cardBorder,
+                },
+              ]}
               value={manualCode3}
               onChangeText={setManualCode3}
               placeholder="P0420 (opsiyonel)"
@@ -677,12 +887,24 @@ export default function ErrorCodesScreen({onBack}: Props) {
             />
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={[styles.modalBtn, {backgroundColor: 'rgba(0,191,255,0.15)', borderColor: '#00bfff'}]}
+                style={[
+                  styles.modalBtn,
+                  {
+                    backgroundColor: 'rgba(0,191,255,0.15)',
+                    borderColor: '#00bfff',
+                  },
+                ]}
                 onPress={handleManualAdd}>
-                <Text style={[styles.modalBtnText, {color: '#00bfff'}]}>KAYDET</Text>
+                <Text style={[styles.modalBtnText, {color: '#00bfff'}]}>
+                  KAYDET
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalBtn} onPress={() => setShowManual(false)}>
-                <Text style={[styles.modalBtnText, {color: colors.text}]}>İPTAL</Text>
+              <TouchableOpacity
+                style={styles.modalBtn}
+                onPress={() => setShowManual(false)}>
+                <Text style={[styles.modalBtnText, {color: colors.text}]}>
+                  İPTAL
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -939,7 +1161,12 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     gap: 8,
   },
-  historyCode: {fontSize: 13, fontWeight: '800', letterSpacing: 1, minWidth: 60},
+  historyCode: {
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 1,
+    minWidth: 60,
+  },
   historyDesc: {fontSize: 12, flex: 1},
   manualInput: {
     borderRadius: 12,

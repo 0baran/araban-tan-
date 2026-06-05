@@ -36,12 +36,14 @@ export function rh(size: number): number {
 export function rf(size: number, maxScale = 1.2): number {
   const newSize = size * scale;
   const pixelRatioScaled = PixelRatio.roundToNearestPixel(newSize);
-  
+
   // Fontun aşırı büyümesini engellemek için sınır
   if (pixelRatioScaled > size * maxScale) {
     return size * maxScale;
   }
-  return Platform.OS === 'ios' ? Math.round(pixelRatioScaled) : Math.round(pixelRatioScaled) - 1;
+  return Platform.OS === 'ios'
+    ? Math.round(pixelRatioScaled)
+    : Math.round(pixelRatioScaled) - 1;
 }
 
 /**

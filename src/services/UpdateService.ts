@@ -23,7 +23,9 @@ type ProgressListener = (pct: number) => void;
 let progressListeners: ProgressListener[] = [];
 export function onDownloadProgress(fn: ProgressListener) {
   progressListeners.push(fn);
-  return () => { progressListeners = progressListeners.filter(l => l !== fn); };
+  return () => {
+    progressListeners = progressListeners.filter(l => l !== fn);
+  };
 }
 function setProgress(pct: number) {
   downloadProgress = pct;
@@ -41,13 +43,17 @@ export async function checkForUpdate(
       cache: 'no-cache',
       signal,
     });
-    if (!resp.ok) return {found: false, reason: 'network'};
+    if (!resp.ok) {
+      return {found: false, reason: 'network'};
+    }
     const info: UpdateInfo = await resp.json();
     if (compareVersions(info.version, currentVersion) <= 0) {
       return {found: false, reason: 'uptodate'};
     }
     const skipped = await AsyncStorage.getItem(SKIPPED_KEY);
-    if (skipped === info.version) return {found: false, reason: 'skipped'};
+    if (skipped === info.version) {
+      return {found: false, reason: 'skipped'};
+    }
     return {found: true, info};
   } catch {
     return {found: false, reason: 'network'};
@@ -59,12 +65,19 @@ let _lastNotificationVersion = '';
 export function promptUpdate(info: UpdateInfo) {
   showUpdateNotification(info.version, info.notes, info.url);
 
-  if (AppState.currentState !== 'active') return;
-  if (_lastNotificationVersion === info.version) return;
+  if (AppState.currentState !== 'active') {
+    return;
+  }
+  if (_lastNotificationVersion === info.version) {
+    return;
+  }
   _lastNotificationVersion = info.version;
 
   Alert.alert('Guncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
-    {text: 'Simdi Guncelle', onPress: () => downloadAndInstall(info.url, info.version)},
+    {
+      text: 'Simdi Guncelle',
+      onPress: () => downloadAndInstall(info.url, info.version),
+    },
     {
       text: 'Daha Sonra',
       style: 'cancel',
@@ -73,15 +86,21 @@ export function promptUpdate(info: UpdateInfo) {
   ]);
 }
 
-export async function downloadAndInstall(url: string, version: string): Promise<boolean> {
+export async function downloadAndInstall(
+  url: string,
+  version: string,
+): Promise<boolean> {
   if (downloadActive) {
-    Alert.alert('Indirme Devam Ediyor', 'Mevcut indirme tamamlanana kadar bekleyin.');
+    Alert.alert(
+      'Indirme Devam Ediyor',
+      'Mevcut indirme tamamlanana kadar bekleyin.',
+    );
     return false;
   }
   downloadActive = true;
   setProgress(0);
 
-  const { fs, android } = ReactNativeBlobUtil;
+  const {fs, android} = ReactNativeBlobUtil;
   const dest = fs.dirs.DownloadDir + `/ArabaniTani-v${version}.apk`;
 
   try {
@@ -103,13 +122,18 @@ export async function downloadAndInstall(url: string, version: string): Promise<
 
     // Otomatik kurulum ekranını açmayı dene (FileProvider üzerinden)
     try {
-      android.actionViewIntent(res.path(), 'application/vnd.android.package-archive');
+      android.actionViewIntent(
+        res.path(),
+        'application/vnd.android.package-archive',
+      );
     } catch (e) {}
 
     Alert.alert(
       'İndirme Tamamlandı',
-      'Kurulum ekranı otomatik açılmadıysa, lütfen "İndirilenler" klasöründen veya bildirim panelinden dosyayı (ArabaniTani-v' + version + '.apk) bularak kurun.',
-      [{ text: 'Tamam' }]
+      'Kurulum ekranı otomatik açılmadıysa, lütfen "İndirilenler" klasöründen veya bildirim panelinden dosyayı (ArabaniTani-v' +
+        version +
+        '.apk) bularak kurun.',
+      [{text: 'Tamam'}],
     );
 
     downloadActive = false;
@@ -130,8 +154,12 @@ function compareVersions(a: string, b: string): number {
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
     const na = pa[i] || 0;
     const nb = pb[i] || 0;
-    if (na > nb) return 1;
-    if (na < nb) return -1;
+    if (na > nb) {
+      return 1;
+    }
+    if (na < nb) {
+      return -1;
+    }
   }
   return 0;
 }

@@ -8,15 +8,29 @@ import RNBluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getSettings } from './AppSettings';
-import notifee, { AndroidImportance, AndroidForegroundServiceType, EventType } from '@notifee/react-native';
+import {getSettings} from './AppSettings';
+import notifee, {
+  AndroidImportance,
+  AndroidForegroundServiceType,
+  EventType,
+} from '@notifee/react-native';
 import type {HiddenFeature} from './HiddenFeatures';
-import { OemSensorDef, OEM_SENSORS, detectBrandFromVIN } from './OemSensors';
+import {OemSensorDef, OEM_SENSORS, detectBrandFromVIN} from './OemSensors';
 import {
-  OBD2Data, MonitorStatus, TripData, DTC, FreezeFrameData,
-  ConnectionState, ConnectionType, ConnectionConfig,
-  OBD2Callback, ConnectionCallback, Transport,
-  OBD2_PROTOCOLS, PROTOCOL_LABELS, ELM_CONSTANTS,
+  OBD2Data,
+  MonitorStatus,
+  TripData,
+  DTC,
+  FreezeFrameData,
+  ConnectionState,
+  ConnectionType,
+  ConnectionConfig,
+  OBD2Callback,
+  ConnectionCallback,
+  Transport,
+  OBD2_PROTOCOLS,
+  PROTOCOL_LABELS,
+  ELM_CONSTANTS,
 } from '../types/OBD2Types';
 import {BluetoothTransport} from './transport/BluetoothTransport';
 import {UsbTransport} from './transport/UsbTransport';
@@ -60,9 +74,9 @@ class OBD2Service {
   ];
   private validKeys = new Set<string>(this.validKeysArray);
   private _validKeysDirty = false;
-  
+
   private isPidSupported(pid: string): boolean {
-    if (this.supportedPids.size <= 1) return true;
+    if (this.supportedPids.size <= 1) {return true;}
     return this.supportedPids.has(pid);
   }
 
@@ -82,7 +96,8 @@ class OBD2Service {
           for (let i = 0; i < 32; i++) {
             if (binary[i] === '1') {
               const pidNum = offset + i + 1;
-              const pidHex = '01' + pidNum.toString(16).padStart(2, '0').toUpperCase();
+              const pidHex =
+                '01' + pidNum.toString(16).padStart(2, '0').toUpperCase();
               this.supportedPids.add(pidHex);
             }
           }
@@ -107,7 +122,6 @@ class OBD2Service {
       }
     } catch (e) {}
   }
-
 
   private currentData: OBD2Data = new Proxy(
     {
@@ -183,7 +197,7 @@ class OBD2Service {
       chargeAirCoolerTemp: 0,
       fuelRailGaugePressure: 0,
       engineFuelRate: 0,
-      
+
       engineFrictionTorque: 0,
       distanceSinceDTCClearHighRes: 0,
       throttlePositionG: 0,
@@ -238,7 +252,7 @@ class OBD2Service {
   );
 
   private async startForegroundService() {
-    if (this.foregroundServiceActive || Platform.OS !== 'android') return;
+    if (this.foregroundServiceActive || Platform.OS !== 'android') {return;}
     try {
       const channelId = await notifee.createChannel({
         id: 'obd_connection',
@@ -246,7 +260,7 @@ class OBD2Service {
         importance: AndroidImportance.LOW,
       });
 
-            await notifee.displayNotification({
+      await notifee.displayNotification({
         title: 'ArabaniTani Calisiyor',
         body: 'Aracla baglanti kuruldu, veri okunuyor...',
         android: {
@@ -262,8 +276,8 @@ class OBD2Service {
           actions: [
             {
               title: 'BAĞLANTIYI KES',
-              pressAction: { id: 'disconnect_obd' },
-            }
+              pressAction: {id: 'disconnect_obd'},
+            },
           ]
         },
       });
@@ -274,7 +288,7 @@ class OBD2Service {
   }
 
   private async stopForegroundService() {
-    if (!this.foregroundServiceActive || Platform.OS !== 'android') return;
+    if (!this.foregroundServiceActive || Platform.OS !== 'android') {return;}
     try {
       await notifee.stopForegroundService();
       this.foregroundServiceActive = false;
@@ -525,7 +539,7 @@ class OBD2Service {
   }
 
   async connectUSB(): Promise<boolean> {
-    if (this._connecting) return false;
+    if (this._connecting) {return false;}
     this._connecting = true;
     try {
       this._connectionType = 'usb';
@@ -639,21 +653,23 @@ class OBD2Service {
     this.currentProtocolLabel = 'Simülasyon';
     this.setConnectionState('connected', 'Simülasyon Modu Aktif');
 
-
     // OEM Discovery
     if (this._vin) {
       this.carBrand = detectBrandFromVIN(this._vin);
     }
-    
+
     // Asynchronous discovery of OEM sensors
     setTimeout(async () => {
       this.supportedOemPids = [];
       const brand = this.carBrand;
       // Eğer VIN yoksa veya marka bulunamadıysa (UNKNOWN), tüm sensörleri dener (Brute-Force)
-      const candidates = brand === 'UNKNOWN' 
-        ? OEM_SENSORS 
-        : OEM_SENSORS.filter(s => s.brands.includes(brand) || s.brands.includes('ALL'));
-      
+      const candidates =
+        brand === 'UNKNOWN'
+          ? OEM_SENSORS
+          : OEM_SENSORS.filter(
+              s => s.brands.includes(brand) || s.brands.includes('ALL')
+            );
+
       for (const sensor of candidates) {
         try {
           if (sensor.header) {
@@ -665,25 +681,30 @@ class OBD2Service {
             await this.sendCommandFast('ATSH7E0'); // reset to default engine header
             await this.delay(50);
           }
-          
-          if (resp && !resp.includes('NO DATA') && !resp.includes('ERROR') && !resp.includes('7F')) {
+
+          if (
+            resp &&
+            !resp.includes('NO DATA') &&
+            !resp.includes('ERROR') &&
+            !resp.includes('7F')
+          ) {
             const parsed = sensor.parse(resp);
             if (parsed !== null) {
               this.supportedOemPids.push(sensor);
               this.oemData[sensor.id] = parsed;
-              
+
               if (!this.validKeys.has(sensor.id)) {
                 this.validKeys.add(sensor.id);
                 this._validKeysDirty = true;
               }
-              
+
               console.log('OEM Sensor Discovered:', sensor.name, parsed);
             }
           }
-        } catch(e){}
+        } catch (e) {}
       }
     }, 2000);
-  
+
     this.pollRunning = true;
     this.currentData.speed = 0;
 
@@ -852,7 +873,7 @@ class OBD2Service {
     this._writeBusy = false;
   }
 
-  
+
   private acquireLock(): Promise<() => void> {
     let release!: () => void;
     const nextLock = new Promise<void>(resolve => {
@@ -867,59 +888,62 @@ class OBD2Service {
     const release = await this.acquireLock();
     try {
       const t = this.transport;
-    if (!t || !this._isConnected) {
-      return '';
-    }
-    try {
-      await t.readAll();
-      await this.enqueueWrite(() => t.write(cmd + '\r'));
-      await this.delay(ELM_CONSTANTS.WRITE_DELAY);
-      let response = '';
-      let emptyCount = 0;
-      for (let i = 0; i < ELM_CONSTANTS.READ_MAX_POLLS; i++) {
-        await this.delay(ELM_CONSTANTS.READ_POLL_INTERVAL);
-        const chunk = await t.readAll();
-        if (chunk) {
-          response += chunk;
-          emptyCount = 0;
-        } else {
-          emptyCount++;
-          if (emptyCount > ELM_CONSTANTS.READ_EMPTY_LIMIT && response.length > 0) {
+      if (!t || !this._isConnected) {
+        return '';
+      }
+      try {
+        await t.readAll();
+        await this.enqueueWrite(() => t.write(cmd + '\r'));
+        await this.delay(ELM_CONSTANTS.WRITE_DELAY);
+        let response = '';
+        let emptyCount = 0;
+        for (let i = 0; i < ELM_CONSTANTS.READ_MAX_POLLS; i++) {
+          await this.delay(ELM_CONSTANTS.READ_POLL_INTERVAL);
+          const chunk = await t.readAll();
+          if (chunk) {
+            response += chunk;
+            emptyCount = 0;
+          } else {
+            emptyCount++;
+            if (
+              emptyCount > ELM_CONSTANTS.READ_EMPTY_LIMIT &&
+              response.length > 0
+            ) {
+              break;
+            }
+          }
+          if (response.includes('>')) {
             break;
           }
         }
-        if (response.includes('>')) {
-          break;
+        let clean = response
+          .replace(/\d+:/g, '')
+          .replace(/>/g, '')
+          .replace(/\s/g, '')
+          .trim();
+        if (cmd.startsWith('01') && cmd.length === 4) {
+          const respPrefix = '41' + cmd.substring(2);
+          const idx = clean.indexOf(respPrefix);
+          if (idx > 0) {
+            clean = clean.substring(idx);
+          } else if (idx < 0) {
+            clean = '';
+          }
         }
-      }
-      let clean = response
-        .replace(/\d+:/g, '')
-        .replace(/>/g, '')
-        .replace(/\s/g, '')
-        .trim();
-      if (cmd.startsWith('01') && cmd.length === 4) {
-        const respPrefix = '41' + cmd.substring(2);
-        const idx = clean.indexOf(respPrefix);
-        if (idx > 0) {
-          clean = clean.substring(idx);
-        } else if (idx < 0) {
-          clean = '';
+        return clean;
+      } catch (e) {
+        const msg = String(e);
+        if (
+          msg.includes('Not connected') ||
+          msg.includes('disconnected') ||
+          msg.includes('closed')
+        ) {
+          this._isConnected = false;
+          this.stopForegroundService();
+          this.setConnectionState('disconnected', 'Bağlantı koptu');
         }
+        return '';
       }
-      return clean;
-    } catch (e) {
-      const msg = String(e);
-      if (
-        msg.includes('Not connected') ||
-        msg.includes('disconnected') ||
-        msg.includes('closed')
-      ) {
-        this._isConnected = false;
-        this.stopForegroundService();
-        this.setConnectionState('disconnected', 'Bağlantı koptu');
-      }
-      return '';
-    }
     } finally {
       release();
     }
@@ -993,9 +1017,11 @@ class OBD2Service {
     await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
 
     this.supportedPids.clear();
-    
+
     if (getSettings().rangeRoverLegacyMode) {
-      console.log('initializeELM327: Eski Range Rover Modu aktif. Özel AT komutları gönderiliyor...');
+      console.log(
+        'initializeELM327: Eski Range Rover Modu aktif. Özel AT komutları gönderiliyor...',
+      );
       await this.sendCommand('ATSP5'); // KWP Fast Init
       await this.delay(ELM_CONSTANTS.ATSP_DELAY);
       await this.sendCommand('ATIIA14'); // Init Address 14
@@ -1013,7 +1039,9 @@ class OBD2Service {
         await this.readMorePidRanges(this.sendCommand.bind(this));
         return true;
       } else {
-        console.log('initializeELM327: Range Rover ATSP5 başarisiz, normal denemelere dönülüyor...');
+        console.log(
+          'initializeELM327: Range Rover ATSP5 başarisiz, normal denemelere dönülüyor...',
+        );
       }
     }
 
@@ -1038,7 +1066,20 @@ class OBD2Service {
     console.log(
       'initializeELM327: Otomatik protokol başarısız, protokoller taranıyor...',
     );
-    const tryProtocols = ['6', '7', '5', '3', '8', '9', '1', '2', '4', 'A', 'B', 'C'];
+    const tryProtocols = [
+      '6',
+      '7',
+      '5',
+      '3',
+      '8',
+      '9',
+      '1',
+      '2',
+      '4',
+      'A',
+      'B',
+      'C',
+    ];
     for (const proto of tryProtocols) {
       await this.sendCommand(`ATSP${proto}`);
       await this.delay(ELM_CONSTANTS.AT_CMD_DELAY);
@@ -1256,81 +1297,87 @@ class OBD2Service {
       // ---------------- PROFESSIONAL VIEW-BASED POLLING ----------------
       // Kritik sensörler (010C, 010D, AT komutları) her zaman geçer.
       // Diğer sensörler sadece priorityPids (ekranda görünenler) listesinde ise geçer!
-      if (this.isViewBasedPollingActive && cmd.startsWith('01') && cmd !== '010C0D' && cmd !== '010C' && cmd !== '010D') {
-         if (!key || !this.priorityPids.has(key)) {
-            // Ekranda görünmüyor, bant genişliğini meşgul etme!
-            release();
-            return '';
-         }
+      if (
+        this.isViewBasedPollingActive &&
+        cmd.startsWith('01') &&
+        cmd !== '010C0D' &&
+        cmd !== '010C' &&
+        cmd !== '010D'
+      ) {
+        if (!key || !this.priorityPids.has(key)) {
+          // Ekranda görünmüyor, bant genişliğini meşgul etme!
+          release();
+          return '';
+        }
       }
 
       const now = Date.now();
-    // Smart Sleep (Ping after 10s)
-    if (this.sleepingPids[cmd]) {
-      if (now - this.sleepingPids[cmd] < 10000) {
-        return '';
-      } else {
-        delete this.sleepingPids[cmd];
-      }
-    }
-
-    if (key && !this.shouldPoll(key)) {
-      return '';
-    }
-
-    if (cmd.startsWith('01') && cmd.length === 4) {
-      if (!this.canPoll(cmd)) {
-        return '';
-      }
-      this.lastPollTimes[cmd] = now;
-    }
-    const t = this.transport;
-    if (!t || !this._isConnected) {
-      return '';
-    }
-    try {
-      await t.readAll();
-      await this.enqueueWrite(() => t.write(cmd + '\r'));
-      await this.delay(ELM_CONSTANTS.FAST_WRITE_DELAY);
-      let response = '';
-      for (let i = 0; i < ELM_CONSTANTS.FAST_MAX_POLLS; i++) {
-        await this.delay(ELM_CONSTANTS.FAST_POLL_INTERVAL);
-        const chunk = await t.readAll();
-        if (chunk) {
-          response += chunk;
-        }
-        if (response.includes('>')) {
-          break;
+      // Smart Sleep (Ping after 10s)
+      if (this.sleepingPids[cmd]) {
+        if (now - this.sleepingPids[cmd] < 10000) {
+          return '';
+        } else {
+          delete this.sleepingPids[cmd];
         }
       }
-      let clean = response
-        .replace(/\d+:/g, '')
-        .replace(/>/g, '')
-        .replace(/\s/g, '')
-        .trim();
+
+      if (key && !this.shouldPoll(key)) {
+        return '';
+      }
+
       if (cmd.startsWith('01') && cmd.length === 4) {
-        const respPrefix = '41' + cmd.substring(2);
-        const idx = clean.indexOf(respPrefix);
-        if (idx > 0) {
-          clean = clean.substring(idx);
-        } else if (idx < 0) {
-          clean = '';
+        if (!this.canPoll(cmd)) {
+          return '';
         }
+        this.lastPollTimes[cmd] = now;
       }
-      return clean;
-    } catch (e) {
-      const msg = String(e);
-      if (
-        msg.includes('Not connected') ||
-        msg.includes('disconnected') ||
-        msg.includes('closed')
-      ) {
-        this._isConnected = false;
-        this.stopForegroundService();
-        this.setConnectionState('disconnected', 'Bağlantı koptu');
+      const t = this.transport;
+      if (!t || !this._isConnected) {
+        return '';
       }
-      return '';
-    }
+      try {
+        await t.readAll();
+        await this.enqueueWrite(() => t.write(cmd + '\r'));
+        await this.delay(ELM_CONSTANTS.FAST_WRITE_DELAY);
+        let response = '';
+        for (let i = 0; i < ELM_CONSTANTS.FAST_MAX_POLLS; i++) {
+          await this.delay(ELM_CONSTANTS.FAST_POLL_INTERVAL);
+          const chunk = await t.readAll();
+          if (chunk) {
+            response += chunk;
+          }
+          if (response.includes('>')) {
+            break;
+          }
+        }
+        let clean = response
+          .replace(/\d+:/g, '')
+          .replace(/>/g, '')
+          .replace(/\s/g, '')
+          .trim();
+        if (cmd.startsWith('01') && cmd.length === 4) {
+          const respPrefix = '41' + cmd.substring(2);
+          const idx = clean.indexOf(respPrefix);
+          if (idx > 0) {
+            clean = clean.substring(idx);
+          } else if (idx < 0) {
+            clean = '';
+          }
+        }
+        return clean;
+      } catch (e) {
+        const msg = String(e);
+        if (
+          msg.includes('Not connected') ||
+          msg.includes('disconnected') ||
+          msg.includes('closed')
+        ) {
+          this._isConnected = false;
+          this.stopForegroundService();
+          this.setConnectionState('disconnected', 'Bağlantı koptu');
+        }
+        return '';
+      }
     } finally {
       release();
     }
@@ -1338,10 +1385,14 @@ class OBD2Service {
 
   private multiPidSupported: boolean | null = null;
   private async sendCritical(): Promise<boolean> {
-    if (!this.pollRunning) return false;
+    if (!this.pollRunning) {return false;}
 
     // Multi-PID (Sadece RPM ve Hız) - Gecikmeyi Önlemek İçin Küçültüldü
-    if (this.multiPidSupported !== false && this.isPidSupported('010C') && this.isPidSupported('010D')) {
+    if (
+      this.multiPidSupported !== false &&
+      this.isPidSupported('010C') &&
+      this.isPidSupported('010D')
+    ) {
       const multiResp = await this.sendCommandFast('010C0D', 'multi_fast');
       if (multiResp && multiResp.includes('410C') && multiResp.includes('0D')) {
         this.multiPidSupported = true;
@@ -1354,21 +1405,26 @@ class OBD2Service {
     if (this.multiPidSupported === false) {
       if (this.isPidSupported('010C')) {
         const rpmResp = await this.sendCommandFast('010C', 'rpm');
-        if (rpmResp) this.parseMultiResponse(rpmResp);
+        if (rpmResp) {this.parseMultiResponse(rpmResp);}
       }
-      if (!this.pollRunning) return false;
+      if (!this.pollRunning) {return false;}
       if (this.isPidSupported('010D')) {
         const speedResp = await this.sendCommandFast('010D', 'speed');
-        if (speedResp) this.parseMultiResponse(speedResp);
+        if (speedResp) {this.parseMultiResponse(speedResp);}
       }
     }
 
-    
+
     // Calculate Fuel Consumption manually if 015E is not providing it
     if (this.currentData.fuelRate === 0) {
       if (this.currentData.maf > 0) {
-        this.currentData.fuelRate = Math.round(this.currentData.maf * 0.298 * 10) / 10;
-      } else if (this.currentData.map > 0 && this.currentData.rpm > 0 && this.currentData.intakeTemp > -40) {
+        this.currentData.fuelRate =
+          Math.round(this.currentData.maf * 0.298 * 10) / 10;
+      } else if (
+        this.currentData.map > 0 &&
+        this.currentData.rpm > 0 &&
+        this.currentData.intakeTemp > -40
+      ) {
         // Ideal gas law approximation: Engine_Disp = 1.6L, VE = 0.85
         // MAF(g/s) = (MAP(kPa) * Disp(L) * VE * RPM) / (120 * 0.287 * (IntakeTemp(C) + 273.15))
         const rpm = this.currentData.rpm;
@@ -1378,14 +1434,17 @@ class OBD2Service {
         this.currentData.fuelRate = Math.round(mafCalc * 0.298 * 10) / 10;
       }
     }
-    
+
     // Update fuel consumption L/100km
     if (this.currentData.speed > 5 && this.currentData.fuelRate > 0) {
-      this.currentData.fuelConsumption = Math.round((this.currentData.fuelRate / this.currentData.speed) * 100 * 10) / 10;
+      this.currentData.fuelConsumption =
+        Math.round(
+          (this.currentData.fuelRate / this.currentData.speed) * 100 * 10,
+        ) / 10;
     } else {
       this.currentData.fuelConsumption = 0;
     }
-    
+
     this.updateTripData(this.currentData.speed);
     this.addLogEntry(this.currentData);
     // Redundant callback removed to prevent lag
@@ -1393,35 +1452,34 @@ class OBD2Service {
     return true;
   }
 
-
   private parseMultiResponse(hex: string) {
     let i = 0;
     while (i < hex.length - 2) {
       if (hex.substring(i, i + 2) === '41') {
-         i += 2; // Skip '41' prefix if present
+        i += 2; // Skip '41' prefix if present
       }
-      
+
       const pid = hex.substring(i, i + 2);
       i += 2;
-      
+
       if (pid === '0C') {
-         if (i + 4 <= hex.length) {
-            this.parseRPM('410C' + hex.substring(i, i + 4));
-            i += 4;
-         } else break;
+        if (i + 4 <= hex.length) {
+          this.parseRPM('410C' + hex.substring(i, i + 4));
+          i += 4;
+        } else {break;}
       } else if (pid === '0D') {
-         if (i + 2 <= hex.length) {
-            this.parseSpeed('410D' + hex.substring(i, i + 2));
-            i += 2;
-         } else break;
+        if (i + 2 <= hex.length) {
+          this.parseSpeed('410D' + hex.substring(i, i + 2));
+          i += 2;
+        } else {break;}
       } else if (pid === '05') {
-         if (i + 2 <= hex.length) {
-            this.parseCoolantTemp('4105' + hex.substring(i, i + 2));
-            i += 2;
-         } else break;
+        if (i + 2 <= hex.length) {
+          this.parseCoolantTemp('4105' + hex.substring(i, i + 2));
+          i += 2;
+        } else {break;}
       } else {
-         // Unknown PID or garbage, stop parsing to prevent misalignment
-         break;
+        // Unknown PID or garbage, stop parsing to prevent misalignment
+        break;
       }
     }
   }
@@ -1464,7 +1522,7 @@ class OBD2Service {
           this.currentData.speed === 0 && this.currentData.rpm === 0;
 
         const ok = await this.sendCritical();
-        
+
         // Timeout Watchdog
         if (ok) {
           this.lastDataTime = Date.now();
@@ -1482,7 +1540,9 @@ class OBD2Service {
           });
           this.currentData.fuelSystemStatus = '';
           this.currentData.fuelType = '';
-          this.dataCallbacks.forEach(cb => cb({...this.currentData, ...this.oemData}));
+          this.dataCallbacks.forEach(cb =>
+            cb({...this.currentData, ...this.oemData}),
+          );
           this.updateWidget();
         }
 
@@ -1503,7 +1563,7 @@ class OBD2Service {
           case 0: {
             if (this.isPidSupported('0105')) {
               const r0 = await this.sendCommandFast('0105', 'coolantTemp');
-              if (r0) this.parseMultiResponse(r0);
+              if (r0) {this.parseMultiResponse(r0);}
             }
             break;
           }
@@ -1571,7 +1631,10 @@ class OBD2Service {
               this.parseCommandedAFR(r3);
             }
             if (this.isPidSupported('0133')) {
-              const r4 = await this.sendCommandFast('0133', 'barometricPressure');
+              const r4 = await this.sendCommandFast(
+                '0133',
+                'barometricPressure',
+              );
               this.parseBarometricPressure(r4);
             }
             break;
@@ -1597,7 +1660,10 @@ class OBD2Service {
           }
           case 6: {
             if (this.isPidSupported('0107')) {
-              const r1 = await this.sendCommandFast('0107', 'shortTermFuelTrim');
+              const r1 = await this.sendCommandFast(
+                '0107',
+                'shortTermFuelTrim',
+              );
               this.parseShortTermFuelTrim(r1);
             }
             if (this.isPidSupported('0108')) {
@@ -1609,26 +1675,41 @@ class OBD2Service {
               this.parseFuelPressure(r3);
             }
             if (this.isPidSupported('0162')) {
-              const r4 = await this.sendCommandFast('0162', 'actualEngineTorque');
+              const r4 = await this.sendCommandFast(
+                '0162',
+                'actualEngineTorque',
+              );
               this.parseActualEngineTorque(r4);
             }
             if (this.isPidSupported('0163')) {
-              const r5 = await this.sendCommandFast('0163', 'engineReferenceTorque');
+              const r5 = await this.sendCommandFast(
+                '0163',
+                'engineReferenceTorque',
+              );
               this.parseEngineReferenceTorque(r5);
             }
             break;
           }
           case 7: {
             if (this.isPidSupported('0147')) {
-              const r1 = await this.sendCommandFast('0147', 'absoluteThrottleB');
+              const r1 = await this.sendCommandFast(
+                '0147',
+                'absoluteThrottleB',
+              );
               this.parseAbsoluteThrottleB(r1);
             }
             if (this.isPidSupported('0148')) {
-              const r2 = await this.sendCommandFast('0148', 'absoluteThrottleC');
+              const r2 = await this.sendCommandFast(
+                '0148',
+                'absoluteThrottleC',
+              );
               this.parseAbsoluteThrottleC(r2);
             }
             if (this.isPidSupported('014C')) {
-              const r3 = await this.sendCommandFast('014C', 'commandedThrottleActuator');
+              const r3 = await this.sendCommandFast(
+                '014C',
+                'commandedThrottleActuator',
+              );
               this.parseCommandedThrottleActuator(r3);
             }
             if (this.isPidSupported('0149')) {
@@ -1636,7 +1717,10 @@ class OBD2Service {
               this.parseAcceleratorPosD(r4);
             }
             if (this.isPidSupported('0161')) {
-              const r5 = await this.sendCommandFast('0161', 'driverDemandTorque');
+              const r5 = await this.sendCommandFast(
+                '0161',
+                'driverDemandTorque',
+              );
               this.parseDriverDemandTorque(r5);
             }
             break;
@@ -1654,7 +1738,10 @@ class OBD2Service {
               this.parseO2Sensor1Voltage(r1);
             }
             if (this.isPidSupported('013C')) {
-              const r2 = await this.sendCommandFast('013C', 'catalystTempBank1');
+              const r2 = await this.sendCommandFast(
+                '013C',
+                'catalystTempBank1',
+              );
               this.parseCatalystTempBank1(r2);
             }
             break;
@@ -1686,7 +1773,10 @@ class OBD2Service {
           }
           case 4: {
             if (this.isPidSupported('0153')) {
-              const r1 = await this.sendCommandFast('0153', 'evapVaporPressure');
+              const r1 = await this.sendCommandFast(
+                '0153',
+                'evapVaporPressure',
+              );
               this.parseEVAPVaporPressure(r1);
             }
             if (this.isPidSupported('015A')) {
@@ -1724,11 +1814,17 @@ class OBD2Service {
               this.parseO2Sensor2Voltage(r1);
             }
             if (this.isPidSupported('0109')) {
-              const r2 = await this.sendCommandFast('0109', 'shortTermFuelTrim2');
+              const r2 = await this.sendCommandFast(
+                '0109',
+                'shortTermFuelTrim2',
+              );
               this.parseShortTermFuelTrim2(r2);
             }
             if (this.isPidSupported('010A')) {
-              const r3 = await this.sendCommandFast('010A', 'longTermFuelTrim2');
+              const r3 = await this.sendCommandFast(
+                '010A',
+                'longTermFuelTrim2',
+              );
               this.parseLongTermFuelTrim2(r3);
             }
             break;
@@ -1739,7 +1835,10 @@ class OBD2Service {
               this.parseDistanceWithMIL(r1);
             }
             if (this.isPidSupported('014F')) {
-              const r2 = await this.sendCommandFast('014F', 'timeSinceDTCClear');
+              const r2 = await this.sendCommandFast(
+                '014F',
+                'timeSinceDTCClear',
+              );
               this.parseTimeSinceDTCClear(r2);
             }
             break;
@@ -1762,7 +1861,10 @@ class OBD2Service {
           }
           case 10: {
             if (this.isPidSupported('013D')) {
-              const r1 = await this.sendCommandFast('013D', 'catalystTempBank2');
+              const r1 = await this.sendCommandFast(
+                '013D',
+                'catalystTempBank2',
+              );
               this.parseCatalystTempBank2(r1);
             }
             if (this.isPidSupported('0134')) {
@@ -1813,7 +1915,10 @@ class OBD2Service {
               this.parseEgrErrorDuty(r4);
             }
             if (this.isPidSupported('0162')) {
-              const r5 = await this.sendCommandFast('0162', 'actualEngineTorque');
+              const r5 = await this.sendCommandFast(
+                '0162',
+                'actualEngineTorque',
+              );
               this.parseActualEngineTorque(r5);
             }
             const r6 = await this.sendCommandFast(
@@ -1829,7 +1934,10 @@ class OBD2Service {
               this.parseOdometer(r1);
             }
             if (this.isPidSupported('015B')) {
-              const r2 = await this.sendCommandFast('015B', 'hybridBatteryLife');
+              const r2 = await this.sendCommandFast(
+                '015B',
+                'hybridBatteryLife',
+              );
               this.parseHybridBatteryLife(r2);
             }
             const r3 = await this.sendCommandFast(
@@ -1880,14 +1988,20 @@ class OBD2Service {
             );
             this.parseDistanceSinceDTCClearHighRes(r3);
             if (this.isPidSupported('018D')) {
-              const r4 = await this.sendCommandFast('018D', 'throttlePositionG');
+              const r4 = await this.sendCommandFast(
+                '018D',
+                'throttlePositionG',
+              );
               this.parseThrottlePositionG(r4);
             }
             break;
           }
           case 16: {
             if (this.isPidSupported('0112')) {
-              const r1 = await this.sendCommandFast('0112', 'secondaryAirStatus');
+              const r1 = await this.sendCommandFast(
+                '0112',
+                'secondaryAirStatus',
+              );
               this.parseSecondaryAirStatus(r1);
             }
             if (this.isPidSupported('011C')) {
@@ -1955,7 +2069,10 @@ class OBD2Service {
             );
             this.parseBoostPressureControl(r3);
             if (this.isPidSupported('017B')) {
-              const r4 = await this.sendCommandFast('017B', 'dpfBypassPressure');
+              const r4 = await this.sendCommandFast(
+                '017B',
+                'dpfBypassPressure',
+              );
               this.parseDpfBypassPressure(r4);
             }
             break;
@@ -1967,7 +2084,10 @@ class OBD2Service {
             );
             this.parseNoxNTEControlStatus(r1);
             if (this.isPidSupported('017E')) {
-              const r2 = await this.sendCommandFast('017E', 'pmNTEControlStatus');
+              const r2 = await this.sendCommandFast(
+                '017E',
+                'pmNTEControlStatus',
+              );
               this.parsePmNTEControlStatus(r2);
             }
             const r3 = await this.sendCommandFast(
@@ -2006,7 +2126,10 @@ class OBD2Service {
           }
           case 22: {
             if (this.isPidSupported('0155')) {
-              const r1 = await this.sendCommandFast('0155', 'shortTermO2TrimB1');
+              const r1 = await this.sendCommandFast(
+                '0155',
+                'shortTermO2TrimB1',
+              );
               this.parseShortTermO2TrimB1(r1);
             }
             if (this.isPidSupported('0156')) {
@@ -2018,7 +2141,10 @@ class OBD2Service {
               this.parseMafSensors(r3);
             } // It sets both A and B
             if (this.isPidSupported('0167')) {
-              const r4 = await this.sendCommandFast('0167', 'engineCoolantTemp2');
+              const r4 = await this.sendCommandFast(
+                '0167',
+                'engineCoolantTemp2',
+              );
               this.parseCoolantTemp2(r4);
             }
             if (this.isPidSupported('0168')) {
@@ -2046,7 +2172,10 @@ class OBD2Service {
         }
 
         this.pollTimer = setTimeout(poll, isIdle ? 500 : 25); // 10ms CPU'yu boğduğu için 25ms yapıldı
-        if (this.dataCallbacks.size > 0 && Date.now() - this.lastCallbackTime > 80) {
+        if (
+          this.dataCallbacks.size > 0 &&
+          Date.now() - this.lastCallbackTime > 80
+        ) {
           if (this._validKeysDirty) {
             this.validKeysArray = Array.from(this.validKeys);
             this._validKeysDirty = false;
@@ -2117,11 +2246,11 @@ class OBD2Service {
       this.setConnectionState('connected', 'Devam ediliyor');
     } else {
       const config = await this.loadLastDevice();
-      if (!config) return;
+      if (!config) {return;}
       this._lastConfig = config;
       if (config.type === 'bluetooth') {
         try {
-          if (!(await this.isBluetoothEnabled())) return;
+          if (!(await this.isBluetoothEnabled())) {return;}
         } catch (_) {}
       }
       this.setConnectionState('connecting', 'Yeniden bağlanıyor...');
@@ -2893,14 +3022,16 @@ class OBD2Service {
     try {
       const response = await this.sendCommand('03');
       let dtcs = this.parseDTCs(response);
-      
+
       if (getSettings().rangeRoverLegacyMode) {
         const kwpResp = await this.sendCommand('18000000');
         const kwpDtcs = this.parseDTCs(kwpResp);
         dtcs = [...dtcs, ...kwpDtcs];
       }
-      
-      return dtcs.filter((d, index, self) => index === self.findIndex(t => t.code === d.code));
+
+      return dtcs.filter(
+        (d, index, self) => index === self.findIndex(t => t.code === d.code),
+      );
     } catch {
       return [];
     }
@@ -3122,18 +3253,20 @@ class OBD2Service {
     ];
   }
 
-    private parseDTCs(response: string): DTC[] {
+  private parseDTCs(response: string): DTC[] {
     const dtcs: DTC[] = [];
     // Remove all whitespace and multi-frame prefixes (0:, 1:, 2:)
     const clean = response.replace(/\s/g, '').replace(/[0-9A-Fa-f]:/gi, '');
 
     // Look for Mode 03 (43), Mode 07 (47), Mode 0A (4A), Mode 18 KWP (58)
-    const match = clean.match(/43([0-9A-Fa-f]+)|47([0-9A-Fa-f]+)|4A([0-9A-Fa-f]+)|58([0-9A-Fa-f]+)/i);
-    if (!match) return dtcs;
+    const match = clean.match(
+      /43([0-9A-Fa-f]+)|47([0-9A-Fa-f]+)|4A([0-9A-Fa-f]+)|58([0-9A-Fa-f]+)/i,
+    );
+    if (!match) {return dtcs;}
 
     let payload = match[1] || match[2] || match[3] || match[4];
-    if (!payload) return dtcs;
-    
+    if (!payload) {return dtcs;}
+
     // Mode 18 (58) returns Number of DTCs as first byte, ignore it
     let step = 4; // Standard OBD Mode 03 is 2 bytes per DTC (4 hex chars)
     if (match[4]) {
@@ -3144,18 +3277,21 @@ class OBD2Service {
     for (let i = 0; i < payload.length - 3; i += step) {
       const b1 = payload.substring(i, i + 2);
       const b2 = payload.substring(i + 2, i + 4);
-      if (b1 === '00' && b2 === '00') continue;
+      if (b1 === '00' && b2 === '00') {continue;}
 
       const code = this.decodeDTC(b1, b2);
       if (code) {
         dtcs.push({
           code,
-          description: DTC_DESCRIPTIONS[code] || `${code} - Tanımlanmamış hata kodu`,
+          description:
+            DTC_DESCRIPTIONS[code] || `${code} - Tanımlanmamış hata kodu`,
         });
       }
     }
 
-    return dtcs.filter((d, index, self) => index === self.findIndex(t => t.code === d.code));
+    return dtcs.filter(
+      (d, index, self) => index === self.findIndex(t => t.code === d.code),
+    );
   }
 
   private decodeDTC(byte1: string, byte2: string): string | null {
@@ -3711,7 +3847,13 @@ class OBD2Service {
 export const obd2Service = new OBD2Service();
 
 export type {
-  OBD2Data, MonitorStatus, TripData, DTC, FreezeFrameData,
-  ConnectionState, ConnectionType, ConnectionConfig,
+  OBD2Data,
+  MonitorStatus,
+  TripData,
+  DTC,
+  FreezeFrameData,
+  ConnectionState,
+  ConnectionType,
+  ConnectionConfig,
 } from '../types/OBD2Types';
-export { OBD2_PROTOCOLS } from '../types/OBD2Types';
+export {OBD2_PROTOCOLS} from '../types/OBD2Types';

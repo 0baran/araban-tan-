@@ -12,7 +12,7 @@ export const CHANGELOG: VersionEntry[] = [
       'DEV GÜNCELLEME - PERFORMANS TESTİ: Artık 0-100 km/h testi yapabilir, telefon ivmeölçeri ile aracın virajlardaki G-Kuvvetini (G-Force) görebilirsiniz.',
       'SANAL DYNO EKLENDİ: Hız, devir ve emilen hava miktarı (MAF) hesaplanarak tahmini Beygir (HP) ve Tork anlık olarak çizilir.',
       'DATALOGGING (TELEMETRİ KAYDI): Yol Bilgisayarı ekranından sürüşünüzü saniye saniye kaydedip, telefona CSV/Excel dosyası olarak dışa aktarabilirsiniz.',
-      'AKTİF SERVİS MODU: Yeni sekme ile, EPB (Elektronik Park Freni) çektirme, DPF Zorla Rejenerasyon başlatma ve Gaz Kelebeği adaptasyonu gibi çift yönlü teşhis komutları eklendi.'
+      'AKTİF SERVİS MODU: Yeni sekme ile, EPB (Elektronik Park Freni) çektirme, DPF Zorla Rejenerasyon başlatma ve Gaz Kelebeği adaptasyonu gibi çift yönlü teşhis komutları eklendi.',
     ],
   },
   {
@@ -23,7 +23,7 @@ export const CHANGELOG: VersionEntry[] = [
       'Alfa Romeo (FCA) DNA Sürüş Modu durumu sensörü sisteme dahil edildi.',
       'Volvo DPF Fark Basıncı, Land Rover AdBlue (DEF) Seviyesi eklendi.',
       'Nissan/Infiniti ATTESA E-TS Dört Çeker Tork Dağılımı ve BMW Akü Şarj Durumu (SOC) eklendi.',
-      'Genel Lastik Basınç (TPMS) Sensör okuma altyapısı kuruldu (Destekleyen araçlarda Şasi kategorisinde görünecektir).'
+      'Genel Lastik Basınç (TPMS) Sensör okuma altyapısı kuruldu (Destekleyen araçlarda Şasi kategorisinde görünecektir).',
     ],
   },
   {
@@ -32,7 +32,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'PREMIUM (LÜKS) ARAÇ SENSÖR PAKETİ EKLENDİ: Standart OBD2 verilerinin ötesine geçerek marka spesifik "Gelişmiş OEM" sensörleri sisteme dahil edildi.',
       'Eklentiler: Range Rover Air Süspansiyon Basıncı ve Sürüş Yüksekliği, BMW xDrive Tork Dağılımı ve Valvetronic Açısı, Mercedes Airmatic Basıncı ve DPF Rejenerasyon Durumu, Porsche PDK Şanzıman Yağ Sıcaklığı ve Yağ Seviyesi, Ferrari F1 Debriyaj Aşınma Oranı.',
-      'Bu sensörleri Canlı Veri ekranındaki yeni "Şasi" ve "Şanzıman" kategorilerinde bulabilirsiniz (Aracınızın desteklemesine bağlıdır).'
+      'Bu sensörleri Canlı Veri ekranındaki yeni "Şasi" ve "Şanzıman" kategorilerinde bulabilirsiniz (Aracınızın desteklemesine bağlıdır).',
     ],
   },
   {
@@ -40,7 +40,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '27 Mayis 2026',
     items: [
       'HATA KODLARI (DTC) VERİTABANI GENİŞLETİLDİ: Özellikle P0 (Güç Aktarma), C0 (Şasi), B0 (Gövde) ve U0 (İletişim) ağından gelen spesifik arıza kodları (toplam 70+ yeni kritik kod) sisteme eklendi.',
-      'Böylelikle tarama yapıldığında "Bilinmeyen Kod" olarak dönen birçok gelişmiş sensör, valf ve haberleşme arızası artık Türkçe açıklamalarıyla görünecek.'
+      'Böylelikle tarama yapıldığında "Bilinmeyen Kod" olarak dönen birçok gelişmiş sensör, valf ve haberleşme arızası artık Türkçe açıklamalarıyla görünecek.',
     ],
   },
   {
@@ -49,7 +49,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'VERİ AKIŞI DONMA SORUNU ÇÖZÜLDÜ: Ekranda görünen sensörlerin 1 saniye, arkaplandaki veya özel sensörlerin ise 2 saniye zorunlu beklemeye tabi tutulması (throttle) sebebiyle oluşan değer donmaları (lag/freezing) tamamen kaldırıldı.',
       'Öncelikli sensörler (ekranda baktığınız sensörler) artık 0ms bekleme ile ELM327 çipi ne kadar hızlı veri yollayabiliyorsa o hızda güncelleniyor. Ekranda görünmeyen sensörler bant genişliğini korumak için 5 saniyede bir taranıyor.',
-      'Sonuç: Araçtan gelen veriler artık "kare kare" değil, son derece akıcı ve anlık (real-time) akacak.'
+      'Sonuç: Araçtan gelen veriler artık "kare kare" değil, son derece akıcı ve anlık (real-time) akacak.',
     ],
   },
   {
@@ -59,7 +59,7 @@ export const CHANGELOG: VersionEntry[] = [
       'KRİTİK HATA DÜZELTİLDİ: Tarama döngüsünde tekrarlanan (duplicate) case etiketleri nedeniyle batarya voltajı, gaz kelebek pozisyonu, yakıt seviyesi, hata sayısı, mutlak kelebek B/C, torque sensörleri ve ivme pedalı hiçbir zaman güncelleNMİYORDU! Tüm sensörler yeniden canlandı.',
       'Parantez yuvalama hatası düzeltildi: Motor torque sensörleri (0162/0163) yanlışlıkla "PID 0107 destekleniyor mu?" kontrolüne bağlıydı, artık bağımsız çalışıyor.',
       'USB bağlantısına çift tıklama koruması (_connecting guard) eklendi.',
-      'Tarama döngüsü 12\'den 8 kademeye optimize edildi — aynı sensörler %50 daha sık güncelleniyor.'
+      "Tarama döngüsü 12'den 8 kademeye optimize edildi — aynı sensörler %50 daha sık güncelleniyor.",
     ],
   },
   {
@@ -68,7 +68,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'USB (OTG) Kablolu Bağlantı Desteği Eklendi!',
       'Ayarlar > Bağlantı menüsüne "USB (OTG) ile Bağlan" butonu eklendi.',
-      'Bluetooth kullanılamayan durumlar için fiziksel kablolu ELM327 cihazları ile doğrudan, kesintisiz iletişim altyapısı sağlandı.'
+      'Bluetooth kullanılamayan durumlar için fiziksel kablolu ELM327 cihazları ile doğrudan, kesintisiz iletişim altyapısı sağlandı.',
     ],
   },
   {
@@ -77,7 +77,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'GÖRÜNÜME DAYALI TARAMA v2.1 (Stabilite Güncellemesi): 10 milisaniyelik aşırı agresif tarama hızı, telefonun Bluetooth işlemcisini boğduğu için (veri eksikliği/donma) 25 milisaniyeye (Optimum değer) çekildi.',
       'Cihazın araca komut gönderdikten sonra dinlemeye geçmesi için gereken süre (Write Delay) 3 katına çıkarılarak eksik veri okuma sorunu çözüldü.',
-      'Uygulama artık donmadan, eksiksiz ve hala eskisinden 3 kat daha hızlı bir şekilde saniyede 40 FPS hızında veri okuyor.'
+      'Uygulama artık donmadan, eksiksiz ve hala eskisinden 3 kat daha hızlı bir şekilde saniyede 40 FPS hızında veri okuyor.',
     ],
   },
   {
@@ -96,7 +96,7 @@ export const CHANGELOG: VersionEntry[] = [
       'GÖRÜNÜME DAYALI TARAMA v2.0 (Gerçek Sıfır Gecikme): Önceki sürümde keşfedilen büyük bir liste tarama mantığı hatası (Tüm listeyi tarama) düzeltildi.',
       'Uygulama artık o an EKRANINIZIN PİKSELLERİ İÇİNDE GÖRÜNMEYEN (Aşağıda veya yukarıda kalan) hiçbir sensörü TARAMIYOR!',
       'Yalnızca gözünüzle gördüğünüz 4-5 sensör araca sorulur. Aşağı kaydırdıkça okunan sensörler dinamik olarak milisaniye içinde değişir.',
-      'Performans Testi (0-100) ekranına Maksimum Hız Tarama (Sadece Hız ve Devir) yeteneği eklendi. Testler artık laboratuvar hassasiyetinde!'
+      'Performans Testi (0-100) ekranına Maksimum Hız Tarama (Sadece Hız ve Devir) yeteneği eklendi. Testler artık laboratuvar hassasiyetinde!',
     ],
   },
   {
@@ -105,7 +105,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Gecikme (Lag) Kökten Çözüldü: Veri okuma döngüsünün içine gömülü olan "Yapay Bekleme (Artificial Sleep)" süreleri tespit edilip tamamen silindi.',
       'Bluetooth tampon (buffer) okuma aralığı 50 milisaniyeden 10 milisaniyeye düşürüldü. Artık araçtan gelen cevap, milisaniyesinde ekrana yansıyacak!',
-      'Torque Pro ve Car Scanner hızının da ötesine, donanımın izin verdiği mutlak fiziksel sınıra (Zero Latency) ulaşıldı.'
+      'Torque Pro ve Car Scanner hızının da ötesine, donanımın izin verdiği mutlak fiziksel sınıra (Zero Latency) ulaşıldı.',
     ],
   },
   {
@@ -113,7 +113,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '25 Mayis 2026',
     items: [
       'UI FPS Performans Güncellemesi: Saniyede 10 kere güncellenen Hız ve Devir gibi ibrelerin (CyberBar), React Native arayüzünde yarattığı gereksiz yeniden çizim (re-render) yükü sıfırlandı.',
-      'Sistem "React.memo" algoritmasıyla koruma altına alındı. Artık telefonun ekranı daha az ısınıyor, pil tüketimi düştü ve sayfalar arası geçişlerde yaşanan kasılmalar tamamen ortadan kalktı!'
+      'Sistem "React.memo" algoritmasıyla koruma altına alındı. Artık telefonun ekranı daha az ısınıyor, pil tüketimi düştü ve sayfalar arası geçişlerde yaşanan kasılmalar tamamen ortadan kalktı!',
     ],
   },
   {
@@ -122,7 +122,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Görünüme Dayalı Profesyonel Veri Okuma (View-Based Polling): Tıpkı endüstri lideri OBD cihazları gibi, araba artık sadece EKRANDA GÖRDÜĞÜNÜZ sensörleri tarıyor.',
       'Ekranda Hız, Devir, Turbo açıkken arka planda 30 tane görünmeyen sensörün veri akışını meşgul etmesi engellendi. Veri akış hızı (Refresh Rate) %500 oranında arttı!',
-      'Gecikmeyi Sıfıra İndiren "Akıllı Interceptor" ve "AT ST 19" (100ms Timeout) teknolojisi çekirdeğe dahil edildi.'
+      'Gecikmeyi Sıfıra İndiren "Akıllı Interceptor" ve "AT ST 19" (100ms Timeout) teknolojisi çekirdeğe dahil edildi.',
     ],
   },
   {
@@ -130,7 +130,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '25 Mayis 2026',
     items: [
       'Multi-PID Timeout Lag Çözüldü: Bazi araclarin Multi-PID sorgularinda "Hararet" (05) verisini farklı bir beyinde (ECU) barındırması nedeniyle ELM327 çipinin 400ms bekleme yapıp uygulamayı dondurması (lag) kökünden çözüldü.',
-      'Sadece Hız ve Devir (0C0D) Multi-PID olarak okunduğu için ibrelerde artık anlık ve kesintisiz akıcılık devrede!'
+      'Sadece Hız ve Devir (0C0D) Multi-PID olarak okunduğu için ibrelerde artık anlık ve kesintisiz akıcılık devrede!',
     ],
   },
   {
@@ -138,7 +138,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '25 Mayis 2026',
     items: [
       'Multi-PID Senkronizasyon Düzeltmesi (Hotfix): Bazi arac beyinlerinin (ECU) çoklu sensör verilerini gönderirken araya koyduğu fazladan ayırıcı karakterler (41) nedeniyle uygulamanın verileri okuyamaması sorunu kökünden çözüldü.',
-      'Sıfır Gecikme (0 Lag) ve Yüksek Hız (Multi-PID) artık Tofaş\'tan Mercedes\'e kadar tüm araç beyinlerinde kusursuz çalışıyor.'
+      "Sıfır Gecikme (0 Lag) ve Yüksek Hız (Multi-PID) artık Tofaş'tan Mercedes'e kadar tüm araç beyinlerinde kusursuz çalışıyor.",
     ],
   },
   {
@@ -146,7 +146,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '25 Mayis 2026',
     items: [
       'Multi-PID Veri Otobanı (0 Lag): Saniyede tek tek sensör okuma mantığı terk edildi! Eğer aracınız destekliyorsa (CAN protokolü), Hız, Devir ve Hararet gibi en kritik veriler aynı anda tek bir komutla okunarak %300 hız artışı (Sıfır Lag) sağlandı.',
-      'Sensör Yükü Dağıtımı (Throttle Control): Arka plandaki 30+ sensörün tamamının aynı saniyede okunmaya çalışılıp veri yolunu tıkaması engellendi. Sensör okuma emirleri 12 farklı döngüye dağıtılarak ana verilerin (RPM, Hız) kusursuz akması sağlandı.'
+      'Sensör Yükü Dağıtımı (Throttle Control): Arka plandaki 30+ sensörün tamamının aynı saniyede okunmaya çalışılıp veri yolunu tıkaması engellendi. Sensör okuma emirleri 12 farklı döngüye dağıtılarak ana verilerin (RPM, Hız) kusursuz akması sağlandı.',
     ],
   },
   {
@@ -154,7 +154,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '25 Mayis 2026',
     items: [
       'Gelişmiş Mutex Kuyruğu (Anti-Freeze): Bluetooth haberleşmesinde yaşanacak donmaları önleyen kilit sırası sayesinde saniyede 1 komut işlenerek aracın veri hattının şişmesi %100 engellendi.',
-      'Polling Optimizasyonu: Sensör okuma döngüleri üst üste binmeyecek şekilde izole edildi. Veri donmaları tamamen tarihe karıştı.'
+      'Polling Optimizasyonu: Sensör okuma döngüleri üst üste binmeyecek şekilde izole edildi. Veri donmaları tamamen tarihe karıştı.',
     ],
   },
   {
@@ -163,7 +163,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'DDT4All Çekirdek Komutları: Renault ve Dacia araçlar için popüler açık kaynaklı DDT4All veritabanındaki en çok kullanılan UDS/CAN komutları sisteme eklendi.',
       'Yeni Fransız Grubu Özellikleri: Viraj Aydınlatma, Otomatik Kapı Kilitleme, Karşılama Işıkları (Follow-Me-Home), Kadran Sıcaklık/Saat Gösterimi ve Kalıcı Start/Stop İptali.',
-      'Özel Renault Header Yönlendirmeleri: Renault gösterge paneli (714) ve gövde kontrol modülü BCM/UCH (7BC) için özel protokol köprülemesi yapıldı.'
+      'Özel Renault Header Yönlendirmeleri: Renault gösterge paneli (714) ve gövde kontrol modülü BCM/UCH (7BC) için özel protokol köprülemesi yapıldı.',
     ],
   },
   {
@@ -172,7 +172,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Mega Arşiv Entegre Edildi: FORScan (Ford), VCDS (VAG), BimmerCode (BMW) ve AlfaOBD (FCA) yazılımlarının kullandığı gerçek As-Built ve Long Coding komutları eklendi.',
       'Header Yönlendirme (AT SH): Gizli özellik komutlarının standart ECU yerine Gösterge (720), BCM (726), Eğlence Sistemi (7D0) gibi spesifik beyinlere yönlendirilmesi sağlandı.',
-      'UI Kritik Güvenlik Uyarısı (Brick Koruması): Riskli bir kodlama komutu gönderilmeden önce kullanıcıyı uyaran ve onay alan özel güvenlik duvarı eklendi.'
+      'UI Kritik Güvenlik Uyarısı (Brick Koruması): Riskli bir kodlama komutu gönderilmeden önce kullanıcıyı uyaran ve onay alan özel güvenlik duvarı eklendi.',
     ],
   },
   {
@@ -181,7 +181,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Yapay Zeka Motoru v2.0: Sadece saniyelik degisen hizli veriler (RPM, Hiz) agirlikli okunarak tepkime suresi telemetri akiciligina cikarildi.',
       'Dinamik Frekans (Smart Polling): Hararet, dis hava sicakligi gibi yavas degisen verilerin guncellenme hizi yavaslatilarak arac yuku azaltildi.',
-      'Uyku Dongusu (Sleep/Wake): Gecici olarak ulasilamayan veya yeni isinan sensorler kara listeye alinmak yerine 10 saniyelik akilli uykuya aliniyor.'
+      'Uyku Dongusu (Sleep/Wake): Gecici olarak ulasilamayan veya yeni isinan sensorler kara listeye alinmak yerine 10 saniyelik akilli uykuya aliniyor.',
     ],
   },
   {
@@ -190,7 +190,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Uyumluluk Modu (Compatibility): Sahte/kalitesiz klon cihazlarda meydana gelen kilitlenme sorunlarini çözen safe-mode altyapisi eklendi.',
       'Yapay Zeka Optimizasyonu (Adaptive Polling): Aracta bulunmayan ve NO DATA donen sensorler uykuya alinarak veri yuku azaltildi ve hiz %40 daha artirildi.',
-      'Ekstra Sensorler: Motor Yagi Sicakligi, Enjeksiyon Zamanlamasi ve Anlik Yakit Tuketim Orani (L/h) veritabanina eklendi.'
+      'Ekstra Sensorler: Motor Yagi Sicakligi, Enjeksiyon Zamanlamasi ve Anlik Yakit Tuketim Orani (L/h) veritabanina eklendi.',
     ],
   },
   {
@@ -199,7 +199,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Mega Sensor Arsivi: Hibrit batarya, EGT ve Wastegate gibi 30+ yeni standart PID eklendi.',
       'OEM Gizli Sensorler: Renault DPF, Fiat Sanziman ve Toyota Hibrit Fan sicaklik sensorleri eklendi.',
-      'Ultimate Gizli Ozellik Kasasi: VAG (Cornering), BMW (Ayna indirme, Video in Motion) ve Ford (Kornasiz Kilit) ozellikleri kodlandi.'
+      'Ultimate Gizli Ozellik Kasasi: VAG (Cornering), BMW (Ayna indirme, Video in Motion) ve Ford (Kornasiz Kilit) ozellikleri kodlandi.',
     ],
   },
   {
@@ -208,7 +208,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Cevrimdisi Ariza (DTC) Sozlugu: P0171 vb. aralar kodlarinin altinda artik detayli Turkce aciklamalari (Fakir Karisim vb.) yer aliyor. Internetsiz calisir!',
       'Gorsel Veri Kayit ve Canli Grafik: Veri kayit ekranina anlik olarak hiz ve devri cizen Cizgi Grafikler (Line Chart) eklendi.',
-      'Wi-Fi & BLE Altyapisi: Sadece Klasik Bluetooth degil, Wi-Fi ve Apple destekli BLE baglantilarina imkan taniyan mimari kodlara eklendi.'
+      'Wi-Fi & BLE Altyapisi: Sadece Klasik Bluetooth degil, Wi-Fi ve Apple destekli BLE baglantilarina imkan taniyan mimari kodlara eklendi.',
     ],
   },
   {
@@ -217,7 +217,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Multi-PID Turbo Motoru: Ayni anda bircok sensor verisini tek bir komutta araca sorarak (Multi-PID) veri okuma hizi %300 artirildi. İbreler artik yaris oyunu akiciliginda!',
       'Gizli Ozellikler Kasasi: Ford, VAG ve BMW grubuna ozel olarak Bambi modu, Kemer Ikazi kapama ve Kadran Selamlama gibi internetin en populer gizli ozellik kodlamalari sisteme entegre edildi.',
-      'DTC (Hata) Okuma hizi optimize edildi, saniyeler icinde sonuc verecek sekilde bekleme sureleri (Adaptive Timing) kaldirildi.'
+      'DTC (Hata) Okuma hizi optimize edildi, saniyeler icinde sonuc verecek sekilde bekleme sureleri (Adaptive Timing) kaldirildi.',
     ],
   },
   {
@@ -225,7 +225,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Gelisitirilmis Brute-Force Taramasi: Sasi numarasini (VIN) vermeyen eski araclar icin tam kapsamli Kaba Kuvvet (Brute-Force) sensor tarama sistemi aktif edildi.',
-      'Markasi bilinmeyen araclarda uygulama pes etmez, bilinen tum gizli OEM sensor sifrelerini araca firlatarak ne var ne yok bulur.'
+      'Markasi bilinmeyen araclarda uygulama pes etmez, bilinen tum gizli OEM sensor sifrelerini araca firlatarak ne var ne yok bulur.',
     ],
   },
   {
@@ -233,7 +233,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Otomatik OEM (Markaya Ozel) Sensor Kesif Motoru Eklendi!',
-      'Uygulama artik sasiden (VIN) aracin markasini taniyip arka planda markaya ozel sensorleri (Sanziman Sicakligi, DPF, Hibrit Bataryasi) bulur ve ekrana otomatik yansitir.'
+      'Uygulama artik sasiden (VIN) aracin markasini taniyip arka planda markaya ozel sensorleri (Sanziman Sicakligi, DPF, Hibrit Bataryasi) bulur ve ekrana otomatik yansitir.',
     ],
   },
   {
@@ -241,14 +241,14 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Arac Fotografi Ekleme: Artik araclarim menusunden kendi arabanizin fotografini galerinizden secerek profil resmi yapabilirsiniz!',
-      'Gorsel Gelistirme: Sectiginiz aracin fotografi ana ekranda (Home) en tepede ve Araclarim menusundeki kartlarda dairesel ve şık bir sekilde gosterilecek.'
+      'Gorsel Gelistirme: Sectiginiz aracin fotografi ana ekranda (Home) en tepede ve Araclarim menusundeki kartlarda dairesel ve şık bir sekilde gosterilecek.',
     ],
   },
   {
     version: '3.8.0',
     date: '24 Mayis 2026',
     items: [
-      'Kararlilik Guncellemesi (Hotfix): Arka plandaki servislerin stabilitesi artirildi. İletişim dongulerindeki kucuk gecikmeler ve performans darboğazları giderildi.'
+      'Kararlilik Guncellemesi (Hotfix): Arka plandaki servislerin stabilitesi artirildi. İletişim dongulerindeki kucuk gecikmeler ve performans darboğazları giderildi.',
     ],
   },
   {
@@ -256,14 +256,14 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Arac Secme Ozelligi: Araclarim menusunden artik eklediginiz bir araci ustune tiklayarak "Aktif Arac" olarak secebilirsiniz.',
-      'Secilen aracin ismi uygulamanin ana ekraninda en tepede gosterilecektir.'
+      'Secilen aracin ismi uygulamanin ana ekraninda en tepede gosterilecektir.',
     ],
   },
   {
     version: '3.6.0',
     date: '24 Mayis 2026',
     items: [
-      'Bildirim Paneli Guncellemesi: Arka planda calisirken ustten inen bildirim paneline "BAĞLANTIYI KES" butonu eklendi. Artik uygulamaya girmeden tek tıkla araba baglantisini kesip batarya tasarrufu yapabilirsiniz.'
+      'Bildirim Paneli Guncellemesi: Arka planda calisirken ustten inen bildirim paneline "BAĞLANTIYI KES" butonu eklendi. Artik uygulamaya girmeden tek tıkla araba baglantisini kesip batarya tasarrufu yapabilirsiniz.',
     ],
   },
   {
@@ -272,14 +272,14 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Genel Kararlilik ve Uyumluluk Paketi: Açık kaynaklı dev projelerin (AndrOBD, python-OBD) standartlari baz alinarak ELM327 iletisim omurgasi bastan asagi yeniden yazildi.',
       'Auto-Recovery (Otomatik Kurtarma): Arac hareket halindeyken baglanti kopsa bile uygulama sizi ana ekrana atmaz, arka planda 2 saniye icinde cihazi sifirlayip verileri tekrar akitmaya baslar.',
-      'Kusursuz Baslatma (Ultimate Init): Cihazi yoran gereksiz bosluk ve satir atlama protokolleri iptal edildi (ATE0, ATL0, ATS0) ve Adaptif Zamanlama (ATAT1) zorunlu kilindi.'
+      'Kusursuz Baslatma (Ultimate Init): Cihazi yoran gereksiz bosluk ve satir atlama protokolleri iptal edildi (ATE0, ATL0, ATS0) ve Adaptif Zamanlama (ATAT1) zorunlu kilindi.',
     ],
   },
   {
     version: '3.4.1',
     date: '24 Mayis 2026',
     items: [
-      'Hata Düzeltmesi: Araçlarım menüsünde kendi belirlediğiniz araç adının yerine markanın gösterilmesi sorunu çözüldü. Artık karta aracınıza verdiğiniz özel isim büyük harflerle yazılacak.'
+      'Hata Düzeltmesi: Araçlarım menüsünde kendi belirlediğiniz araç adının yerine markanın gösterilmesi sorunu çözüldü. Artık karta aracınıza verdiğiniz özel isim büyük harflerle yazılacak.',
     ],
   },
   {
@@ -287,7 +287,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Ultimate Gizli Ozellik Paketi (All-in-One): BimmerCode, OBDeleven, Carista ve AlfaOBD gibi devlerin parali sundugu en gozde gizli ozellikler eklendi.',
-      'Yeni Markalar & Ozellikler: BMW (M Logo, Dijital Hiz, Angel Parlakligi), Toyota/Lexus (Cam Indirme, Geri Vites Bip Iptali, Sinyal Tık Sayisi), FCA/Jeep (Proxi Hizalama, SRT Menusu), PSA/Peugeot (GT Line Tema).'
+      'Yeni Markalar & Ozellikler: BMW (M Logo, Dijital Hiz, Angel Parlakligi), Toyota/Lexus (Cam Indirme, Geri Vites Bip Iptali, Sinyal Tık Sayisi), FCA/Jeep (Proxi Hizalama, SRT Menusu), PSA/Peugeot (GT Line Tema).',
     ],
   },
   {
@@ -295,7 +295,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Gizli Özellik Mega Paketi Eklendi: Volkswagen, Audi, Seat, Skoda, Ford ve Renault/Dacia grubu araclar icin yepyeni gizli ozellikler kodlamalari sisteme eklendi.',
-      'Yeni Ozellikler: Kadran Selamlama (Needle Sweep), Amerikan Park, Hareket Halinde Video İzleme (VIM), Otomatik Kapi Kilitleme, Start-Stop Iptali, Android Auto / Apple CarPlay aktivasyonu ve cok daha fazlasi Gizli Ozellikler sayfasina entegre edildi.'
+      'Yeni Ozellikler: Kadran Selamlama (Needle Sweep), Amerikan Park, Hareket Halinde Video İzleme (VIM), Otomatik Kapi Kilitleme, Start-Stop Iptali, Android Auto / Apple CarPlay aktivasyonu ve cok daha fazlasi Gizli Ozellikler sayfasina entegre edildi.',
     ],
   },
   {
@@ -303,14 +303,14 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'Mega Sensor Paket: Yakit Basinci, Hava Debisi (MAF), Gaz Pedali Konumu (Tork), Motor Yagi Sicakligi, Katalitik Sicakligi ve Motor Yakit Tuketimi (L/h) dahil 30+ yeni sensor destegi eklendi.',
-      'Genel Uyumluluk Paketi: Ucuz ELM327 klon cihazlarinda yasanan kilitlenme, sensor listesinin eksik gelmesi veya baglanti kopmasi gibi sorunlari cozen agresif filtreleme modulu devreye alindi. Araciniz hangi sensorleri destekliyorsa, en ufak bir sorun yasamadan listede belirecek.'
+      'Genel Uyumluluk Paketi: Ucuz ELM327 klon cihazlarinda yasanan kilitlenme, sensor listesinin eksik gelmesi veya baglanti kopmasi gibi sorunlari cozen agresif filtreleme modulu devreye alindi. Araciniz hangi sensorleri destekliyorsa, en ufak bir sorun yasamadan listede belirecek.',
     ],
   },
   {
     version: '3.1.30',
     date: '24 Mayis 2026',
     items: [
-      'Ozel Gosterge Eklentisi: Artik kendi sectiginiz (sabitlediginiz) favori sensorleriniz, buyuk HUD / PANEL gostergesinin hemen altinda da devasa sayilarla gosterilecek.'
+      'Ozel Gosterge Eklentisi: Artik kendi sectiginiz (sabitlediginiz) favori sensorleriniz, buyuk HUD / PANEL gostergesinin hemen altinda da devasa sayilarla gosterilecek.',
     ],
   },
   {
@@ -318,7 +318,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'HUD & Panel Duzeltmesi: Cama yansitma modu olan HUD tusunun yanina bir de PANEL tusu eklendi. Panel tusu ile ekrani ters cevirmeden de buyuk gosterge tablosunu gorebilirsiniz.',
-      'Sensör Kisitlama Hatasi Cözüldü: Bazi arac ve adaptörlerde guvenlik moduna gecilerek sadece 6 temel sensorun okunmasi ve diger yuzlerce sensorun gizlenmesi problemi kalici olarak cozuldu.'
+      'Sensör Kisitlama Hatasi Cözüldü: Bazi arac ve adaptörlerde guvenlik moduna gecilerek sadece 6 temel sensorun okunmasi ve diger yuzlerce sensorun gizlenmesi problemi kalici olarak cozuldu.',
     ],
   },
   {
@@ -326,7 +326,7 @@ export const CHANGELOG: VersionEntry[] = [
     date: '24 Mayis 2026',
     items: [
       'HUD Duzeltmesi: Ekranin yarisini kaplayan buyuk Canli Veri paneli (Cyberpunk Dashboard) varsayilan olarak gizlendi. Artik sadece sag ustteki "HUD" butonuna bastiginizda acilacak.',
-      'Klon Cihaz Uyumlulugu 2.0: Ucuz klon cihazlarin sensor sorgulamasina hic yanit verememesi (0100 timeout) durumunda tum sensorlerin ekrandan silinmesi hatasi giderildi. Artik yanit gelmese bile sistem otomatik varsayilan sensorleri okumaya devam eder.'
+      'Klon Cihaz Uyumlulugu 2.0: Ucuz klon cihazlarin sensor sorgulamasina hic yanit verememesi (0100 timeout) durumunda tum sensorlerin ekrandan silinmesi hatasi giderildi. Artik yanit gelmese bile sistem otomatik varsayilan sensorleri okumaya devam eder.',
     ],
   },
   {
@@ -342,7 +342,7 @@ export const CHANGELOG: VersionEntry[] = [
     items: [
       'Gelistirilmis Klon Duzeltmesi (Sensör Taraması): Uygulama artik once aracin hangi sensorleri destekledigini tarar (PID Discovery) ve sadece desteklenen sensorleri okur. Bu sayede ucuz ELM327 klonlari kilitlenmez ve Car Scanner gibi maksimum sayida (10-15+) sensor okunur.',
       'Yakit Tuketimi (L/100km): Aracin beyni dogrudan yakit verisi yollamasa bile, MAF veya MAP basincini, RPM ve Sicaklik degerlerini kullanarak termodinamik yasa (Ideal Gaz Kanunu) ile Anlik Yakit Tuketimi hesaplanir.',
-      'Performans Artisi: Desteklenmeyen sensorlere soru sorulmadigi icin veri yenileme hizi %40 oraninda hizlandirildi.'
+      'Performans Artisi: Desteklenmeyen sensorlere soru sorulmadigi icin veri yenileme hizi %40 oraninda hizlandirildi.',
     ],
   },
   {
@@ -350,10 +350,10 @@ export const CHANGELOG: VersionEntry[] = [
     date: '23 Mayis 2026',
     items: [
       'Tam Ekran Sifirlama: Veri akisi kesildiginde (veya kontak kapatildiginda) ekrandaki gostergelerin ve sicakliklarin donup kalmasi sorunu cozuldu. Baglanti koptugunda 3 saniye icinde tum veriler sifirlanir.',
-      'Arka Plan ve Widget Duzeltmesi: Android 14+ cihazlarda uygulama arka plana atildiginda widget\'in donmasi (veri senkronizasyonu eksikligi) giderildi. Yeni arka plan servisi eklendi.',
+      "Arka Plan ve Widget Duzeltmesi: Android 14+ cihazlarda uygulama arka plana atildiginda widget'in donmasi (veri senkronizasyonu eksikligi) giderildi. Yeni arka plan servisi eklendi.",
       'Karakter Kodlamasi: Bildirim cubugundaki Turkce karakter bozulmasi tamamen duzeltildi.',
       'Eski Telefon Duzeltmesi: Android 10 ve oncesi icin otomatik guncelleme ekraninin acilmamasi sorunu icin bildirim uyarisi eklendi.',
-      'Derleme Uyumlulugu: Android Manifest yapilandirmasinda yer alan onemsiz cakismalar (Foreground Service) duzeltildi.'
+      'Derleme Uyumlulugu: Android Manifest yapilandirmasinda yer alan onemsiz cakismalar (Foreground Service) duzeltildi.',
     ],
   },
   {

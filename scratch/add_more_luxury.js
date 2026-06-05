@@ -175,7 +175,10 @@ const moreOem = `
   },
 `;
 
-oemFile = oemFile.replace(/export const OEM_SENSORS: OemSensorDef\[\] = \[/, "export const OEM_SENSORS: OemSensorDef[] = [" + moreOem);
+oemFile = oemFile.replace(
+  /export const OEM_SENSORS: OemSensorDef\[\] = \[/,
+  'export const OEM_SENSORS: OemSensorDef[] = [' + moreOem,
+);
 fs.writeFileSync('src/services/OemSensors.ts', oemFile, 'utf8');
 
 // 2. Add to LiveDataScreen.tsx
@@ -255,7 +258,7 @@ const moreUi = `
 `;
 
 // Insert into PARAM_META in UI.
-uiFile = uiFile.replace(/  \},\n\];/, '  },' + moreUi + '\n];');
+uiFile = uiFile.replace(/ {2}\},\n\];/, '  },' + moreUi + '\n];');
 fs.writeFileSync('src/screens/LiveDataScreen.tsx', uiFile, 'utf8');
 
 console.log('More luxury sensors added to OEM and UI!');

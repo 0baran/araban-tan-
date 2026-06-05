@@ -12,49 +12,46 @@ export type OemSensorDef = {
 
 // Common WMI prefixes to Brand
 export const WMI_MAP: Record<string, string> = {
-  'WBA': 'BMW',
-  'WBS': 'BMW',
-  'WVG': 'VAG', // VW
-  'WVW': 'VAG',
-  'WAU': 'VAG', // Audi
-  'TRU': 'VAG',
-  'WP0': 'VAG', // Porsche
-  'WF0': 'FORD',
+  WBA: 'BMW',
+  WBS: 'BMW',
+  WVG: 'VAG', // VW
+  WVW: 'VAG',
+  WAU: 'VAG', // Audi
+  TRU: 'VAG',
+  WP0: 'VAG', // Porsche
+  WF0: 'FORD',
   '1FA': 'FORD',
-  'JTD': 'TOYOTA',
-  'JT1': 'TOYOTA',
-  'JT2': 'TOYOTA',
-  'VF1': 'RENAULT',
-  'VF3': 'PSA', // Peugeot
-  'VF7': 'PSA', // Citroen
-  'ZFA': 'FCA', // Fiat
+  JTD: 'TOYOTA',
+  JT1: 'TOYOTA',
+  JT2: 'TOYOTA',
+  VF1: 'RENAULT',
+  VF3: 'PSA', // Peugeot
+  VF7: 'PSA', // Citroen
+  ZFA: 'FCA', // Fiat
   '1G': 'GM',
   '2G': 'GM',
   '3G': 'GM',
-  'ZAR': 'ALFA_ROMEO',
-  'YV1': 'VOLVO',
-  'JN1': 'NISSAN',
-  'JN8': 'NISSAN',
-  'SAL': 'LAND_ROVER', // Range Rover / Land Rover
-  'WBA': 'BMW',
-  'WBS': 'BMW',
-  'WBY': 'BMW',
-  'WDB': 'MERCEDES',
-  'WDD': 'MERCEDES',
-  'WDC': 'MERCEDES',
-  'WP0': 'PORSCHE',
-  'ZFF': 'FERRARI',
-  'ZHW': 'LAMBORGHINI',
-  'SAJ': 'JAGUAR',
-  'WMW': 'MINI',
-  'JHL': 'HONDA',
-  'JHM': 'HONDA',
-  'KM8': 'HYUNDAI',
-  'KNA': 'KIA',
-  'JM1': 'MAZDA',
-  'JF1': 'SUBARU',
-  'JA3': 'MITSUBISHI',
-  'KL1': 'CHEVROLET',
+  ZAR: 'ALFA_ROMEO',
+  YV1: 'VOLVO',
+  JN1: 'NISSAN',
+  JN8: 'NISSAN',
+  SAL: 'LAND_ROVER', // Range Rover / Land Rover
+  WBY: 'BMW',
+  WDB: 'MERCEDES',
+  WDD: 'MERCEDES',
+  WDC: 'MERCEDES',
+  ZFF: 'FERRARI',
+  ZHW: 'LAMBORGHINI',
+  SAJ: 'JAGUAR',
+  WMW: 'MINI',
+  JHL: 'HONDA',
+  JHM: 'HONDA',
+  KM8: 'HYUNDAI',
+  KNA: 'KIA',
+  JM1: 'MAZDA',
+  JF1: 'SUBARU',
+  JA3: 'MITSUBISHI',
+  KL1: 'CHEVROLET',
   '1G1': 'CHEVROLET',
   '1C3': 'CHRYSLER',
   '1C4': 'JEEP',
@@ -76,15 +73,15 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['TOYOTA'],
     command: '2182',
     color: '#e17055',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6182');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = parseInt(hex.substring(idx + 4, idx + 6), 16);
         const B = parseInt(hex.substring(idx + 6, idx + 8), 16);
-        return ((((A * 256) + B) * (5/256)) - 40).toFixed(1);
+        return ((A * 256 + B) * (5 / 256) - 40).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_honda_misfire',
@@ -94,13 +91,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['HONDA'],
     command: '221102',
     color: '#ff7675',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621102');
       if (idx >= 0 && hex.length >= idx + 6) {
         return parseInt(hex.substring(idx + 4, idx + 6), 16);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_hyundai_cvvt',
@@ -110,13 +107,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['HYUNDAI', 'KIA'],
     command: '220106',
     color: '#fdcb6e',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('620106');
       if (idx >= 0 && hex.length >= idx + 6) {
         return parseInt(hex.substring(idx + 4, idx + 6), 16) - 40;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_psa_fap',
@@ -126,13 +123,16 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['PSA', 'PEUGEOT', 'CITROEN'],
     command: '221155',
     color: '#6c5ce7',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621155');
       if (idx >= 0 && hex.length >= idx + 6) {
-        return (parseInt(hex.substring(idx + 4, idx + 6), 16) * 100 / 255).toFixed(1);
+        return (
+          (parseInt(hex.substring(idx + 4, idx + 6), 16) * 100) /
+          255
+        ).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_renault_inj_pres',
@@ -142,7 +142,7 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['RENAULT', 'DACIA'],
     command: '222430',
     color: '#0984e3',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('622430');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = parseInt(hex.substring(idx + 4, idx + 6), 16);
@@ -150,7 +150,7 @@ export const OEM_SENSORS: OemSensorDef[] = [
         return (A * 256 + B) * 10;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_gm_knock',
@@ -160,13 +160,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['GM', 'CHEVROLET', 'OPEL'],
     command: '2211A6',
     color: '#d63031',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211A6');
       if (idx >= 0 && hex.length >= idx + 6) {
         return parseInt(hex.substring(idx + 4, idx + 6), 16) * 0.5;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_fca_oil_life',
@@ -176,13 +176,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['FCA', 'JEEP', 'FIAT', 'DODGE'],
     command: '221503',
     color: '#00b894',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621503');
       if (idx >= 0 && hex.length >= idx + 6) {
         return parseInt(hex.substring(idx + 4, idx + 6), 16);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_mazda_afr',
@@ -192,7 +192,7 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['MAZDA'],
     command: '221111',
     color: '#00cec9',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621111');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = parseInt(hex.substring(idx + 4, idx + 6), 16);
@@ -200,7 +200,7 @@ export const OEM_SENSORS: OemSensorDef[] = [
         return (((A * 256 + B) / 32768) * 14.7).toFixed(2);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_subaru_boost',
@@ -210,13 +210,16 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['SUBARU'],
     command: '221200',
     color: '#81ecec',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621200');
       if (idx >= 0 && hex.length >= idx + 6) {
-        return ((parseInt(hex.substring(idx + 4, idx + 6), 16) - 128) * 0.145038).toFixed(1);
+        return (
+          (parseInt(hex.substring(idx + 4, idx + 6), 16) - 128) *
+          0.145038
+        ).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_universal_batt_temp',
@@ -226,13 +229,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['ALL', 'TESLA', 'TOYOTA', 'HONDA'],
     command: '224028',
     color: '#e84393',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('624028');
       if (idx >= 0 && hex.length >= idx + 6) {
         return parseInt(hex.substring(idx + 4, idx + 6), 16) - 40;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_universal_cat_temp1',
@@ -242,15 +245,15 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['ALL'],
     command: '013C',
     color: '#ff9f43',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('413C');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = parseInt(hex.substring(idx + 4, idx + 6), 16);
         const B = parseInt(hex.substring(idx + 6, idx + 8), 16);
-        return (((A * 256) + B) / 10 - 40).toFixed(1);
+        return ((A * 256 + B) / 10 - 40).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_universal_dpf_regen',
@@ -260,14 +263,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['ALL', 'VAG', 'BMW', 'PSA', 'RENAULT', 'FORD'],
     command: '018B',
     color: '#feca57',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('418B');
       if (idx >= 0 && hex.length >= idx + 6) {
         const A = parseInt(hex.substring(idx + 4, idx + 6), 16);
-        return (A & 0x01) ? 'Aktif' : 'Pasif';
+        return A & 0x01 ? 'Aktif' : 'Pasif';
       }
       return null;
-    }
+    },
   },
 
   {
@@ -278,13 +281,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['VAG'],
     command: '2211DA',
     color: '#eb4d4b',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211DA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return (h2d(hex.substring(idx + 6, idx + 8)) / 10).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_vag_haldex',
@@ -294,13 +297,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['VAG'],
     command: '2211DB',
     color: '#686de0',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211DB');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8)) - 40;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_alfa_dna',
@@ -310,14 +313,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['ALFA_ROMEO', 'FCA'],
     command: '2211AA',
     color: '#e056fd',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211AA');
       if (idx >= 0 && hex.length >= idx + 8) {
         const val = h2d(hex.substring(idx + 6, idx + 8));
         return val === 1 ? 'Dynamic' : val === 2 ? 'Natural' : 'All-Weather';
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_volvo_dpf_diff',
@@ -327,13 +330,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['VOLVO'],
     command: '2211VA',
     color: '#4834d4',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211VA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8)) * 2;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_nissan_attesa',
@@ -343,13 +346,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['NISSAN'],
     command: '2211NA',
     color: '#be2edd',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211NA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return Math.min(50, h2d(hex.substring(idx + 6, idx + 8)));
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_generic_tpms1',
@@ -359,13 +362,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['ALL'],
     command: '22C901',
     color: '#22a6b3',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('62C901');
       if (idx >= 0 && hex.length >= idx + 8) {
         return (h2d(hex.substring(idx + 6, idx + 8)) * 0.145038).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_bmw_battery_soc',
@@ -375,13 +378,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['BMW', 'MINI'],
     command: '2211BB',
     color: '#f9ca24',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211BB');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8));
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_mb_oil_temp',
@@ -391,13 +394,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['MERCEDES'],
     command: '22015C',
     color: '#eb4d4b',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('62015C');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8)) - 40;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_vag_misfire_1',
@@ -407,13 +410,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['VAG'],
     command: '2211M1',
     color: '#ff7979',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211M1');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8));
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_lr_def_level',
@@ -423,13 +426,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['LAND_ROVER'],
     command: '2211AD',
     color: '#c7ecee',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211AD');
       if (idx >= 0 && hex.length >= idx + 8) {
         return (h2d(hex.substring(idx + 6, idx + 8)) / 2.55).toFixed(1);
       }
       return null;
-    }
+    },
   },
 
   {
@@ -440,13 +443,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['LAND_ROVER'],
     command: '2211AA',
     color: '#00d2d3',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211AA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return (h2d(hex.substring(idx + 6, idx + 8)) / 10).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_lr_ride_height',
@@ -456,13 +459,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['LAND_ROVER'],
     command: '2211AB',
     color: '#10ac84',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211AB');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8)) - 100; // -100 to +155 mm
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_bmw_valvetronic',
@@ -472,13 +475,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['BMW', 'MINI'],
     command: '22115A',
     color: '#ff9f43',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('62115A');
       if (idx >= 0 && hex.length >= idx + 8) {
         return (h2d(hex.substring(idx + 6, idx + 8)) * 0.1).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_bmw_xdrive',
@@ -488,13 +491,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['BMW'],
     command: '22115B',
     color: '#feca57',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('62115B');
       if (idx >= 0 && hex.length >= idx + 8) {
         return Math.min(100, h2d(hex.substring(idx + 6, idx + 8)));
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_mb_airmatic',
@@ -504,13 +507,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['MERCEDES'],
     command: '2211CA',
     color: '#54a0ff',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211CA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return (h2d(hex.substring(idx + 6, idx + 8)) / 10).toFixed(1);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_mb_dpf_regen',
@@ -520,13 +523,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['MERCEDES'],
     command: '2211CB',
     color: '#8395a7',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211CB');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8));
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_porsche_pdk_temp',
@@ -536,13 +539,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['PORSCHE'],
     command: '2211PA',
     color: '#ff4757',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211PA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8)) - 40;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_porsche_oil_lvl',
@@ -552,13 +555,13 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['PORSCHE'],
     command: '2211PB',
     color: '#eccc68',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211PB');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8));
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_ferrari_clutch',
@@ -568,15 +571,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['FERRARI'],
     command: '2211FA',
     color: '#e84118',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('6211FA');
       if (idx >= 0 && hex.length >= idx + 8) {
         return h2d(hex.substring(idx + 6, idx + 8));
       }
       return null;
-    }
+    },
   },
-
 
   {
     id: 'oem_renault_dpf',
@@ -586,7 +588,7 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['RENAULT'],
     command: '22042C',
     color: '#3c40c6',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('62042C');
       if (idx >= 0 && hex.length >= idx + 10) {
         const A = h2d(hex.substring(idx + 6, idx + 8));
@@ -594,7 +596,7 @@ export const OEM_SENSORS: OemSensorDef[] = [
         return (A * 256 + B) / 100;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_fiat_trans_temp',
@@ -604,14 +606,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['FCA'],
     command: '221E1C',
     color: '#ff5e57',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621E1C');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = h2d(hex.substring(idx + 6, idx + 8));
         return A - 40;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_toyota_fan_speed',
@@ -621,14 +623,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['TOYOTA'],
     command: '21C4',
     color: '#05c46b',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('61C4');
       if (idx >= 0 && hex.length >= idx + 6) {
         const A = h2d(hex.substring(idx + 4, idx + 6));
         return (A * 100) / 255;
       }
       return null;
-    }
+    },
   },
 
   {
@@ -640,16 +642,16 @@ export const OEM_SENSORS: OemSensorDef[] = [
     command: '221E1C',
     header: '7E0',
     color: '#ff5e57',
-    parse: (hex) => {
+    parse: hex => {
       // 62 1E 1C A B
       const idx = hex.indexOf('621E1C');
       if (idx >= 0 && hex.length >= idx + 10) {
         const A = h2d(hex.substring(idx + 6, idx + 8));
         const B = h2d(hex.substring(idx + 8, idx + 10));
-        return Math.floor((((A * 256) + B) * 0.1) - 40);
+        return Math.floor((A * 256 + B) * 0.1 - 40);
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_vag_dpf_soot',
@@ -659,14 +661,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['VAG'],
     command: '22115C', // Hypothetical VAG DPF PID
     color: '#3c40c6',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('62115C');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = h2d(hex.substring(idx + 6, idx + 8));
         return A;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_toyota_hybrid_bat',
@@ -676,14 +678,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['TOYOTA'],
     command: '21C3',
     color: '#05c46b',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('61C3');
       if (idx >= 0 && hex.length >= idx + 6) {
         const A = h2d(hex.substring(idx + 4, idx + 6));
         return (A * 100) / 255;
       }
       return null;
-    }
+    },
   },
   {
     id: 'oem_gm_trans_temp',
@@ -693,14 +695,14 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['GM'],
     command: '221940',
     color: '#ffdd59',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('621940');
       if (idx >= 0 && hex.length >= idx + 8) {
         const A = h2d(hex.substring(idx + 6, idx + 8));
         return A - 40;
       }
       return null;
-    }
+    },
   },
   {
     // Generic Mode 01 PID for Transmission Temp (some cars support it on 01 B4 but usually 01 00-5F)
@@ -712,24 +714,30 @@ export const OEM_SENSORS: OemSensorDef[] = [
     brands: ['ALL'],
     command: '01B4',
     color: '#ef5777',
-    parse: (hex) => {
+    parse: hex => {
       const idx = hex.indexOf('41B4');
       if (idx >= 0 && hex.length >= idx + 6) {
         const A = h2d(hex.substring(idx + 4, idx + 6));
         return A - 40;
       }
       return null;
-    }
-  }
+    },
+  },
 ];
 
 export function detectBrandFromVIN(vin: string): string {
-  if (!vin || vin.length < 3) return 'UNKNOWN';
+  if (!vin || vin.length < 3) {
+    return 'UNKNOWN';
+  }
   const wmi3 = vin.substring(0, 3).toUpperCase();
-  if (WMI_MAP[wmi3]) return WMI_MAP[wmi3];
-  
+  if (WMI_MAP[wmi3]) {
+    return WMI_MAP[wmi3];
+  }
+
   const wmi2 = vin.substring(0, 2).toUpperCase();
-  if (WMI_MAP[wmi2]) return WMI_MAP[wmi2];
+  if (WMI_MAP[wmi2]) {
+    return WMI_MAP[wmi2];
+  }
 
   return 'UNKNOWN';
 }

@@ -166,6 +166,9 @@ const oemAdditions = `
   },
 `;
 
-file = file.replace(/export const OEM_SENSORS: OemSensorDef\[\] = \[/, "export const OEM_SENSORS: OemSensorDef[] = [" + oemAdditions);
+file = file.replace(
+  /export const OEM_SENSORS: OemSensorDef\[\] = \[/,
+  'export const OEM_SENSORS: OemSensorDef[] = [' + oemAdditions,
+);
 fs.writeFileSync('src/services/OemSensors.ts', file, 'utf8');
 console.log('Luxury sensors added!');

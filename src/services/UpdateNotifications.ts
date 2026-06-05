@@ -27,8 +27,11 @@ export async function showUpdateNotification(
   notes: string,
   url: string,
 ) {
-  const cleanBody = notes.split('\n')[0].replace(/^\*\s\*\*/, '').replace(/\*\*:/, ':');
-  
+  const cleanBody = notes
+    .split('\n')[0]
+    .replace(/^\*\s\*\*/, '')
+    .replace(/\*\*:/, ':');
+
   await notifee.displayNotification({
     title: `v${version} guncellemesi hazir`,
     body: cleanBody,

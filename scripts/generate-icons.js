@@ -40,13 +40,23 @@ function createMILSVG(size) {
     </defs>
     <rect width="${size}" height="${size}" rx="${28 * s}" fill="url(#bg)"/>
     <!-- Engine block outline -->
-    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="${10 * s}" fill="url(#mil)" stroke="#E65100" stroke-width="${3 * s}"/>
+    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="${
+    10 * s
+  }" fill="url(#mil)" stroke="#E65100" stroke-width="${3 * s}"/>
     <!-- Valve cover -->
-    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" rx="${6 * s}" fill="url(#mil)" stroke="#E65100" stroke-width="${3 * s}"/>
+    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" rx="${
+    6 * s
+  }" fill="url(#mil)" stroke="#E65100" stroke-width="${3 * s}"/>
     <!-- Horizontal detail lines -->
-    <rect x="${bx + 16 * s}" y="${by + 16 * s}" width="${bw - 32 * s}" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
-    <rect x="${bx + 16 * s}" y="${by + 36 * s}" width="${bw - 32 * s}" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
-    <rect x="${bx + 16 * s}" y="${by + 56 * s}" width="${bw - 32 * s}" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
+    <rect x="${bx + 16 * s}" y="${by + 16 * s}" width="${
+    bw - 32 * s
+  }" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
+    <rect x="${bx + 16 * s}" y="${by + 36 * s}" width="${
+    bw - 32 * s
+  }" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
+    <rect x="${bx + 16 * s}" y="${by + 56 * s}" width="${
+    bw - 32 * s
+  }" height="${5 * s}" rx="${2 * s}" fill="#E65100" opacity="0.4"/>
   </svg>`;
 }
 
@@ -58,8 +68,15 @@ async function main() {
     fs.writeFileSync(`${ICON_DIR}/${dir}/ic_launcher_round.png`, png);
     console.log(`✓ ${dir} (${size}x${size})`);
   }
-  for (const f of ['check-jimp.js', 'check-jimp2.js', 'check-jimp3.js', 'test-jimp.js']) {
-    try { fs.unlinkSync(`scripts/${f}`); } catch {}
+  for (const f of [
+    'check-jimp.js',
+    'check-jimp2.js',
+    'check-jimp3.js',
+    'test-jimp.js',
+  ]) {
+    try {
+      fs.unlinkSync(`scripts/${f}`);
+    } catch {}
   }
   console.log('MIL icons generated successfully!');
 }

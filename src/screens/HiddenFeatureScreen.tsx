@@ -77,16 +77,24 @@ export default function HiddenFeatureScreen({onBack}: Props) {
     setLoading(prev => ({...prev, [f.id]: false}));
   }, []);
 
-  const performToggle = useCallback(async (f: HiddenFeature, turnOn: boolean) => {
+  const performToggle = useCallback(
+    async (f: HiddenFeature, turnOn: boolean) => {
       setLoading(prev => ({...prev, [f.id]: true}));
       const resp = await obd2Service.writeFeature(f, turnOn);
       setReadResults(prev => ({...prev, [f.id]: resp || '(boş)'}));
       setLoading(prev => ({...prev, [f.id]: false}));
       Alert.alert(
         turnOn ? 'Aktif' : 'Devre Dışı',
-        f.name + " " + (turnOn ? 'açıldı' : 'kapatıldı') + ". Yanıt: " + (resp || '(boş)') + ". Değişiklik için kontağı kapatıp açın."
+        f.name +
+          ' ' +
+          (turnOn ? 'açıldı' : 'kapatıldı') +
+          '. Yanıt: ' +
+          (resp || '(boş)') +
+          '. Değişiklik için kontağı kapatıp açın.',
       );
-  }, []);
+    },
+    [],
+  );
 
   const toggleFeature = useCallback(
     (f: HiddenFeature, turnOn: boolean) => {
@@ -94,10 +102,14 @@ export default function HiddenFeatureScreen({onBack}: Props) {
         'Kritik Kodlama Uyarısı ⚠️',
         'Bu işlem, klasik arıza okumadan tamamen farklıdır ve doğrudan aracınızın Ana Beynine (ECU/BCM) YAZMA (Flash) işlemi yapar.\n\nPiyasadaki ucuz v2.1 ELM327 klonları veri yazarken kilitlenirse aracınızın beyni çöker ve araç ÇALIŞMAZ (Brick olur).\n\nBütün sorumluluk SİZE aittir. Devam edilsin mi?',
         [
-          { text: 'İPTAL ET', style: 'cancel' },
-          { text: 'RİSKİ KABUL EDİYORUM', style: 'destructive', onPress: () => performToggle(f, turnOn) }
+          {text: 'İPTAL ET', style: 'cancel'},
+          {
+            text: 'RİSKİ KABUL EDİYORUM',
+            style: 'destructive',
+            onPress: () => performToggle(f, turnOn),
+          },
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     },
     [performToggle],
@@ -110,7 +122,7 @@ export default function HiddenFeatureScreen({onBack}: Props) {
     }
     setLoading(prev => ({...prev, _custom: true}));
     setReadResults(prev => ({...prev, _custom: 'Gönderiliyor...'}));
-    await obd2Service.sendCustomCommand("ATSH" + customHeader);
+    await obd2Service.sendCustomCommand('ATSH' + customHeader);
     const resp = await obd2Service.sendCustomCommand(customCmd.trim());
     setReadResults(prev => ({...prev, _custom: resp || '(boş)'}));
     setLoading(prev => ({...prev, _custom: false}));

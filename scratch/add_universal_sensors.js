@@ -210,13 +210,15 @@ const universalSensors = `
 
 if (!code.includes('oem_toyota_atf')) {
   // Find the end of the OEM_SENSORS array
-  const insertionPoint = code.indexOf('export const OEM_SENSORS: OemSensorDef[] = [');
+  const insertionPoint = code.indexOf(
+    'export const OEM_SENSORS: OemSensorDef[] = [',
+  );
   if (insertionPoint !== -1) {
     code = code.replace(
       'export const OEM_SENSORS: OemSensorDef[] = [',
-      'export const OEM_SENSORS: OemSensorDef[] = [' + universalSensors
+      'export const OEM_SENSORS: OemSensorDef[] = [' + universalSensors,
     );
-    
+
     // Add mapping for brands
     const wmiMapping = `
   'JHL': 'HONDA',
@@ -233,11 +235,8 @@ if (!code.includes('oem_toyota_atf')) {
   '2C4': 'DODGE',
   '5YJ': 'TESLA',
   '7SA': 'TESLA',`;
-    
-    code = code.replace(
-      "'WMW': 'MINI',",
-      "'WMW': 'MINI'," + wmiMapping
-    );
+
+    code = code.replace("'WMW': 'MINI',", "'WMW': 'MINI'," + wmiMapping);
 
     fs.writeFileSync(oemSensorsPath, code);
     console.log('Universal compatibility sensor package loaded successfully!');

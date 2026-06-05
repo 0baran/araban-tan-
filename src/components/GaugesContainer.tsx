@@ -17,7 +17,9 @@ export default function GaugesContainer() {
       if (now - lastUiUpdate > 100) {
         lastUiUpdate = now;
         const s = getSettings();
-        setSpeedWarnActive(s.speedWarningEnabled && data.speed >= s.speedWarningThreshold);
+        setSpeedWarnActive(
+          s.speedWarningEnabled && data.speed >= s.speedWarningThreshold,
+        );
         setRpm(data.rpm);
         setSpeed(data.speed);
       }
@@ -29,25 +31,70 @@ export default function GaugesContainer() {
 
   return (
     <View style={styles.gaugesContainer}>
-      <View style={[styles.glassCard, styles.gaugeCard, {backgroundColor: colors.card}]}>
-        <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>MOTOR DEVRİ</Text>
+      <View
+        style={[
+          styles.glassCard,
+          styles.gaugeCard,
+          {backgroundColor: colors.card},
+        ]}>
+        <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>
+          MOTOR DEVRİ
+        </Text>
         <Text style={[styles.gaugeValue, {color: colors.accent}]}>{rpm}</Text>
         <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>RPM</Text>
       </View>
-      <View style={[styles.glassCard, styles.gaugeCard, {backgroundColor: colors.card}]}>
+      <View
+        style={[
+          styles.glassCard,
+          styles.gaugeCard,
+          {backgroundColor: colors.card},
+        ]}>
         <Text style={[styles.gaugeLabel, {color: colors.textDim}]}>HIZ</Text>
-        <Text style={[styles.gaugeValue, {color: speedWarnActive ? '#ff4757' : '#2ed573'}]}>{speed}</Text>
+        <Text
+          style={[
+            styles.gaugeValue,
+            {color: speedWarnActive ? '#ff4757' : '#2ed573'},
+          ]}>
+          {speed}
+        </Text>
         <Text style={[styles.gaugeUnit, {color: colors.textMuted}]}>KM/H</Text>
       </View>
     </View>
   );
 }
 
-const getStyles = (colors: any) => StyleSheet.create({
-  gaugesContainer: {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20},
-  gaugeCard: {flex: 1, alignItems: 'center', marginHorizontal: 5, paddingVertical: 35},
-  glassCard: {borderRadius: 24, padding: 20, borderWidth: 1, marginBottom: 20, borderColor: colors.cardBorder},
-  gaugeLabel: {color: colors.textDim, fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 20},
-  gaugeValue: {fontSize: 44, fontWeight: '900'},
-  gaugeUnit: {color: colors.textMuted, fontSize: 12, fontWeight: 'bold', marginTop: 5},
-});
+const getStyles = (colors: any) =>
+  StyleSheet.create({
+    gaugesContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+    },
+    gaugeCard: {
+      flex: 1,
+      alignItems: 'center',
+      marginHorizontal: 5,
+      paddingVertical: 35,
+    },
+    glassCard: {
+      borderRadius: 24,
+      padding: 20,
+      borderWidth: 1,
+      marginBottom: 20,
+      borderColor: colors.cardBorder,
+    },
+    gaugeLabel: {
+      color: colors.textDim,
+      fontSize: 12,
+      fontWeight: 'bold',
+      letterSpacing: 1,
+      marginBottom: 20,
+    },
+    gaugeValue: {fontSize: 44, fontWeight: '900'},
+    gaugeUnit: {
+      color: colors.textMuted,
+      fontSize: 12,
+      fontWeight: 'bold',
+      marginTop: 5,
+    },
+  });

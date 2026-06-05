@@ -14,6 +14,6 @@ OEM_SENSORS.forEach(sensor => {
 });
 `;
 
-file = file.replace(/  \},\n\];/, '  },\n' + injection);
+file = file.replace(/ {2}\},\n\];/, '  },\n' + injection);
 fs.writeFileSync('src/screens/LiveDataScreen.tsx', file, 'utf8');
 console.log('PARAM_META updated!');
