@@ -56,8 +56,9 @@ import KeepAwake from 'react-native-keep-awake';
 import GaugesContainer from '../components/GaugesContainer';
 import FeaturesGrid from '../components/FeaturesGrid';
 import VehicleStatusCard from '../components/VehicleStatusCard';
+import packageJson from '../../package.json';
 
-const APP_VERSION = '3.1.78';
+const APP_VERSION = packageJson.version;
 
 export default function HomeScreen() {
   const navigation =
