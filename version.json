@@ -1,5 +1,1 @@
-{
-  "version": "3.2.8",
-  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.8/ArabaniTani-release-v3.2.8.apk",
-  "notes": "v3.2.8: Otomatik güncelleme motoru onarıldı. BT döngü hatası, çift kilit ve widget performansı iyileştirildi."
-}
+{"url":"https://raw.githubusercontent.com/0baran/araban-tan-/main/ArabaniTani-v3.2.9.apk","version":"3.2.9","notes":"* **DDT4All Çekirdek Komutları:** Renault ve Dacia araçlar için popüler açık kaynaklı DDT4All veritabanındaki en çok kullanılan UDS/CAN komutları sisteme eklendi.\\n* **Yeni Fransız Grubu Gizli Özellikleri:**"}
