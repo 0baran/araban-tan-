@@ -216,11 +216,11 @@ export const ELM_CONSTANTS = {
   ATZ_RESET_DELAY: 2000,
   AT_CMD_DELAY: 300,
   ATSP_DELAY: 800,
-  WRITE_DELAY: 150,
-  READ_POLL_INTERVAL: 40,
+  WRITE_DELAY: 50, // 150'den 50'ye düşürüldü
+  READ_POLL_INTERVAL: 20, // 40'tan 20'ye düşürüldü
   READ_MAX_POLLS: 50,
   READ_EMPTY_LIMIT: 5,
-  FAST_WRITE_DELAY: 15,
-  FAST_POLL_INTERVAL: 25,
-  FAST_MAX_POLLS: 20,
+  FAST_WRITE_DELAY: 2, // 15'ten 2'ye düşürüldü
+  FAST_POLL_INTERVAL: 10, // 25'ten 10'a düşürüldü
+  FAST_MAX_POLLS: 50, // Timeout olmaması için 20'den 50'ye çıkarıldı (50 * 10ms = 500ms max)
 };

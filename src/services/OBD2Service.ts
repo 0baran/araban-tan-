@@ -2147,7 +2147,7 @@ class OBD2Service {
           }
         }
 
-        this.pollTimer = setTimeout(poll, isIdle ? 500 : 25); // 10ms CPU'yu boğduğu için 25ms yapıldı
+        this.pollTimer = setTimeout(poll, isIdle ? 500 : 15); // 10ms CPU'yu boğduğu için 15ms yapıldı
         if (
           this.dataCallbacks.size > 0 &&
           Date.now() - this.lastCallbackTime > 80
