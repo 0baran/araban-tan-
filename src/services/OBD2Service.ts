@@ -63,8 +63,7 @@ class OBD2Service {
   public compatibilityMode: boolean = false;
   private lastPollTimes: Record<string, number> = {};
 
-  private _writeBusy = false;
-  private _writeQueue: Array<() => Promise<void>> = [];
+  private lastWidgetUpdateTime = 0; // Widget'ı saniyede 1 kez güncelle
 
   private validKeysArray: string[] = [
     'rpm',
@@ -845,32 +844,9 @@ class OBD2Service {
     return {...this.currentData};
   }
 
-  // Write queue - tüm komutlar sırayla işlenir
+  // Komut yazma — commandLock zaten serialization sağlıyor, ayrı queue gereksiz
   private async enqueueWrite(fn: () => Promise<void>): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this._writeQueue.push(async () => {
-        try {
-          await fn();
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      });
-      if (!this._writeBusy) {
-        this._processQueue();
-      }
-    });
-  }
-
-  private async _processQueue() {
-    this._writeBusy = true;
-    while (this._writeQueue.length > 0) {
-      const fn = this._writeQueue.shift();
-      if (fn) {
-        await fn();
-      }
-    }
-    this._writeBusy = false;
+    return fn();
   }
 
 
@@ -1485,6 +1461,12 @@ class OBD2Service {
   }
 
   private updateWidget() {
+    // Native köprü pahalı — saniyede 1 kez güncelle (her 25ms'de değil)
+    const now = Date.now();
+    if (now - this.lastWidgetUpdateTime < 1000) {
+      return;
+    }
+    this.lastWidgetUpdateTime = now;
     try {
       if (NativeModules.WidgetDataModule) {
         NativeModules.WidgetDataModule.updateWidget({
@@ -1914,13 +1896,7 @@ class OBD2Service {
               const r4 = await this.sendCommandFast('0161', 'egrErrorDuty');
               this.parseEgrErrorDuty(r4);
             }
-            if (this.isPidSupported('0162')) {
-              const r5 = await this.sendCommandFast(
-                '0162',
-                'actualEngineTorque',
-              );
-              this.parseActualEngineTorque(r5);
-            }
+            // NOT: PID 0162 (actualEngineTorque) case 6'da zaten sorgulanıyor — duplikasyon kaldırıldı
             const r6 = await this.sendCommandFast(
               '0163',
               'engineReferenceTorque',

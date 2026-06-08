@@ -1,5 +1,5 @@
 {
-  "version": "3.2.6",
-  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.6/ArabaniTani-release-v3.2.6.apk",
-  "notes": "v3.1.78'deki eski ve stabil olan sessiz indirme (FileCache) motoruna %100 geri dönüldü."
+  "version": "3.2.7",
+  "url": "https://github.com/0baran/araban-tan-/releases/download/v3.2.7/ArabaniTani-release-v3.2.7.apk",
+  "notes": "v3.2.7: Otomatik güncelleme motoru onarıldı. Bluetooth döngü hatası, çift kilit sistemi ve widget performansı iyileştirildi."
 }

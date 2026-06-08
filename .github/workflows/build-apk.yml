@@ -27,15 +27,45 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install npm dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Cache Gradle files
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/.gradle
+          key: gradle-${{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties', 'android/build.gradle', 'android/app/build.gradle') }}
+          restore-keys: |
+            gradle-
+
+      - name: Bundle JS (Metro) — Düşük Bellekle
+        env:
+          NODE_OPTIONS: "--max_old_space_size=3072"
+        run: |
+          mkdir -p android/app/src/main/assets
+          npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output android/app/src/main/assets/index.android.bundle \
+            --assets-dest android/app/src/main/res
+
       - name: Build Android Release APK
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=512m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+          NODE_OPTIONS: "--max_old_space_size=2048"
         run: |
           cd android
           chmod +x ./gradlew
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease \
+            -x bundleReleaseJsAndAssets \
+            --no-daemon \
+            --stacktrace
 
       - name: Get Version
         id: get_version
@@ -48,7 +78,11 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           name: ProCarScanner v${{ env.VERSION }} Update
-          body: "Otomatik Test Güncellemesi - GitHub Actions tarafından derlenmiştir."
+          body: |
+            ## ProCarScanner v${{ env.VERSION }}
+            Otomatik GitHub Actions derlemesi.
+            
+            📲 APK'yı indirip kurun.
           files: android/app/build/outputs/apk/release/*.apk
           draft: false
           prerelease: false

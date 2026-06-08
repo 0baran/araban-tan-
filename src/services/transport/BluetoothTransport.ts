@@ -82,9 +82,10 @@ export class BluetoothTransport implements Transport {
     try {
       while ((await this.device.available()) > 0) {
         const chunk = await this.device.read();
-        if (chunk) {
-          data += chunk;
+        if (!chunk) {
+          break; // Sonsuz döngü koruması: available() > 0 ama read() boş döndürüyor
         }
+        data += chunk;
       }
     } catch (_) {}
     return data;
