@@ -9,6 +9,8 @@ import {
   FlatList,
   TextInput,
   Platform,
+  Vibration,
+  Alert,
 } from 'react-native';
 import {obd2Service, OBD2Data} from '../services/OBD2Service';
 import {OEM_SENSORS} from '../services/OemSensors';
@@ -925,6 +927,13 @@ export default function LiveDataScreen({onBack}: Props) {
   const lastUpdateRef = useRef(0);
   const fuelConsumedRef = useRef(0);
 
+  // Hız Limiti Alarmı
+  const [speedLimit, setSpeedLimit] = useState(120);
+  const [speedAlertActive, setSpeedAlertActive] = useState(false);
+  const [showSpeedLimitModal, setShowSpeedLimitModal] = useState(false);
+  const [tempSpeedLimit, setTempSpeedLimit] = useState('120');
+  const speedAlertRef = useRef(false);
+
   useEffect(() => {
     loadSettings().then(() => {
       const s = getSettings();
@@ -943,8 +952,20 @@ export default function LiveDataScreen({onBack}: Props) {
         setFuelCost(fuelConsumedRef.current * fuelPriceRef.current);
       }
       lastUpdateRef.current = now;
+
+      // Hız limiti kontrolü
+      const curSpeed = d.speed || 0;
+      const limitVal = speedAlertRef.current
+        ? speedLimit
+        : 0; // ref üzerinden limit değeri al
+      if (curSpeed > speedLimit && !speedAlertActive) {
+        setSpeedAlertActive(true);
+        Vibration.vibrate([0, 300, 200, 300]);
+      } else if (curSpeed <= speedLimit && speedAlertActive) {
+        setSpeedAlertActive(false);
+      }
     });
-  }, []);
+  }, [speedLimit, speedAlertActive]);
 
   const togglePin = useCallback(async (key: string) => {
     setPinned(prev => {
@@ -1070,6 +1091,31 @@ export default function LiveDataScreen({onBack}: Props) {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => {
+                setTempSpeedLimit(String(speedLimit));
+                setShowSpeedLimitModal(true);
+              }}
+              style={[
+                styles.backButton,
+                {
+                  marginRight: 8,
+                  backgroundColor: speedAlertActive
+                    ? 'rgba(255,71,87,0.2)'
+                    : 'transparent',
+                  borderRadius: 6,
+                  paddingHorizontal: 6,
+                },
+              ]}>
+              <Text
+                style={{
+                  color: speedAlertActive ? '#ff4757' : colors.textDim,
+                  fontWeight: '800',
+                  fontSize: 12,
+                }}>
+                {speedAlertActive ? `⚠️${data.speed}` : `🚧${speedLimit}`}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => setListView(!listView)}
               style={styles.backButton}>
               <Text style={{color: colors.accent}}>
@@ -1079,6 +1125,125 @@ export default function LiveDataScreen({onBack}: Props) {
           </View>
         </View>
 
+        {/* Hız limiti aşıldı banner */}
+        {speedAlertActive && (
+          <View
+            style={{
+              backgroundColor: '#ff4757',
+              paddingVertical: 8,
+              paddingHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            }}>
+            <Text style={{color: '#fff', fontWeight: '900', fontSize: 13}}>
+              {'⚠️ Hız Limiti Aşıldı! ' +
+                data.speed +
+                ' km/h > ' +
+                speedLimit +
+                ' km/h'}
+            </Text>
+          </View>
+        )}
+
+        {/* Hız limiti ayar modal */}
+        {showSpeedLimitModal && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 999,
+            }}>
+            <View
+              style={{
+                backgroundColor: colors.card,
+                borderRadius: 16,
+                padding: 24,
+                width: 280,
+                gap: 16,
+                borderWidth: 1,
+                borderColor: colors.accent + '44',
+              }}>
+              <Text
+                style={{
+                  color: colors.text,
+                  fontSize: 16,
+                  fontWeight: '800',
+                  textAlign: 'center',
+                }}>
+                🚧 Hız Limiti Alarmı
+              </Text>
+              <Text
+                style={{
+                  color: colors.textMuted,
+                  fontSize: 12,
+                  textAlign: 'center',
+                }}>
+                Bu hızı aşınca titreme ve uyarı gösterilir.
+              </Text>
+              <TextInput
+                style={{
+                  backgroundColor: colors.inputBg,
+                  color: colors.text,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: colors.accent,
+                  padding: 12,
+                  fontSize: 28,
+                  fontWeight: '800',
+                  textAlign: 'center',
+                }}
+                value={tempSpeedLimit}
+                onChangeText={setTempSpeedLimit}
+                keyboardType="numeric"
+                maxLength={3}
+                placeholder="120"
+                placeholderTextColor={colors.textMuted}
+                autoFocus
+              />
+              <View style={{flexDirection: 'row', gap: 10}}>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    padding: 12,
+                    borderRadius: 10,
+                    backgroundColor: colors.inputBg,
+                    alignItems: 'center',
+                  }}
+                  onPress={() => setShowSpeedLimitModal(false)}>
+                  <Text style={{color: colors.textMuted, fontWeight: '700'}}>
+                    İPTAL
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    padding: 12,
+                    borderRadius: 10,
+                    backgroundColor: colors.accent,
+                    alignItems: 'center',
+                  }}
+                  onPress={() => {
+                    const lim = parseInt(tempSpeedLimit, 10);
+                    if (lim > 0 && lim <= 300) {
+                      setSpeedLimit(lim);
+                    }
+                    setShowSpeedLimitModal(false);
+                  }}>
+                  <Text style={{color: '#fff', fontWeight: '900'}}>KAYDET</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+
         <View style={{paddingHorizontal: 16, paddingBottom: 10}}>
           <Text
             style={{
@@ -1086,8 +1251,9 @@ export default function LiveDataScreen({onBack}: Props) {
               fontSize: 12,
               textAlign: 'center',
             }}>
-            💡 Sadece aracınızın desteklediği ({filtered.length}) sensör
-            listeleniyor.
+            {'💡 Sadece aracınızın desteklediği (' +
+              filtered.length +
+              ') sensör listeleniyor.'}
           </Text>
         </View>
 

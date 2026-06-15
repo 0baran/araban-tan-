@@ -130,10 +130,14 @@ export default function ErrorCodesScreen({onBack}: Props) {
     setPending(pendingCodes);
     setLoading(false);
 
-    const vid = await getActiveVehicleId();
-    if (vid) {
-      setActiveVehicleIdState(vid);
-      await saveDTCScan(vid, codes, pendingCodes, {isManual: false});
+    // Bağlı değilse veya hiç kod yoksa boş tarama kaydetme!
+    const connected = obd2Service.isConnected;
+    if (connected && (codes.length > 0 || pendingCodes.length > 0)) {
+      const vid = await getActiveVehicleId();
+      if (vid) {
+        setActiveVehicleIdState(vid);
+        await saveDTCScan(vid, codes, pendingCodes, {isManual: false});
+      }
     }
   }, []);
 

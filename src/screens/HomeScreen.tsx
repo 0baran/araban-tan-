@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import {
   View,
   Text,
@@ -56,6 +56,7 @@ import KeepAwake from 'react-native-keep-awake';
 import GaugesContainer from '../components/GaugesContainer';
 import FeaturesGrid from '../components/FeaturesGrid';
 import VehicleStatusCard from '../components/VehicleStatusCard';
+import {calculateEngineHealth, EngineHealthResult} from '../services/EngineHealthService';
 import packageJson from '../../package.json';
 
 const APP_VERSION = packageJson.version;
@@ -93,6 +94,8 @@ export default function HomeScreen() {
     {code: string; description: string; source: string}[]
   >([]);
   const autoConnectDone = useRef(false);
+  const searchDebounceRef = useRef<any>(null);
+  const [engineHealth, setEngineHealth] = useState<EngineHealthResult | null>(null);
   const {colors, darkMode} = useTheme();
 
   useEffect(() => {
@@ -165,9 +168,22 @@ export default function HomeScreen() {
       });
     }
 
+    // Motor sağlık skoru — her 5sn’de güncelle
+    const healthInterval = setInterval(() => {
+      const lastData = obd2Service.getLastData();
+      const connected = obd2Service.isConnected;
+      // DTC sayısını simule edilmiş DTC listesiyle geççi olarak sayıyoruz
+      const fakeDtcs = dtcScanCount > 0
+        ? Array.from({length: dtcScanCount}, (_, i) => ({code: `P${i}`, description: ''}))
+        : [];
+      setEngineHealth(calculateEngineHealth(lastData, fakeDtcs, connected));
+    }, 5000);
+
     return () => {
-      obd2Service.disconnect();
+      // NOT: disconnect burada YOK — başka ekrana geçince bağlantı kesilmesin!
+      // Disconnect sadece kullanıcı butona basınca olur.
       unsubConnection();
+      clearInterval(healthInterval);
     };
   }, []);
 
@@ -189,58 +205,48 @@ export default function HomeScreen() {
   }, []);
 
   const handleGlobalSearch = useCallback((q: string) => {
-    const query = q.trim();
-    if (!query) {
-      setSearchRes([]);
-      return;
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
     }
-    const upper = query.toUpperCase();
-    const lowerTR = query.toLocaleLowerCase('tr');
-    const isCodeSearch = /^[PUCB]\d{0,4}$/i.test(query);
-    const seenCodes = new Set<string>();
-    const results: {code: string; description: string; source: string}[] = [];
-
-    for (const [code, desc] of Object.entries(DTC_DESCRIPTIONS)) {
-      if (isCodeSearch && code.startsWith(upper)) {
-        results.push({code, description: desc, source: 'VT'});
-        seenCodes.add(code);
-      } else if (
-        !isCodeSearch &&
-        desc.toLocaleLowerCase('tr').includes(lowerTR)
-      ) {
-        results.push({code, description: desc, source: 'VT'});
-        seenCodes.add(code);
+    searchDebounceRef.current = setTimeout(() => {
+      const query = q.trim();
+      if (!query) {
+        setSearchRes([]);
+        return;
       }
-      if (results.length >= 30) {
-        break;
-      }
-    }
+      const upper = query.toUpperCase();
+      const lowerTR = query.toLocaleLowerCase('tr');
+      const isCodeSearch = /^[PUCB]\d{0,4}$/i.test(query);
+      const seenCodes = new Set<string>();
+      const results: {code: string; description: string; source: string}[] = [];
 
-    if (!isCodeSearch && results.length < 30) {
-      for (const [code, advice] of Object.entries(DTC_AI_ADVICE)) {
-        if (seenCodes.has(code)) {
-          continue;
-        }
-        if (
-          (advice.cause + ' ' + advice.advice)
-            .toLocaleLowerCase('tr')
-            .includes(lowerTR)
-        ) {
-          results.push({
-            code,
-            description:
-              (DTC_DESCRIPTIONS[code] || getDtcDescription(code) || code) +
-              ' (AI)',
-            source: 'AI',
-          });
+      for (const [code, desc] of Object.entries(DTC_DESCRIPTIONS)) {
+        if (isCodeSearch && code.startsWith(upper)) {
+          results.push({code, description: desc, source: 'VT'});
+          seenCodes.add(code);
+        } else if (!isCodeSearch && desc.toLocaleLowerCase('tr').includes(lowerTR)) {
+          results.push({code, description: desc, source: 'VT'});
           seenCodes.add(code);
         }
-        if (results.length >= 30) {
-          break;
+        if (results.length >= 30) { break; }
+      }
+
+      if (!isCodeSearch && results.length < 30) {
+        for (const [code, advice] of Object.entries(DTC_AI_ADVICE)) {
+          if (seenCodes.has(code)) { continue; }
+          if ((advice.cause + ' ' + advice.advice).toLocaleLowerCase('tr').includes(lowerTR)) {
+            results.push({
+              code,
+              description: (DTC_DESCRIPTIONS[code] || getDtcDescription(code) || code) + ' (AI)',
+              source: 'AI',
+            });
+            seenCodes.add(code);
+          }
+          if (results.length >= 30) { break; }
         }
       }
-    }
-    setSearchRes(results);
+      setSearchRes(results);
+    }, 300); // 300ms debounce — her tuşta 2852 kayıt taranmasın
   }, []);
 
   const requestPermissions = async () => {
@@ -555,6 +561,119 @@ export default function HomeScreen() {
           />
 
           <GaugesContainer />
+
+          {/* MOTOR SAĞlIK SKORU */}
+          {engineHealth && engineHealth.overall > 0 && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigate('errorcodes')}
+              style={[
+                {
+                  marginHorizontal: 16,
+                  marginBottom: 12,
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: engineHealth.color + '44',
+                  backgroundColor: engineHealth.color + '11',
+                  padding: 14,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 14,
+                },
+              ]}>
+              {/* Skor çemberi */}
+              <View
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 32,
+                  borderWidth: 3,
+                  borderColor: engineHealth.color,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: engineHealth.color + '22',
+                }}>
+                <Text
+                  style={{
+                    color: engineHealth.color,
+                    fontSize: 20,
+                    fontWeight: '900',
+                  }}>
+                  {engineHealth.grade}
+                </Text>
+                <Text
+                  style={{
+                    color: engineHealth.color,
+                    fontSize: 10,
+                    fontWeight: '700',
+                  }}>
+                  {engineHealth.overall}
+                </Text>
+              </View>
+              {/* Detay */}
+              <View style={{flex: 1}}>
+                <Text
+                  style={{
+                    color: colors.text,
+                    fontSize: 13,
+                    fontWeight: '800',
+                    marginBottom: 3,
+                  }}>
+                  MOTOR SAĞLIK SKORU
+                </Text>
+                <Text
+                  style={{
+                    color: engineHealth.color,
+                    fontSize: 12,
+                    fontWeight: '600',
+                  }}>
+                  {engineHealth.summary}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 6,
+                    marginTop: 4,
+                    flexWrap: 'wrap',
+                  }}>
+                  {engineHealth.categories.slice(0, 3).map(cat => (
+                    <View
+                      key={cat.name}
+                      style={{
+                        backgroundColor:
+                          cat.status === 'excellent'
+                            ? '#00e67622'
+                            : cat.status === 'good'
+                            ? '#7bed9f22'
+                            : cat.status === 'warning'
+                            ? '#ffa50222'
+                            : '#ff475722',
+                        borderRadius: 4,
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 9,
+                          fontWeight: '700',
+                          color:
+                            cat.status === 'excellent'
+                              ? '#00e676'
+                              : cat.status === 'good'
+                              ? '#7bed9f'
+                              : cat.status === 'warning'
+                              ? '#ffa502'
+                              : '#ff4757',
+                        }}>
+                        {cat.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <Text style={{color: colors.textMuted, fontSize: 16}}>›</Text>
+            </TouchableOpacity>
+          )}
 
           <FeaturesGrid onNavigate={navigate} />
 

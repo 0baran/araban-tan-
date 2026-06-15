@@ -73,9 +73,9 @@ export function promptUpdate(info: UpdateInfo) {
   }
   _lastNotificationVersion = info.version;
 
-  Alert.alert('Guncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
+  Alert.alert('Güncelleme Mevcut', `v${info.version}\n\n${info.notes}`, [
     {
-      text: 'Simdi Guncelle',
+      text: 'Şimdi Güncelle',
       onPress: () => downloadAndInstall(info.url, info.version),
     },
     {
@@ -92,7 +92,7 @@ export async function downloadAndInstall(
 ): Promise<boolean> {
   if (downloadActive) {
     Alert.alert(
-      'Indirme Devam Ediyor',
+      'İndirme Devam Ediyor',
       'Mevcut indirme tamamlanana kadar bekleyin.',
     );
     return false;
@@ -143,7 +143,7 @@ export async function downloadAndInstall(
     downloadActive = false;
     setProgress(0);
     await fs.unlink(dest).catch(() => {});
-    Alert.alert('Indirme Hatasi', 'APK indirilemedi.');
+    Alert.alert('İndirme Hatası', 'APK indirilemedi. İnternet bağlantınızı kontrol edin.');
     return false;
   }
 }
