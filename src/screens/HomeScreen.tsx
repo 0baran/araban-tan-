@@ -55,8 +55,9 @@ import {
 import KeepAwake from 'react-native-keep-awake';
 import GaugesContainer from '../components/GaugesContainer';
 import FeaturesGrid from '../components/FeaturesGrid';
-import VehicleStatusCard from '../components/VehicleStatusCard';
 import {calculateEngineHealth, EngineHealthResult} from '../services/EngineHealthService';
+import {EngineHealthWidget} from '../components/EngineHealthWidget';
+import {GlobalSearchModal} from '../components/GlobalSearchModal';
 import packageJson from '../../package.json';
 
 const APP_VERSION = packageJson.version;
@@ -89,12 +90,7 @@ export default function HomeScreen() {
   const [downloadPercent, setDownloadPercent] = useState(0);
   const [showDownloadBar, setShowDownloadBar] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [searchQ, setSearchQ] = useState('');
-  const [searchRes, setSearchRes] = useState<
-    {code: string; description: string; source: string}[]
-  >([]);
   const autoConnectDone = useRef(false);
-  const searchDebounceRef = useRef<any>(null);
   const [engineHealth, setEngineHealth] = useState<EngineHealthResult | null>(null);
   const {colors, darkMode} = useTheme();
 
@@ -202,51 +198,6 @@ export default function HomeScreen() {
       setShowDownloadBar(pct > 0 && pct < 100);
     });
     return unsub;
-  }, []);
-
-  const handleGlobalSearch = useCallback((q: string) => {
-    if (searchDebounceRef.current) {
-      clearTimeout(searchDebounceRef.current);
-    }
-    searchDebounceRef.current = setTimeout(() => {
-      const query = q.trim();
-      if (!query) {
-        setSearchRes([]);
-        return;
-      }
-      const upper = query.toUpperCase();
-      const lowerTR = query.toLocaleLowerCase('tr');
-      const isCodeSearch = /^[PUCB]\d{0,4}$/i.test(query);
-      const seenCodes = new Set<string>();
-      const results: {code: string; description: string; source: string}[] = [];
-
-      for (const [code, desc] of Object.entries(DTC_DESCRIPTIONS)) {
-        if (isCodeSearch && code.startsWith(upper)) {
-          results.push({code, description: desc, source: 'VT'});
-          seenCodes.add(code);
-        } else if (!isCodeSearch && desc.toLocaleLowerCase('tr').includes(lowerTR)) {
-          results.push({code, description: desc, source: 'VT'});
-          seenCodes.add(code);
-        }
-        if (results.length >= 30) { break; }
-      }
-
-      if (!isCodeSearch && results.length < 30) {
-        for (const [code, advice] of Object.entries(DTC_AI_ADVICE)) {
-          if (seenCodes.has(code)) { continue; }
-          if ((advice.cause + ' ' + advice.advice).toLocaleLowerCase('tr').includes(lowerTR)) {
-            results.push({
-              code,
-              description: (DTC_DESCRIPTIONS[code] || getDtcDescription(code) || code) + ' (AI)',
-              source: 'AI',
-            });
-            seenCodes.add(code);
-          }
-          if (results.length >= 30) { break; }
-        }
-      }
-      setSearchRes(results);
-    }, 300); // 300ms debounce — her tuşta 2852 kayıt taranmasın
   }, []);
 
   const requestPermissions = async () => {
@@ -525,11 +476,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => {
-                setShowSearch(true);
-                setSearchQ('');
-                setSearchRes([]);
-              }}
+              onPress={() => setShowSearch(true)}
               style={{padding: 8}}>
               <Text style={{fontSize: 20}}>🔎</Text>
             </TouchableOpacity>
@@ -562,118 +509,10 @@ export default function HomeScreen() {
 
           <GaugesContainer />
 
-          {/* MOTOR SAĞlIK SKORU */}
-          {engineHealth && engineHealth.overall > 0 && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => navigate('errorcodes')}
-              style={[
-                {
-                  marginHorizontal: 16,
-                  marginBottom: 12,
-                  borderRadius: 16,
-                  borderWidth: 1,
-                  borderColor: engineHealth.color + '44',
-                  backgroundColor: engineHealth.color + '11',
-                  padding: 14,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 14,
-                },
-              ]}>
-              {/* Skor çemberi */}
-              <View
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 32,
-                  borderWidth: 3,
-                  borderColor: engineHealth.color,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: engineHealth.color + '22',
-                }}>
-                <Text
-                  style={{
-                    color: engineHealth.color,
-                    fontSize: 20,
-                    fontWeight: '900',
-                  }}>
-                  {engineHealth.grade}
-                </Text>
-                <Text
-                  style={{
-                    color: engineHealth.color,
-                    fontSize: 10,
-                    fontWeight: '700',
-                  }}>
-                  {engineHealth.overall}
-                </Text>
-              </View>
-              {/* Detay */}
-              <View style={{flex: 1}}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontSize: 13,
-                    fontWeight: '800',
-                    marginBottom: 3,
-                  }}>
-                  MOTOR SAĞLIK SKORU
-                </Text>
-                <Text
-                  style={{
-                    color: engineHealth.color,
-                    fontSize: 12,
-                    fontWeight: '600',
-                  }}>
-                  {engineHealth.summary}
-                </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: 6,
-                    marginTop: 4,
-                    flexWrap: 'wrap',
-                  }}>
-                  {engineHealth.categories.slice(0, 3).map(cat => (
-                    <View
-                      key={cat.name}
-                      style={{
-                        backgroundColor:
-                          cat.status === 'excellent'
-                            ? '#00e67622'
-                            : cat.status === 'good'
-                            ? '#7bed9f22'
-                            : cat.status === 'warning'
-                            ? '#ffa50222'
-                            : '#ff475722',
-                        borderRadius: 4,
-                        paddingHorizontal: 6,
-                        paddingVertical: 2,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 9,
-                          fontWeight: '700',
-                          color:
-                            cat.status === 'excellent'
-                              ? '#00e676'
-                              : cat.status === 'good'
-                              ? '#7bed9f'
-                              : cat.status === 'warning'
-                              ? '#ffa502'
-                              : '#ff4757',
-                        }}>
-                        {cat.name}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-              <Text style={{color: colors.textMuted, fontSize: 16}}>›</Text>
-            </TouchableOpacity>
-          )}
+          <EngineHealthWidget
+            engineHealth={engineHealth}
+            onPress={() => navigate('errorcodes')}
+          />
 
           <FeaturesGrid onNavigate={navigate} />
 
@@ -1075,160 +914,6 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
-
-        {/* Evrensel Arama Modal */}
-        <Modal visible={showSearch} transparent animationType="slide">
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'rgba(0,0,0,0.85)',
-              paddingTop: 60,
-            }}>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: colors.bg,
-                borderTopLeftRadius: 30,
-                borderTopRightRadius: 30,
-                padding: 20,
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: 16,
-                }}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontSize: 18,
-                    fontWeight: '900',
-                    letterSpacing: 1,
-                  }}>
-                  🔎 EVRENSEL ARAMA
-                </Text>
-                <TouchableOpacity onPress={() => setShowSearch(false)}>
-                  <Text style={{color: colors.accent, fontWeight: '700'}}>
-                    KAPAT
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <TextInput
-                style={[
-                  {
-                    backgroundColor: colors.inputBg,
-                    color: colors.text,
-                    borderColor: colors.cardBorder,
-                    borderRadius: 12,
-                    padding: 14,
-                    fontSize: 16,
-                    borderWidth: 1,
-                    marginBottom: 10,
-                    textAlign: 'center',
-                    fontWeight: '800',
-                    letterSpacing: 2,
-                  },
-                ]}
-                value={searchQ}
-                onChangeText={t => {
-                  setSearchQ(t);
-                  handleGlobalSearch(t);
-                }}
-                placeholder="Kod veya kelime (turbo, egr, fren, yağ...)"
-                placeholderTextColor={colors.textMuted}
-                autoCapitalize="characters"
-                autoFocus
-              />
-              {searchRes.length > 0 && (
-                <Text
-                  style={{
-                    color: colors.textDim,
-                    fontSize: 11,
-                    marginBottom: 8,
-                  }}>
-                  {searchRes.length} sonuç bulundu (
-                  {searchRes.filter(r => r.source === 'VT').length} VT +{' '}
-                  {searchRes.filter(r => r.source === 'AI').length} AI)
-                </Text>
-              )}
-              <ScrollView>
-                {searchRes.map((item, idx) => (
-                  <TouchableOpacity
-                    key={item.code + idx}
-                    onPress={() => {
-                      navigation.navigate('ErrorCodes' as any);
-                      setShowSearch(false);
-                    }}
-                    onLongPress={() => {
-                      Linking.openURL(
-                        `https://www.google.com/search?q=${encodeURIComponent(
-                          item.code + ' OBD2 hata kodu',
-                        )}`,
-                      ).catch(() => {});
-                    }}
-                    style={{
-                      backgroundColor: colors.card,
-                      borderRadius: 14,
-                      padding: 14,
-                      marginBottom: 8,
-                      borderLeftWidth: 3,
-                      borderLeftColor: getDTCCategoryColor(item.code),
-                    }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: getDTCCategoryColor(item.code),
-                          fontSize: 18,
-                          fontWeight: '900',
-                          letterSpacing: 1,
-                        }}>
-                        📖 {item.code}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 9,
-                          fontWeight: '700',
-                          color: item.source === 'AI' ? '#00bfff' : '#ffa502',
-                          backgroundColor: 'rgba(255,255,255,0.06)',
-                          paddingHorizontal: 4,
-                          paddingVertical: 1,
-                          borderRadius: 3,
-                        }}>
-                        {item.source}
-                      </Text>
-                    </View>
-                    <Text
-                      style={{
-                        color: colors.textDim,
-                        fontSize: 12,
-                        marginTop: 4,
-                        lineHeight: 16,
-                      }}>
-                      {item.description}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-                {searchRes.length === 0 && searchQ.length >= 2 && (
-                  <Text
-                    style={{
-                      color: colors.textDim,
-                      textAlign: 'center',
-                      marginTop: 40,
-                      fontSize: 14,
-                    }}>
-                    Sonuç bulunamadı.
-                  </Text>
-                )}
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
       </SafeAreaView>
     </>
   );

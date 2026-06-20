@@ -632,20 +632,7 @@ const PARAM_META: {
     color: '#f39c12',
     category: 'hava',
   },
-  {
-    key: 'engineRunTime',
-    label: 'Motor Çalışma Süresi',
-    unit: 'sn',
-    color: '#7f8c8d',
-    category: 'motor',
-  },
-  {
-    key: 'widebandO2S1',
-    label: 'Geniş Bant O2 B1S1',
-    unit: 'V',
-    color: '#8e44ad',
-    category: 'egzoz',
-  },
+
   {
     key: 'widebandO2S2',
     label: 'Geniş Bant O2 B1S2',

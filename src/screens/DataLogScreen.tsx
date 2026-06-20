@@ -84,6 +84,15 @@ export default function DataLogScreen({onBack}: Props) {
   }, [isRecording]);
 
   const openFile = async (file: LogFile) => {
+    // 5MB'dan büyük dosyaları okumayı reddet (Out of Memory koruması)
+    if (file.size > 5 * 1024 * 1024) {
+      Alert.alert(
+        'Dosya Çok Büyük',
+        "Bu log dosyası 5MB'den büyük olduğu için telefonda önizlenemiyor. Lütfen paylaş butonunu kullanarak bilgisayarda veya excel'de açın.",
+      );
+      return;
+    }
+
     setLoading(true);
     setSelectedFile(file);
     try {

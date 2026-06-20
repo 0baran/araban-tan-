@@ -10,7 +10,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {obd2Service} from '../services/OBD2Service';
 import {useTheme} from '../services/ThemeContext';
-import ReactNativeBlobUtil from 'react-native-blob-util';
+import {dataLogService} from '../services/DataLogService';
 
 interface Props {
   onBack: () => void;
@@ -31,62 +31,48 @@ export default function TripScreen({onBack}: Props) {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    let logBuffer: string[] = [];
-
-    // Init CSV
-    const dirs = ReactNativeBlobUtil.fs.dirs;
-    const path = `${dirs.DownloadDir}/ArabanTani_Log_${Date.now()}.csv`;
-    setLogPath(path);
-
-    const writeLog = async (dataStr: string) => {
-      try {
-        await ReactNativeBlobUtil.fs.appendFile(path, dataStr, 'utf8');
-      } catch (e) {
-        console.error('Log write error', e);
-      }
-    };
 
     if (isLogging) {
-      // Write Header
-      writeLog('Timestamp,RPM,Speed,Load,Temp,MAF,HP_Est\n');
-
       interval = setInterval(() => {
         setTripTime(t => t + 1);
 
         const d = obd2Service.getLastData();
         const curSpeed = typeof d.speed === 'number' ? d.speed : 0;
-        const curRpm = typeof d.rpm === 'number' ? d.rpm : 0;
-        const curLoad = typeof d.engineLoad === 'number' ? d.engineLoad : 0;
-        const curTemp = typeof d.coolantTemp === 'number' ? d.coolantTemp : 0;
-        const curMaf = typeof d.maf === 'number' ? d.maf : 0;
-        const hpEst = (curMaf * 1.25).toFixed(1);
 
         setSpeed(curSpeed);
-
         // Distance calculation (speed km/h to km/s)
         setDistance(prev => prev + curSpeed / 3600);
-
-        const csvRow = `${new Date().toISOString()},${curRpm},${curSpeed},${curLoad},${curTemp},${curMaf},${hpEst}\n`;
-        writeLog(csvRow);
-        setLogCount(c => c + 1);
-      }, 1000); // 1 sec log rate
+        
+        setLogCount(dataLogService.pointCount);
+      }, 1000);
+    } else {
+      setLogCount(dataLogService.pointCount);
     }
 
     return () => {
-      if (interval) {clearInterval(interval);}
+      if (interval) clearInterval(interval);
     };
   }, [isLogging]);
 
   const toggleLogging = () => {
     if (isLogging) {
-      Alert.alert('Loglama Durduruldu', `Dosya kaydedildi:\n${logPath}`);
+      const path = dataLogService.stop();
+      setLogPath(path);
+      setIsLogging(false);
+      Alert.alert('Loglama Durduruldu', `Dosya kaydedildi:\\n${path}`);
     } else {
+      if (!obd2Service.isConnected) {
+        Alert.alert('Bağlı Değil', 'Kayıt başlatmak için araca bağlanın.');
+        return;
+      }
+      dataLogService.start();
+      setLogPath('Kaydediliyor...');
+      setIsLogging(true);
       Alert.alert(
         'Loglama Başladı',
-        'Arka planda saniyede 1 kez veri kaydediliyor...',
+        'Arka planda veriler kaydediliyor...',
       );
     }
-    setIsLogging(!isLogging);
   };
 
   const formatTime = (secs: number) => {
