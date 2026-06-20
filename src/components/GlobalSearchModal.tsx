@@ -11,7 +11,7 @@ import {
   Linking,
 } from 'react-native';
 import {useTheme} from '../services/ThemeContext';
-import {DTC_DESCRIPTIONS, DTC_AI_ADVICE, getDTCCategoryColor, getDtcDescription} from '../services/DTCDatabase';
+import {DTC_DESCRIPTIONS, DTC_AI_ADVICE, getDTCCategoryColor} from '../services/DTCDatabase';
 import {CloudDTCService} from '../services/CloudDTCService';
 
 interface GlobalSearchModalProps {
@@ -62,7 +62,7 @@ export function GlobalSearchModal({visible, onClose, onNavigate}: GlobalSearchMo
           if ((advice.cause + ' ' + advice.advice).toLocaleLowerCase('tr').includes(lowerTR)) {
             results.push({
               code,
-              description: (DTC_DESCRIPTIONS[code] || getDtcDescription(code) || code) + ' (AI)',
+              description: (DTC_DESCRIPTIONS[code] || code) + ' (AI)',
               source: 'AI',
             });
             seenCodes.add(code);
