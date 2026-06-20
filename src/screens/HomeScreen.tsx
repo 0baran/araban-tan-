@@ -38,6 +38,7 @@ import {
   DTC_AI_ADVICE,
 } from '../services/DTCDatabase';
 import {getDtcDescription} from '../services/DtcDictionary';
+import VehicleStatusCard from '../components/VehicleStatusCard';
 import {dataLogService} from '../services/DataLogService';
 import {initLogCapture} from '../services/AppLog';
 import {ThemeProvider, useTheme} from '../services/ThemeContext';
