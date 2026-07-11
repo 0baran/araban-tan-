@@ -19,7 +19,7 @@ export const CloudDTCService = {
 
     // 1. Yerel veritabanında var mı?
     const localDesc = DTC_DESCRIPTIONS[upperCode] || getDtcDescription(upperCode);
-    if (localDesc) {
+    if (localDesc && localDesc !== 'Bilinmeyen Hata Kodu...') {
       return {code: upperCode, description: localDesc, source: 'LOCAL'};
     }
 

@@ -717,6 +717,55 @@ const PARAM_META: {
     color: '#c7ecee',
     category: 'egzoz',
   },
+  {
+    key: 'fuelConsumption',
+    label: 'Anlık Yakıt Tüketimi',
+    unit: 'L/100km',
+    color: '#e056fd',
+    category: 'yakıt',
+  },
+  {
+    key: 'turboBoostPressure',
+    label: 'Turbo Basıncı',
+    unit: 'kPa',
+    color: '#f9ca24',
+    category: 'motor',
+  },
+  {
+    key: 'odometer',
+    label: 'Odometre',
+    unit: 'km',
+    color: '#bdc3c7',
+    category: 'sürüş',
+  },
+  {
+    key: 'widebandO2S1',
+    label: 'Geniş Bant O2 Sensör 1 (Lambda)',
+    unit: 'EqRatio',
+    color: '#ffbe76',
+    category: 'egzoz',
+  },
+  {
+    key: 'actualEngineTorque',
+    label: 'Gerçek Motor Torku',
+    unit: '%',
+    color: '#eb4d4b',
+    category: 'motor',
+  },
+  {
+    key: 'driverDemandTorque',
+    label: 'Sürücü Talep Torku',
+    unit: '%',
+    color: '#ff7979',
+    category: 'motor',
+  },
+  {
+    key: 'engineReferenceTorque',
+    label: 'Referans Tork',
+    unit: 'Nm',
+    color: '#ff7979',
+    category: 'motor',
+  },
 ];
 
 OEM_SENSORS.forEach(sensor => {
@@ -927,7 +976,7 @@ export default function LiveDataScreen({onBack}: Props) {
       setPinned(s.pinnedSensors);
       fuelPriceRef.current = s.fuelPricePerLiter;
     });
-    obd2Service.onDataUpdate(d => {
+    const unsubscribe = obd2Service.onDataUpdate(d => {
       setData({...d});
       voiceAlertService.checkAlerts(d);
       const now = Date.now();
@@ -942,17 +991,17 @@ export default function LiveDataScreen({onBack}: Props) {
 
       // Hız limiti kontrolü
       const curSpeed = d.speed || 0;
-      const limitVal = speedAlertRef.current
-        ? speedLimit
-        : 0; // ref üzerinden limit değeri al
-      if (curSpeed > speedLimit && !speedAlertActive) {
+      if (curSpeed > speedLimit && !speedAlertRef.current) {
+        speedAlertRef.current = true;
         setSpeedAlertActive(true);
         Vibration.vibrate([0, 300, 200, 300]);
-      } else if (curSpeed <= speedLimit && speedAlertActive) {
+      } else if (curSpeed <= speedLimit && speedAlertRef.current) {
+        speedAlertRef.current = false;
         setSpeedAlertActive(false);
       }
     });
-  }, [speedLimit, speedAlertActive]);
+    return () => unsubscribe();
+  }, [speedLimit]);
 
   const togglePin = useCallback(async (key: string) => {
     setPinned(prev => {

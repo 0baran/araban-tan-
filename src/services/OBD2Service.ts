@@ -296,6 +296,7 @@ class OBD2Service {
   private logBuffer: string[] = [];
   private logMax = 6000;
   private tripStartTime = 0;
+  private lastTripUpdateTime = 0;
   private tripLastSpeed = 0;
   private tripDistanceKm = 0;
   private tripFuelUsedL = 0;
@@ -1652,8 +1653,8 @@ class OBD2Service {
               const r2 = await this.sendCommandFast('0108', 'longTermFuelTrim');
               this.parseLongTermFuelTrim(r2);
             }
-            if (this.isPidSupported('0123')) {
-              const r3 = await this.sendCommandFast('0123', 'fuelPressure');
+            if (this.isPidSupported('010A')) {
+              const r3 = await this.sendCommandFast('010A', 'fuelPressure');
               this.parseFuelPressure(r3);
             }
             if (this.isPidSupported('0162')) {
@@ -1729,24 +1730,21 @@ class OBD2Service {
             break;
           }
           case 2: {
-            const r1 = await this.sendCommandFast(
-              '0131',
-              'distanceSinceDTCClear',
-            );
-            this.parseDistanceSinceDTCClear(r1);
-            const r2 = await this.sendCommandFast(
-              '0122',
-              'fuelRailPressureRelative',
-            );
-            this.parseFuelRailPressureRelative(r2);
+            if (this.isPidSupported('0131')) {
+              const r1 = await this.sendCommandFast('0131', 'distanceSinceDTCClear');
+              this.parseDistanceSinceDTCClear(r1);
+            }
+            if (this.isPidSupported('0122')) {
+              const r2 = await this.sendCommandFast('0122', 'fuelRailPressureRelative');
+              this.parseFuelRailPressureRelative(r2);
+            }
             break;
           }
           case 3: {
-            const r1 = await this.sendCommandFast(
-              '0159',
-              'fuelRailPressureAbsolute',
-            );
-            this.parseFuelRailPressureAbsolute(r1);
+            if (this.isPidSupported('0159')) {
+              const r1 = await this.sendCommandFast('0159', 'fuelRailPressureAbsolute');
+              this.parseFuelRailPressureAbsolute(r1);
+            }
             if (this.isPidSupported('015F')) {
               const r2 = await this.sendCommandFast('015F', 'egtBank1');
               this.parseEGTBank1(r2);
@@ -1772,11 +1770,10 @@ class OBD2Service {
               const r1 = await this.sendCommandFast('0143', 'absoluteLoad');
               this.parseAbsoluteLoad(r1);
             }
-            const r2 = await this.sendCommandFast(
-              '0145',
-              'relativeThrottlePos',
-            );
-            this.parseRelativeThrottlePos(r2);
+            if (this.isPidSupported('0145')) {
+              const r2 = await this.sendCommandFast('0145', 'relativeThrottlePos');
+              this.parseRelativeThrottlePos(r2);
+            }
             break;
           }
           case 6: {
@@ -1826,11 +1823,10 @@ class OBD2Service {
             break;
           }
           case 9: {
-            const r1 = await this.sendCommandFast(
-              '0130',
-              'warmUpsSinceDTCClear',
-            );
-            this.parseWarmUpsSinceDTCClear(r1);
+            if (this.isPidSupported('0130')) {
+              const r1 = await this.sendCommandFast('0130', 'warmUpsSinceDTCClear');
+              this.parseWarmUpsSinceDTCClear(r1);
+            }
             if (this.isPidSupported('0151')) {
               const r2 = await this.sendCommandFast('0151', 'fuelType');
               this.parseFuelType(r2);
@@ -1872,11 +1868,10 @@ class OBD2Service {
               const r2 = await this.sendCommandFast('012D', 'egrError');
               this.parseEgrError(r2);
             }
-            const r3 = await this.sendCommandFast(
-              '012E',
-              'commandedEvapPurgeFlow',
-            );
-            this.parseCommandedEvapPurge(r3);
+            if (this.isPidSupported('012E')) {
+              const r3 = await this.sendCommandFast('012E', 'commandedEvapPurgeFlow');
+              this.parseCommandedEvapPurge(r3);
+            }
             break;
           }
           case 12: {
@@ -1888,20 +1883,7 @@ class OBD2Service {
               const r2 = await this.sendCommandFast('0125', 'o2B1S2EquivRatio');
               this.parseO2B1S2EquivRatio(r2);
             }
-            if (this.isPidSupported('0160')) {
-              const r3 = await this.sendCommandFast('0160', 'actualEgr');
-              this.parseActualEgr(r3);
-            }
-            if (this.isPidSupported('0161')) {
-              const r4 = await this.sendCommandFast('0161', 'egrErrorDuty');
-              this.parseEgrErrorDuty(r4);
-            }
-            // NOT: PID 0162 (actualEngineTorque) case 6'da zaten sorgulanıyor — duplikasyon kaldırıldı
-            const r6 = await this.sendCommandFast(
-              '0163',
-              'engineReferenceTorque',
-            );
-            this.parseEngineReferenceTorque(r6);
+            // removed duplicate and invalid PIDs
             break;
           }
           case 13: {
@@ -1916,11 +1898,10 @@ class OBD2Service {
               );
               this.parseHybridBatteryLife(r2);
             }
-            const r3 = await this.sendCommandFast(
-              '017A',
-              'dpfDifferentialPressure',
-            );
-            this.parseDpfDifferentialPressure(r3);
+            if (this.isPidSupported('017A')) {
+              const r3 = await this.sendCommandFast('017A', 'dpfDifferentialPressure');
+              this.parseDpfDifferentialPressure(r3);
+            }
             if (this.isPidSupported('017C')) {
               const r4 = await this.sendCommandFast('017C', 'dpfTemp');
               this.parseDpfTemp(r4);
@@ -1936,16 +1917,14 @@ class OBD2Service {
               const r2 = await this.sendCommandFast('0174', 'turboRpm');
               this.parseTurboRpm(r2);
             }
-            const r3 = await this.sendCommandFast(
-              '0177',
-              'chargeAirCoolerTemp',
-            );
-            this.parseChargeAirCoolerTemp(r3);
-            const r4 = await this.sendCommandFast(
-              '0123',
-              'fuelRailGaugePressure',
-            );
-            this.parseFuelRailGaugePressure(r4);
+            if (this.isPidSupported('0177')) {
+              const r3 = await this.sendCommandFast('0177', 'chargeAirCoolerTemp');
+              this.parseChargeAirCoolerTemp(r3);
+            }
+            if (this.isPidSupported('0123')) {
+              const r4 = await this.sendCommandFast('0123', 'fuelRailGaugePressure');
+              this.parseFuelRailGaugePressure(r4);
+            }
             break;
           }
           case 15: {
@@ -1953,16 +1932,14 @@ class OBD2Service {
               const r1 = await this.sendCommandFast('015D', 'injectionTiming');
               this.parseInjectionTiming(r1);
             }
-            const r2 = await this.sendCommandFast(
-              '018E',
-              'engineFrictionTorque',
-            );
-            this.parseEngineFrictionTorque(r2);
-            const r3 = await this.sendCommandFast(
-              '018B',
-              'distanceSinceDTCClearHighRes',
-            );
-            this.parseDistanceSinceDTCClearHighRes(r3);
+            if (this.isPidSupported('018E')) {
+              const r2 = await this.sendCommandFast('018E', 'engineFrictionTorque');
+              this.parseEngineFrictionTorque(r2);
+            }
+            if (this.isPidSupported('018B')) {
+              const r3 = await this.sendCommandFast('018B', 'distanceSinceDTCClearHighRes');
+              this.parseDistanceSinceDTCClearHighRes(r3);
+            }
             if (this.isPidSupported('018D')) {
               const r4 = await this.sendCommandFast(
                 '018D',
@@ -1984,11 +1961,10 @@ class OBD2Service {
               const r2 = await this.sendCommandFast('011C', 'obdStandard');
               this.parseObdStandard(r2);
             }
-            const r3 = await this.sendCommandFast(
-              '0154',
-              'evapVaporPressureAbsolute',
-            );
-            this.parseEvapVaporPressureAbsolute(r3);
+            if (this.isPidSupported('0154')) {
+              const r3 = await this.sendCommandFast('0154', 'evapVaporPressureAbsolute');
+              this.parseEvapVaporPressureAbsolute(r3);
+            }
             if (this.isPidSupported('0179')) {
               const r4 = await this.sendCommandFast('0179', 'egtBank2');
               this.parseEgtBank2(r4);
@@ -1996,11 +1972,10 @@ class OBD2Service {
             break;
           }
           case 17: {
-            const r1 = await this.sendCommandFast(
-              '016F',
-              'turboCompressorInletPressure',
-            );
-            this.parseTurboCompressorInletPressure(r1);
+            if (this.isPidSupported('016F')) {
+              const r1 = await this.sendCommandFast('016F', 'turboCompressorInletPressure');
+              this.parseTurboCompressorInletPressure(r1);
+            }
             if (this.isPidSupported('0171')) {
               const r2 = await this.sendCommandFast('0171', 'vgtControl');
               this.parseVgtControl(r2);
@@ -2016,34 +1991,29 @@ class OBD2Service {
               const r1 = await this.sendCommandFast('0175', 'turboTemp');
               this.parseTurboTemp(r1);
             }
-            const r2 = await this.sendCommandFast(
-              '016D',
-              'fuelPressureControl',
-            );
-            this.parseFuelPressureControl(r2);
-            const r3 = await this.sendCommandFast(
-              '016E',
-              'injectionPressureControl',
-            );
-            this.parseInjectionPressureControl(r3);
+            if (this.isPidSupported('016D')) {
+              const r2 = await this.sendCommandFast('016D', 'fuelPressureControl');
+              this.parseFuelPressureControl(r2);
+            }
+            if (this.isPidSupported('016E')) {
+              const r3 = await this.sendCommandFast('016E', 'injectionPressureControl');
+              this.parseInjectionPressureControl(r3);
+            }
             break;
           }
           case 19: {
-            const r1 = await this.sendCommandFast(
-              '013E',
-              'catalystTempBank1Sensor2',
-            );
-            this.parseCatalystTempBank1Sensor2(r1);
-            const r2 = await this.sendCommandFast(
-              '013F',
-              'catalystTempBank2Sensor2',
-            );
-            this.parseCatalystTempBank2Sensor2(r2);
-            const r3 = await this.sendCommandFast(
-              '0170',
-              'boostPressureControl',
-            );
-            this.parseBoostPressureControl(r3);
+            if (this.isPidSupported('013E')) {
+              const r1 = await this.sendCommandFast('013E', 'catalystTempBank1Sensor2');
+              this.parseCatalystTempBank1Sensor2(r1);
+            }
+            if (this.isPidSupported('013F')) {
+              const r2 = await this.sendCommandFast('013F', 'catalystTempBank2Sensor2');
+              this.parseCatalystTempBank2Sensor2(r2);
+            }
+            if (this.isPidSupported('0170')) {
+              const r3 = await this.sendCommandFast('0170', 'boostPressureControl');
+              this.parseBoostPressureControl(r3);
+            }
             if (this.isPidSupported('017B')) {
               const r4 = await this.sendCommandFast(
                 '017B',
@@ -2054,23 +2024,18 @@ class OBD2Service {
             break;
           }
           case 20: {
-            const r1 = await this.sendCommandFast(
-              '017D',
-              'noxNTEControlStatus',
-            );
-            this.parseNoxNTEControlStatus(r1);
+            if (this.isPidSupported('017D')) {
+              const r1 = await this.sendCommandFast('017D', 'noxNTEControlStatus');
+              this.parseNoxNTEControlStatus(r1);
+            }
             if (this.isPidSupported('017E')) {
-              const r2 = await this.sendCommandFast(
-                '017E',
-                'pmNTEControlStatus',
-              );
+              const r2 = await this.sendCommandFast('017E', 'pmNTEControlStatus');
               this.parsePmNTEControlStatus(r2);
             }
-            const r3 = await this.sendCommandFast(
-              '0165',
-              'engineAuxiliarySupported',
-            );
-            this.parseEngineAuxiliarySupported(r3);
+            if (this.isPidSupported('0165')) {
+              const r3 = await this.sendCommandFast('0165', 'engineAuxiliarySupported');
+              this.parseEngineAuxiliarySupported(r3);
+            }
             break;
           }
           case 21: {
@@ -2349,9 +2314,9 @@ class OBD2Service {
   }
 
   private parseFuelPressure(response: string) {
-    const val = this.parseHexValue(response, '4123', 4, 2);
+    const val = this.parseHexValue(response, '410A', 4, 2);
     if (val !== null) {
-      this.currentData.fuelPressure = val * 10;
+      this.currentData.fuelPressure = val * 3;
     }
   }
 
@@ -2667,9 +2632,14 @@ class OBD2Service {
   }
 
   private parseInjectionTiming(response: string) {
-    const val = this.parseHexValue(response, '415D', 4, 2);
-    if (val !== null) {
-      this.currentData.injectionTiming = Math.round((val / 2 - 64) * 10) / 10;
+    const clean = response.replace(/\s/g, '');
+    if (clean.startsWith('415D') && clean.length >= 8) {
+      const A = parseInt(clean.substring(4, 6), 16);
+      const B = parseInt(clean.substring(6, 8), 16);
+      if (!isNaN(A) && !isNaN(B)) {
+        this.currentData.injectionTiming =
+          Math.round(((A * 256 + B) / 128 - 210) * 10) / 10;
+      }
     }
   }
 
@@ -2799,26 +2769,7 @@ class OBD2Service {
     }
   }
 
-  private parseActualEgr(response: string) {
-    const val = this.parseHexValue(response, '4160', 4, 2);
-    if (val !== null) {
-      this.currentData.actualEgr = Math.round((val / 255) * 100);
-    }
-  }
-
-  private parseEgrErrorDuty(response: string) {
-    const val = this.parseHexValue(response, '4161', 4, 2);
-    if (val !== null) {
-      this.currentData.egrErrorDuty = Math.round((val / 128 - 1) * 100);
-    }
-  }
-
-  private parseCommandedEvapPurgeFlow(response: string) {
-    const val = this.parseHexValue(response, '4162', 4, 2);
-    if (val !== null) {
-      this.currentData.commandedEvapPurgeFlow = Math.round((val / 255) * 100);
-    }
-  }
+  // parseActualEgr, parseEgrErrorDuty, parseCommandedEvapPurgeFlow removed due to incorrect PIDs
 
   private parseMonitorStatusForPoll(response: string) {
     const clean = response.replace(/\s/g, '');
@@ -2827,7 +2778,7 @@ class OBD2Service {
       const B = parseInt(clean.substring(6, 8), 16);
       if (!isNaN(A)) {
         this.currentData.milOn = A >> 7 === 1;
-        this.currentData.dtcCount = (A & 0x7f) * 2 + (B >> 4);
+        this.currentData.dtcCount = A & 0x7f;
       }
     }
   }
@@ -2862,7 +2813,7 @@ class OBD2Service {
         const B = parseInt(clean.substring(6, 8), 16);
         if (!isNaN(A)) {
           milOn = A >> 7 === 1;
-          dtcCount = (A & 0x7f) * 2 + (B >> 4);
+          dtcCount = A & 0x7f;
         }
       }
       const testNames = [
@@ -2926,17 +2877,23 @@ class OBD2Service {
     this.tripSpeedSum = 0;
     this.tripSpeedCount = 0;
     this.tripMaxSpeed = 0;
+    this.lastTripUpdateTime = Date.now();
   }
 
   private updateTripData(speedKmh: number) {
+    const now = Date.now();
     if (!this.tripStartTime) {
-      this.tripStartTime = Date.now();
+      this.tripStartTime = now;
+      this.lastTripUpdateTime = now;
     }
+    const deltaMs = this.lastTripUpdateTime > 0 ? (now - this.lastTripUpdateTime) : 500;
+    this.lastTripUpdateTime = now;
+
     if (speedKmh > this.tripMaxSpeed) {
       this.tripMaxSpeed = speedKmh;
     }
     if (this.tripLastSpeed > 0 && speedKmh > 0) {
-      const dt = 0.5 / 3600;
+      const dt = deltaMs / 1000 / 3600; // in hours
       const avgSpeedKmh = (this.tripLastSpeed + speedKmh) / 2;
       this.tripDistanceKm += avgSpeedKmh * dt;
       this.tripSpeedSum += speedKmh;
